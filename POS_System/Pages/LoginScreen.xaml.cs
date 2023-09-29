@@ -50,13 +50,5 @@ namespace POS_System.Pages
                 MessageBox.Show("Invalid userid or password. Please try again.");
             }
         }
-    
-
-    private void id_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-
-        }
-
-
     }
 }
