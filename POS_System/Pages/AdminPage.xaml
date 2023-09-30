@@ -1,0 +1,43 @@
+﻿<Window x:Class="POS_System.Pages.AdminPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:POS_System.Pages"
+        mc:Ignorable="d"
+        Title="AdminPage" d:DesignHeight="562.387" Width="832" WindowStartupLocation="CenterOwner"
+        >
+    <Grid Background="#212121">
+        <DataGrid Name="userGrid" ItemsSource="{Binding}" Margin="18,10,18,273" SelectionChanged="DataGrid_SelectionChanged"/>
+
+        <!--Add User-->
+        <TextBlock HorizontalAlignment="Left" Margin="132,303,0,0" TextWrapping="Wrap" Text="Add User" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana" FontSize="30" FontWeight="Bold"/>
+
+        <Label Content="ID" HorizontalAlignment="Left" Margin="90,344,0,0" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold"/>
+        <TextBox x:Name="adduser_idBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="132,348,491,172"/>
+
+        <Label Content="Username" HorizontalAlignment="Left" Margin="5,382,0,0" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold"/>
+        <TextBox x:Name="adduser_usernameBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="132,390,491,132"/>
+
+        <Label Content="Password" HorizontalAlignment="Left" Margin="9,424,0,0" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold"/>
+        <TextBox x:Name="adduser_passwordBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="132,429,491,92"/>
+
+
+        <Button x:Name="adduserbutton" Click="addUser_Click" Content="Add" HorizontalAlignment="Left" Background="Orange" Width="78" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" Margin="132,472,0,46" FontSize="20"/>
+
+        <!--Delete User-->
+        <TextBlock HorizontalAlignment="Left" Margin="349,303,0,0" TextWrapping="Wrap" Text="Delete User" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana" FontSize="30" FontWeight="Bold"/>
+        <TextBox x:Name="deleteuser_idBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="350,348,273,172"/>
+        <Button x:Name="deleteuserbutton" Click="deleteUser_Click" Content="Delete" HorizontalAlignment="Left" Background="Orange" Width="78" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" Margin="349,471,0,46" FontSize="20"/>
+
+        <!--Edit User-->
+        <TextBlock HorizontalAlignment="Left" Margin="578,303,0,0" TextWrapping="Wrap" Text="Edit User" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana" FontSize="30" FontWeight="Bold"/>
+        <TextBox x:Name="edituser_idBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="579,348,44,172" TextChanged="edituser_idBox_TextChanged"/>
+        <TextBox x:Name="edituser_usernameBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="579,390,44,132"/>
+        <TextBox x:Name="edituser_passwordBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="579,429,44,92"/>
+        <Button x:Name="edituserbutton" Click="editUser_Click" Content="Edit" HorizontalAlignment="Left" Background="Orange" Width="78" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" Margin="579,472,0,46" FontSize="20"/>
+
+
+
+    </Grid>
+</Window>

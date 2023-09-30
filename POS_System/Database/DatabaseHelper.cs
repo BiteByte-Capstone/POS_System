@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -107,6 +108,40 @@ namespace POS_System.Database
 
             return username;
         }
+
+        //public string GetAllUser()
+        //{
+        //    DataTable dt = new DataTable();
+
+        //    if (OpenConnection())
+        //    {
+        //        try
+        //        {
+        //            Query to check if the entered user ID and password match a user in the database
+        //            string query = "SELECT * FROM user";
+        //            MySqlCommand command = new MySqlCommand(query, sqlConn);
+
+        //            using (MySqlDataReader reader = command.ExecuteReader())
+        //            {
+        //                if (reader.Read())
+        //                {
+        //                    return dt.Load(reader.Read()); // User is authenticated
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine("Error: " + ex.Message);
+        //        }
+        //        finally
+        //        {
+        //            CloseConnection();
+        //        }
+        //    }
+
+        //    return false; // Authentication failed or an error occurred
+
+        //}
 
         public void Dispose()
         {
