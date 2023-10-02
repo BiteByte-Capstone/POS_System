@@ -211,5 +211,10 @@ namespace POS_System.Pages
                 edituser_passwordBox.Clear();
             }
         }
+
+        private void adduser_idBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
