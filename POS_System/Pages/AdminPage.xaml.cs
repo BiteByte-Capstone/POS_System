@@ -216,5 +216,15 @@ namespace POS_System.Pages
         {
 
         }
+
+        private void edituser_idBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void edituser_usernameBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
