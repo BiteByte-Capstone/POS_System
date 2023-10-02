@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using POS.Models;
+using POS_System.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,7 +49,13 @@ namespace POS_System.Pages
         }
 
         public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
+        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category> ();
 
+        private void LoadCategoryData()
+        {
+            string connectString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+            MySqlConnection mySqlConnection = new MySqlConnection(connectString);
+        }
         private void LoadItemsData()
         {
             
@@ -81,17 +88,17 @@ namespace POS_System.Pages
                     Items.Add(item);*/
 
                     // Creating a new button for each item in database
-                    Button newButton = new Button();
-                    newButton.Content = rdr["item_name"].ToString(); // Set the text of the button to the item name
-                    newButton.Tag = item;
-                    newButton.Click += NewButton_Click; // Assign a click event handler
-                    newButton.Width = 150; // Set other properties as needed
-                    newButton.Height = 30;
-                    newButton.Margin = new Thickness(5);
+                    Button newItemButton = new Button();
+                    newItemButton.Content = rdr["item_name"].ToString(); // Set the text of the button to the item name
+                    newItemButton.Tag = item;
+                    newItemButton.Click += ItemClick; // Assign a click event handler
+                    newItemButton.Width = 150; // Set other properties as needed
+                    newItemButton.Height = 30;
+                    newItemButton.Margin = new Thickness(5);
 
                     // Add the new button to a container on your window
                     // For example, a StackPanel with the name 'buttonPanel'
-                    buttonPanel.Children.Add(newButton);
+                    ItemButtonPanel.Children.Add(newItemButton);
                 }
 
                 rdr.Close();
@@ -104,9 +111,11 @@ namespace POS_System.Pages
         }
 
 
+
+
         private double TotalAmount = 0.0;
 
-        private void NewButton_Click(object sender, RoutedEventArgs e)
+        private void ItemClick(object sender, RoutedEventArgs e)
         {
            
             Button clickedButton = sender as Button;
