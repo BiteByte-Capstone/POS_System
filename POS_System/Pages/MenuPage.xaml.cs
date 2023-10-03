@@ -318,7 +318,22 @@ namespace POS_System.Pages
 
         }
 
+        private void VoidButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
+            {
+                // Remove the selected ordered item from the ObservableCollection
+                OrdersListBox.Items.Remove(selectedOrderedItem);
 
+                // Subtract the item price from the total amount
+                TotalAmount -= selectedOrderedItem.ItemPrice;
+                TotalAmountTextBlock.Text = TotalAmount.ToString("C");
+            }
+            else
+            {
+                MessageBox.Show("Please select an item to void.");
+            }
+        }
     }
 }
 
