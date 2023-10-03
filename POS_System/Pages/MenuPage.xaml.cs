@@ -181,7 +181,7 @@ namespace POS_System.Pages
                     newButton.Height = 60;
                     SetButtonStyle(newButton);
                     newButton.Click += NewButton_Click;
-                    itemButtonPanel.Children.Add(newButton);
+                    ItemButtonPanel.Children.Add(newButton);
                 }
 
                 rdr.Close();
@@ -193,7 +193,7 @@ namespace POS_System.Pages
             conn.Close();
         }
 
-        Button clickedButton = sender as Button;
+        /*Button clickedButton = sender as Button;
             if (clickedButton != null && clickedButton.Tag is Category)
             {
                 Category category = (Category)clickedButton.Tag as Category;
@@ -205,9 +205,17 @@ namespace POS_System.Pages
                     if (category.Name == Item.)
 
                 }
-            }
-        }
+            }*/
 
+        private void SetButtonStyle(Button button)
+        {
+            button.FontFamily = new FontFamily("Verdana");
+            button.FontSize = 20;
+            button.Background = Brushes.Orange;
+            button.FontWeight = FontWeights.Bold;
+            button.BorderBrush = Brushes.Orange;
+            button.Margin = new Thickness(5);
+        }
 
         private double TotalAmount = 0.0;
 
