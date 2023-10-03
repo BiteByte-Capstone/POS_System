@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,37 +32,75 @@ namespace POS_System.Pages
             this.Close();
         }
 
-        //Handle table number, order number, order type
+        // Handle table number, order number, order type
         private void Open_Table(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             if (button != null)
             {
-                string tableName = button.Name; // get the name of the button
-                string orderType = button.Name; //get the name of button
-
-                int index = tableName.IndexOf('_'); //get the index number after "_"
-
-                // Show table number or take-our order number
-                string tableNumber = tableName.Substring(index + 1);// remove the first 5 characters ("table")
+                string tableName = button.Name;
+                string orderType = button.Name;
+                int index = tableName.IndexOf('_');
+                string tableNumber = tableName.Substring(index + 1);
                 orderType = tableName.Substring(0, index);
 
                 String Type = "";
                 if (orderType.Equals("table"))
                 {
-                    Type = "Dine-In"; 
-                } 
-                else if (orderType.Equals ("takeOut"))
+                    Type = "Dine-In";
+                }
+                else if (orderType.Equals("takeOut"))
                 {
                     Type = "Take-Out";
                 }
 
+                bool hasUnpaidOrders = CheckForUnpaidOrders(tableNumber);
 
-                MenuPage menuPage = new MenuPage(tableNumber, Type); // pass the table number as a string
-                menuPage.Show();
-                this.Close();
+                if (hasUnpaidOrders)
+                {
+                    // If there are unpaid orders, navigate to MenuPage with unpaid order details
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, hasUnpaidOrders);
+                    menuPage.Show();
+                    this.Close();
+                }
+                else
+                {
+                    // If there are no unpaid orders, simply navigate to MenuPage
+                    MenuPage menuPage = new MenuPage(tableNumber, Type);
+                    menuPage.Show();
+                    this.Close();
+                }
             }
         }
+
+        // Check if there are unpaid orders for the specified table
+        private bool CheckForUnpaidOrders(string tableNumber)
+        {
+            // Create a connection string
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Check if there are unpaid orders for the specified table
+                    string checkUnpaidOrdersSql = "SELECT order_id FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
+                    MySqlCommand checkUnpaidOrdersCmd = new MySqlCommand(checkUnpaidOrdersSql, conn);
+                    checkUnpaidOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
+                    object unpaidOrderId = checkUnpaidOrdersCmd.ExecuteScalar();
+
+                    return (unpaidOrderId != null);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error checking for unpaid orders: " + ex.ToString());
+                    return false;
+                }
+            }
+        }
+
 
 
     }
