@@ -180,7 +180,7 @@ namespace POS_System.Pages
                     newButton.Width = 150;
                     newButton.Height = 60;
                     SetButtonStyle(newButton);
-                    newButton.Click += NewButton_Click;
+                    newButton.Click += ItemClick;
                     ItemButtonPanel.Children.Add(newButton);
                 }
 
