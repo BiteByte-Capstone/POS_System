@@ -12,11 +12,31 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Images\addUser.png" />
+    <None Remove="Images\editUser.png" />
+    <None Remove="Images\logo.png" />
+    <None Remove="Images\userDelete.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Pages\Window1.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\addUser.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\editUser.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\logo.png" />
+    <Resource Include="Images\userDelete.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

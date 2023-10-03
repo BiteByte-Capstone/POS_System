@@ -62,9 +62,6 @@ namespace POS_System.Pages
 
             //Close connection to user table
             connection.Close();
-
-            //Bind data table to the DataGrid on XAML
-            userGrid.DataContext = dt;
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
