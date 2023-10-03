@@ -70,13 +70,11 @@ namespace POS_System.Pages
                 while (rdr.Read())
                 {
                     // Create an Item object for each item in database
-                    Item item = new Item()
+                    Category category = new Category()
                     {
-                        Id = Convert.ToInt32(rdr["item_id"]),
-                        Name = rdr["item_name"].ToString(),
-                        Price = Convert.ToDouble(rdr["item_price"]),
-                        Description = rdr["item_description"].ToString(),
-                        Category = rdr["item_category"].ToString()
+                        Id = Convert.ToInt32(rdr["category_id"]),
+                        Name = rdr["category_name"].ToString(),
+
                     };
 
                     /*                    // Add item to Items collection
@@ -84,8 +82,8 @@ namespace POS_System.Pages
 
                     // Creating a new button for each item in database
                     Button newCategoryButton = new Button();
-                    newCategoryButton.Content = rdr["category_category"].ToString(); // Set the text of the button to the item name
-                    newCategoryButton.Tag = item;
+                    newCategoryButton.Content = rdr["category_name"].ToString(); // Set the text of the button to the item name
+                    newCategoryButton.Tag = category;
                     newCategoryButton.Click += CategoryClick; // Assign a click event handler
                     newCategoryButton.Width = 150; // Set other properties as needed
                     newCategoryButton.Height = 30;
@@ -105,19 +103,7 @@ namespace POS_System.Pages
             mySqlConnection.Close();
         }
 
-        private void CategoryClick(object sender, RoutedEventArgs e)
-        {
-            Button clickedButton = sender as Button;
-            if (clickedButton != null && clickedButton.Tag is Category)
-            {
-                Category category = (Category)clickedButton.Tag as Category;
 
-                if (category != null)
-                {
-                //Connect to item button
-                }
-            }
-        }
 
         private void LoadItemsData()
         {
@@ -173,7 +159,25 @@ namespace POS_System.Pages
             conn.Close();
         }
 
+        private void CategoryClick(object sender, RoutedEventArgs e)
+        {
+            Item item = new Item();
+            Category category = new Category();
+            
+            Button clickedButton = sender as Button;
+            if (clickedButton != null && clickedButton.Tag is Category)
+            {
+                Category category1 = (Category)clickedButton.Tag as Category;
 
+                if (category1 != null)
+                {
+                    Category.Add(category1);
+
+                    if (category1.Id ==)
+
+                }
+            }
+        }
 
 
         private double TotalAmount = 0.0;
