@@ -85,13 +85,16 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Type:" VerticalAlignment="Top" Margin="10,14,418,0" Foreground="Orange" FontSize="15" FontFamily="Verdana" Grid.ColumnSpan="2"/>
                 <TextBox Name="TypeTextBox" Text="Dining" VerticalAlignment="Top" IsReadOnly="True" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="58,10,-49,0" Height="26" Grid.Column="1"/>
+                <TextBox x:Name="orderIdTextField" Grid.Column="1" HorizontalAlignment="Left" Margin="27,44,0,0" TextWrapping="Wrap" Text="Order Id" VerticalAlignment="Top" Width="381" Height="24" Foreground="Orange" FontFamily="Verdana" Background="#FF454545" BorderBrush="Orange"/>
+
             </Grid>
+            
             <ListBox x:Name="OrdersListBox" ItemsSource="{Binding Items}" Width="400" Height="399"  Background="#FF454545"  BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Name}" Width="150"/>
-                            <!--<TextBlock Text="{Binding Quantity}" Width="50"/>-->
+                            <TextBlock Text="{Binding Quantity}" Width="50"/>
                             <TextBlock Text="{Binding Price}" Width="100"/>
                         </StackPanel>
                     </DataTemplate>
