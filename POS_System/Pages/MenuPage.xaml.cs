@@ -32,10 +32,8 @@ namespace POS_System.Pages
             this.DataContext = this;
             this.Loaded += Window_Loaded; // Subscribe to the Loaded event
             
-            
-
-
         }
+
         public MenuPage(string tableNumber, string Type) : this()
         {
             TableNumberTextBox.Text = tableNumber;
@@ -46,7 +44,7 @@ namespace POS_System.Pages
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadCategoryData(); // Call LoadCategoryData when the window is loaded           
-            LoadItemsData(); // Call LoadFoodData when the window is loaded
+            /*LoadItemsData(); // Call LoadFoodData when the window is loaded*/
         }
 
         public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
@@ -84,10 +82,12 @@ namespace POS_System.Pages
                     Button newCategoryButton = new Button();
                     newCategoryButton.Content = rdr["category_name"].ToString(); // Set the text of the button to the item name
                     newCategoryButton.Tag = category;
-                    newCategoryButton.Click += CategoryClick; // Assign a click event handler
+                   /* newCategoryButton.Click += CategoryClick; // Assign a click event handler*/
+                    newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
                     newCategoryButton.Width = 150; // Set other properties as needed
                     newCategoryButton.Height = 30;
                     newCategoryButton.Margin = new Thickness(5);
+                    SetButtonStyle(newCategoryButton);
 
                     // Add the new button to a container on your window
                     // For example, a StackPanel with the name 'buttonPanel'
@@ -159,7 +159,52 @@ namespace POS_System.Pages
             conn.Close();
         }
 
-        private void CategoryClick(object sender, RoutedEventArgs e)
+        private void LoadItemsByCategory(object categoryName)
+        {
+            ItemButtonPanel.Children.Clear();
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+            MySqlConnection conn = new MySqlConnection(connStr);
+
+            try
+            {
+                conn.Open();
+                string sql = "SELECT * FROM item WHERE item_category = @category;";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@category", categoryName);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+
+                    Item item = new Item()
+                    {
+                        Id = Convert.ToInt32(rdr["item_id"]),
+                        Name = rdr["item_name"].ToString(),
+                        Price = Convert.ToDouble(rdr["item_price"]),
+                        Description = rdr["item_description"].ToString(),
+                        Category = rdr["item_category"].ToString()
+                    };
+
+                    Button newItemButton = new Button();
+                    newItemButton.Content = rdr["item_name"].ToString();
+                    newItemButton.Tag = item;
+                    newItemButton.Width = 150;
+                    newItemButton.Height = 60;
+                    SetButtonStyle(newItemButton);
+                    newItemButton.Click += ItemClick;
+                    ItemButtonPanel.Children.Add(newItemButton);
+                }
+
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            conn.Close();
+        }
+
+/*        private void CategoryClick(object sender, RoutedEventArgs e)
         {
             ItemButtonPanel.Children.Clear();
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
@@ -191,7 +236,7 @@ namespace POS_System.Pages
                 MessageBox.Show(ex.ToString());
             }
             conn.Close();
-        }
+        }*/
 
         /*Button clickedButton = sender as Button;
             if (clickedButton != null && clickedButton.Tag is Category)
