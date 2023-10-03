@@ -54,7 +54,7 @@ namespace POS_System.Pages
 
         private void LoadCategoryData()
         {
-            ItemButtonPanel.Children.Clear();
+            /*ItemButtonPanel.Children.Clear();*/
             string connectString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
             MySqlConnection mySqlConnection = new MySqlConnection(connectString);
 
@@ -161,9 +161,39 @@ namespace POS_System.Pages
 
         private void CategoryClick(object sender, RoutedEventArgs e)
         {
+            ItemButtonPanel.Children.Clear();
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+            MySqlConnection conn = new MySqlConnection(connStr);
 
-            
-            Button clickedButton = sender as Button;
+            try
+            {
+                conn.Open();
+                string sql = "SELECT item_name FROM item WHERE item_category = @category;";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@category", categoryName);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    Button newButton = new Button();
+                    newButton.Content = rdr["item_name"].ToString();
+                    newButton.Width = 150;
+                    newButton.Height = 60;
+                    SetButtonStyle(newButton);
+                    newButton.Click += NewButton_Click;
+                    itemButtonPanel.Children.Add(newButton);
+                }
+
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            conn.Close();
+        }
+
+        Button clickedButton = sender as Button;
             if (clickedButton != null && clickedButton.Tag is Category)
             {
                 Category category = (Category)clickedButton.Tag as Category;
