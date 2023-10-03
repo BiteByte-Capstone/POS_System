@@ -85,6 +85,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Type:" VerticalAlignment="Top" Margin="10,14,418,0" Foreground="Orange" FontSize="15" FontFamily="Verdana" Grid.ColumnSpan="2"/>
                 <TextBox Name="TypeTextBox" Text="Dining" VerticalAlignment="Top" IsReadOnly="True" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="58,10,-49,0" Height="26" Grid.Column="1"/>
+                <TextBlock x:Name="oderIdTextBlock" HorizontalAlignment="Left" Margin="4,47,0,0" TextWrapping="Wrap" Text="Order ID:" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana"/>
                 <TextBox x:Name="orderIdTextField" Grid.Column="1" HorizontalAlignment="Left" Margin="27,44,0,0" TextWrapping="Wrap" Text="Order Id" VerticalAlignment="Top" Width="381" Height="24" Foreground="Orange" FontFamily="Verdana" Background="#FF454545" BorderBrush="Orange"/>
 
             </Grid>
