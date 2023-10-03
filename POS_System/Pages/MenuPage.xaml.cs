@@ -54,7 +54,7 @@ namespace POS_System.Pages
 
         private void LoadCategoryData()
         {
-            Category.Clear ();
+            ItemButtonPanel.Children.Clear();
             string connectString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
             MySqlConnection mySqlConnection = new MySqlConnection(connectString);
 
@@ -161,19 +161,18 @@ namespace POS_System.Pages
 
         private void CategoryClick(object sender, RoutedEventArgs e)
         {
-            Item item = new Item();
-            Category category = new Category();
+
             
             Button clickedButton = sender as Button;
             if (clickedButton != null && clickedButton.Tag is Category)
             {
-                Category category1 = (Category)clickedButton.Tag as Category;
+                Category category = (Category)clickedButton.Tag as Category;
 
-                if (category1 != null)
+                if (category != null)
                 {
-                    Category.Add(category1);
+                    Category.Add(category);
 
-                    if (category1.Id ==)
+                    if (category.Name == Item.)
 
                 }
             }
