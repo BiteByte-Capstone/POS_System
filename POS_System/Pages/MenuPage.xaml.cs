@@ -45,6 +45,7 @@ namespace POS_System.Pages
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            LoadCategoryData(); // Call LoadCategoryData when the window is loaded           
             LoadItemsData(); // Call LoadFoodData when the window is loaded
         }
 
@@ -53,9 +54,71 @@ namespace POS_System.Pages
 
         private void LoadCategoryData()
         {
+            Category.Clear ();
             string connectString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
             MySqlConnection mySqlConnection = new MySqlConnection(connectString);
+
+            try
+            {
+                mySqlConnection.Open();
+
+                // Your query to fetch items
+                string sql = "SELECT * FROM category;";
+                MySqlCommand cmd = new MySqlCommand(sql, mySqlConnection);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    // Create an Item object for each item in database
+                    Item item = new Item()
+                    {
+                        Id = Convert.ToInt32(rdr["item_id"]),
+                        Name = rdr["item_name"].ToString(),
+                        Price = Convert.ToDouble(rdr["item_price"]),
+                        Description = rdr["item_description"].ToString(),
+                        Category = rdr["item_category"].ToString()
+                    };
+
+                    /*                    // Add item to Items collection
+                                        Items.Add(item);*/
+
+                    // Creating a new button for each item in database
+                    Button newCategoryButton = new Button();
+                    newCategoryButton.Content = rdr["category_category"].ToString(); // Set the text of the button to the item name
+                    newCategoryButton.Tag = item;
+                    newCategoryButton.Click += CategoryClick; // Assign a click event handler
+                    newCategoryButton.Width = 150; // Set other properties as needed
+                    newCategoryButton.Height = 30;
+                    newCategoryButton.Margin = new Thickness(5);
+
+                    // Add the new button to a container on your window
+                    // For example, a StackPanel with the name 'buttonPanel'
+                    CategoryButtonPanel.Children.Add(newCategoryButton);
+                }
+
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            mySqlConnection.Close();
         }
+
+        private void CategoryClick(object sender, RoutedEventArgs e)
+        {
+            Button clickedButton = sender as Button;
+            if (clickedButton != null && clickedButton.Tag is Category)
+            {
+                Category category = (Category)clickedButton.Tag as Category;
+
+                if (category != null)
+                {
+                //Connect to item button
+                }
+            }
+        }
+
         private void LoadItemsData()
         {
             
