@@ -320,13 +320,17 @@ namespace POS_System.Pages
 
         private void VoidButton_Click(object sender, RoutedEventArgs e)
         {
-            if (OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
+            if (OrdersListBox.SelectedItem is Item selectedItem)
             {
+                OrdersListBox.ItemsSource = Items;
+
+                Items.Remove(selectedItem);
+
                 // Remove the selected ordered item from the ObservableCollection
-                OrdersListBox.Items.Remove(selectedOrderedItem);
+                /*OrdersListBox.Items.Remove(selectedOrderedItem);*/
 
                 // Subtract the item price from the total amount
-                TotalAmount -= selectedOrderedItem.ItemPrice;
+                TotalAmount -= selectedItem.Price;
                 TotalAmountTextBlock.Text = TotalAmount.ToString("C");
             }
             else
