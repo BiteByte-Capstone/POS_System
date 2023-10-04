@@ -104,7 +104,7 @@ namespace POS_System.Pages
         }
 
 
-
+        //!!no use code. keep it for refernece 
         private void LoadItemsData()
         {
             
@@ -318,6 +318,7 @@ namespace POS_System.Pages
 
         }
 
+        //Void button click event
         private void VoidButton_Click(object sender, RoutedEventArgs e)
         {
             if (OrdersListBox.SelectedItem is Item selectedItem)
