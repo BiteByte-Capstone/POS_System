@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using POS.Models;
+using POS_System.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +22,60 @@ namespace POS_System.Pages
     {
         public TablePage()
         {
+           
             InitializeComponent();
+            UpdateTableColors();
         }
+
+/*        private void getTableInfo()
+        {
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "SELECT * FROM order ";
+                    MySqlCommand cmd = new MySqlCommand(sql, conn);
+                    *//*cmd.Parameters.AddWithValue("@category", categoryName);*//* // read from category button just ref.
+                    MySqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+
+                        Order order = new Order()
+                        {
+                            Id = Convert.ToInt32(rdr["order_id"]),
+                            *//*                                    public int tableNumber { get; set; }
+                                    public DateTime timeStamp { get; set; }
+                                    public double price { get; set; }*//*
+                            tableNumber = Convert.ToInt16(rdr["table_num"]),
+                            *//*timeStamp = Convert.ToDouble(rdr["order_timestamp"]),*//* // work on it later for TIME!!
+                            price = Convert.ToDouble(rdr["item_description"]),
+                            IsPaid = rdr["item_category"].ToString()
+                        };
+
+                        Button newItemButton = new Button();
+                        newItemButton.Content = rdr["item_name"].ToString();
+                        newItemButton.Tag = item;
+                        newItemButton.Width = 150;
+                        newItemButton.Height = 60;
+                        SetButtonStyle(newItemButton);
+                        newItemButton.Click += ItemClick;
+                        ItemButtonPanel.Children.Add(newItemButton);
+                    }
+
+                    rdr.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+                conn.Close();
+            }
+
+        }*/
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
@@ -29,6 +84,53 @@ namespace POS_System.Pages
             LoginScreen loginScreen = new LoginScreen();
             loginScreen.Show();
             this.Close();
+        }
+
+        // Method to update table colors based on the database
+        private void UpdateTableColors()
+        {
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Query the database for tables with paid=n
+                    string query = "SELECT table_num FROM `order` WHERE paid = 'n';";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        // Get the table number from the query result
+                        int tableNumber = reader.GetInt32(0);
+
+                        // Find the corresponding table UI element in your XAML
+                        string buttonName = "table_" + tableNumber;
+
+                        // Try to find the button by name
+                        Button tableButton = FindName(buttonName) as Button;
+
+                        if (tableButton != null)
+                        {
+                            // Change the background color to green
+                            tableButton.Background = Brushes.Green;
+                        }
+                    }
+
+                    reader.Close();
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
         }
 
         //Handle table number, order number, order type
