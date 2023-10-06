@@ -31,13 +31,98 @@ namespace POS_System.Pages
             InitializeComponent();
             this.DataContext = this;
             this.Loaded += Window_Loaded; // Subscribe to the Loaded event
+            /*LoadItemsFromDatabase(orderId);*/
             
         }
 
-        public MenuPage(string tableNumber, string Type) : this()
+        //Constructor for tableNumber and Type, to show on menu page
+        public MenuPage(string tableNumber, string Type, string Occrupied ,bool hasUnpaidOrders) : this()
         {
             TableNumberTextBox.Text = tableNumber;
             TypeTextBox.Text = Type;
+            StatusTextBox.Text = Occrupied;
+
+
+            if (hasUnpaidOrders)
+            {
+                // Call the method to load unpaid orders for this table.
+                LoadUnpaidOrders(tableNumber);
+            }
+        }
+
+
+/*        //To show the table number, order type on menu page.
+        public MenuPage(string tableNumber, string Type, string orderId) : this()
+        {
+            TableNumberTextBox.Text = tableNumber;
+            TypeTextBox.Text = Type;
+            orderIdTextBox.Text = orderId;
+        }
+*/
+        public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
+        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category>();
+        public ObservableCollection<Order> Order { get; set; } = new ObservableCollection<Order> ();
+
+        //To show number and type
+        private void Open_Table(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            if (button != null)
+            {
+                string tableName = button.Name; // get the name of the button
+                string orderType = button.Name; // get the name of the button
+
+                int index = tableName.IndexOf('_'); // get the index number after "_"
+
+                // Show table number or take-out order number
+                string tableNumber = tableName.Substring(index + 1); // remove the first 5 characters ("table")
+                orderType = tableName.Substring(0, index);
+
+                String Type = "";
+                if (orderType.Equals("table"))
+                {
+                    Type = "Dine-In";
+                }
+                else if (orderType.Equals("takeOut"))
+                {
+                    Type = "Take-Out";
+                }
+
+                // Check if there are unpaid orders for the table
+                bool hasUnpaidOrders = CheckForUnpaidOrders(tableNumber);
+                string Occrupied = "o";
+
+                // Open the MenuPage with the table number and Type
+                MenuPage menuPage = new MenuPage(tableNumber, Type, Occrupied,hasUnpaidOrders);
+                menuPage.Show();
+
+                //show up the items that order before.
+                
+
+                this.Close();
+            }
+        }
+
+        //Howard work on it. To load the item to the table
+        private void LoadItemsFromDatabase(object orderId)
+        {
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string getItemSql = "SELECT COUNT(*) FROM `ordered_itemlist` WHERE order_id = @orderId ;";
+                    MySqlCommand getItemCmd = new MySqlCommand(getItemSql, conn);
+                    getItemCmd.Parameters.AddWithValue("@tableNum", orderId);
+                }
+
+                catch
+                {
+                    conn.Close();
+                }
+            }
         }
 
         private bool CheckForUnpaidOrders(string tableNumber)
@@ -73,17 +158,7 @@ namespace POS_System.Pages
         }
 
 
-        public MenuPage(string tableNumber, string Type, bool hasUnpaidOrders) : this()
-        {
-            TableNumberTextBox.Text = tableNumber;
-            TypeTextBox.Text = Type;
 
-            if (hasUnpaidOrders)
-            {
-                // Call the method to load unpaid orders for this table.
-                LoadUnpaidOrders(tableNumber);
-            }
-        }
 
 
         private void LoadUnpaidOrders(string tableNumber)
@@ -102,8 +177,27 @@ namespace POS_System.Pages
                     string unpaidOrdersSql = "SELECT * FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
                     MySqlCommand unpaidOrdersCmd = new MySqlCommand(unpaidOrdersSql, conn);
                     unpaidOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
+                    MySqlDataReader rdr = unpaidOrdersCmd.ExecuteReader();
 
-                    MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
+                    while (rdr.Read())
+                    {
+                        Order order = new Order()
+                        {
+                            Id = Convert.ToInt32(rdr["order_id"]),
+                            tableNumber = Convert.ToInt32(rdr["table_num"]),
+                            /*timeStamp = Convert.ToDateTime(rdr["order_timestamp"]),*/
+                            price = Convert.ToDouble(rdr["total_amount"]),
+                            /*IsPaid = Convert.ToBoolean(rdr["paid"])*/
+                        };
+
+                        ListBox listBox = new ListBox();
+                        listBox.Items.Add(order);
+                    }
+
+
+
+
+/*                    MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
                     DataTable unpaidOrdersTable = new DataTable();
                     dataAdapter.Fill(unpaidOrdersTable);
 
@@ -111,7 +205,7 @@ namespace POS_System.Pages
                     // You can bind the DataTable to your UI element's ItemSource property
 
                     // Example for binding to a ListBox
-                    OrdersListBox.ItemsSource = unpaidOrdersTable.DefaultView;
+                    OrdersListBox.ItemsSource = unpaidOrdersTable.DefaultView;*/
                 }
                 catch (Exception ex)
                 {
@@ -121,39 +215,7 @@ namespace POS_System.Pages
         }
 
 
-        private void Open_Table(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            if (button != null)
-            {
-                string tableName = button.Name; // get the name of the button
-                string orderType = button.Name; // get the name of the button
 
-                int index = tableName.IndexOf('_'); // get the index number after "_"
-
-                // Show table number or take-out order number
-                string tableNumber = tableName.Substring(index + 1); // remove the first 5 characters ("table")
-                orderType = tableName.Substring(0, index);
-
-                String Type = "";
-                if (orderType.Equals("table"))
-                {
-                    Type = "Dine-In";
-                }
-                else if (orderType.Equals("takeOut"))
-                {
-                    Type = "Take-Out";
-                }
-
-                // Check if there are unpaid orders for the table
-                bool hasUnpaidOrders = CheckForUnpaidOrders(tableNumber);
-
-                // Open the MenuPage with the table number and Type
-                MenuPage menuPage = new MenuPage(tableNumber, Type, hasUnpaidOrders);
-                menuPage.Show();
-                this.Close();
-            }
-        }
 
         
 
@@ -166,8 +228,7 @@ namespace POS_System.Pages
             /*LoadItemsData(); // Call LoadFoodData when the window is loaded*/
         }
 
-        public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
-        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category> ();
+       
 
         private void LoadCategoryData()
         {
@@ -224,7 +285,7 @@ namespace POS_System.Pages
 
 
 
-        private void LoadItemsData()
+/*        private void LoadItemsData()
         {
             
             // Your connection string here
@@ -252,8 +313,8 @@ namespace POS_System.Pages
                         Category = rdr["item_category"].ToString()
                     };
 
-/*                    // Add item to Items collection
-                    Items.Add(item);*/
+*//*                    // Add item to Items collection
+                    Items.Add(item);*//*
 
                     // Creating a new button for each item in database
                     Button newItemButton = new Button();
@@ -276,7 +337,7 @@ namespace POS_System.Pages
                 MessageBox.Show(ex.ToString());
             }
             conn.Close();
-        }
+        }*/
 
         private void LoadItemsByCategory(object categoryName)
         {
@@ -371,15 +432,7 @@ namespace POS_System.Pages
                 }
             }*/
 
-        private void SetButtonStyle(Button button)
-        {
-            button.FontFamily = new FontFamily("Verdana");
-            button.FontSize = 20;
-            button.Background = Brushes.Orange;
-            button.FontWeight = FontWeights.Bold;
-            button.BorderBrush = Brushes.Orange;
-            button.Margin = new Thickness(5);
-        }
+
 
         private double TotalAmount = 0.0;
 
@@ -458,6 +511,7 @@ namespace POS_System.Pages
             }
         }
 
+        //Button: Send item to database 
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
             // Create a connection string
@@ -477,10 +531,13 @@ namespace POS_System.Pages
                     orderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount); // Assuming TotalAmount is of type double
                     orderCmd.ExecuteNonQuery();
 
+
+
                     // Get the last inserted order_id
                     long orderId = orderCmd.LastInsertedId;
 
                     // Insert the ordered items into the database
+                    //All from order list
                     foreach (Item orderedItem in Items)
                     {
                         // Ensure that the item exists in the `item` table
@@ -530,6 +587,19 @@ namespace POS_System.Pages
                 }
             }
         }
+
+        //For the button for categories
+        private void SetButtonStyle(Button button)
+        {
+            button.FontFamily = new FontFamily("Verdana");
+            button.FontSize = 20;
+            button.Background = Brushes.Orange;
+            button.FontWeight = FontWeights.Bold;
+            button.BorderBrush = Brushes.Orange;
+            button.Margin = new Thickness(5);
+        }
+
+
     }
 }
 

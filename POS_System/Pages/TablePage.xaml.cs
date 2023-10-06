@@ -98,8 +98,8 @@ namespace POS_System.Pages
                     conn.Open();
 
                     // Query the database for tables with paid=n
-                    string query = "SELECT table_num FROM `order` WHERE paid = 'n';";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    string checkPaidStatusSql = "SELECT table_num FROM `order` WHERE paid = 'n';";
+                    MySqlCommand cmd = new MySqlCommand(checkPaidStatusSql, conn);
                     MySqlDataReader reader = cmd.ExecuteReader();
 
                     while (reader.Read())
@@ -141,12 +141,14 @@ namespace POS_System.Pages
             {
                 string tableName = button.Name; // get the name of the button
                 string orderType = button.Name; //get the name of button
+                
 
                 int index = tableName.IndexOf('_'); //get the index number after "_"
 
                 // Show table number or take-our order number
                 string tableNumber = tableName.Substring(index + 1);// remove the first 5 characters ("table")
                 orderType = tableName.Substring(0, index);
+                
 
                 String Type = "";
                 if (orderType.Equals("table"))
@@ -158,8 +160,10 @@ namespace POS_System.Pages
                     Type = "Take-Out";
                 }
 
+                bool hasUnpaidOrders = true;
+                string Occrupied = "o";
 
-                MenuPage menuPage = new MenuPage(tableNumber, Type); // pass the table number as a string
+                MenuPage menuPage = new MenuPage(tableNumber, Type, Occrupied, hasUnpaidOrders); // pass the table number as a string
                 menuPage.Show();
                 this.Close();
             }
