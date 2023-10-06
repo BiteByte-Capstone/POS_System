@@ -5,134 +5,123 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-        Title="AdminPage" d:DesignHeight="562.387" Width="832" WindowStartupLocation="CenterOwner"
+        Title="AdminPage" WindowState="Maximized" d:DesignHeight="562.387" Width="832" WindowStartupLocation="CenterOwner"
         >
     <Grid Background="#212121">
 
-        <!-- Navigation button(TabControl) "Add" -->
-        <TabControl>
-            <TabItem Header="Add" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="18" FontFamily="Verdana" FontWeight="Bold">
-                <Grid Background="#212121">
-                    <!-- Outer Grid for centering -->
-                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="442" Width="392">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-                        <!-- Grid Definitions -->
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="150"/>
-                        </Grid.ColumnDefinitions>
+        <!-- DataGrid for displaying -->
+        <DataGrid x:Name="userGrid" ItemsSource="{Binding}" Margin="0,10,48,2244" SelectionChanged="DataGrid_SelectionChanged" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="User ID" Binding="{Binding user_id}" />
+                <DataGridTextColumn Header="Username" Binding="{Binding user_name}" />
+                <DataGridTextColumn Header="Password" Binding="{Binding user_password}" />
+                <DataGridTemplateColumn Header="Delete" Width="SizeToCells" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete" Click="DeleteButton_Click"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
-                        <!-- Image -->
-                        <Image x:Name="addUser" HorizontalAlignment="Left" VerticalAlignment="Top" Height="125" Width="74" Source="/Images/addUser.png" Margin="39,39,0,0" RenderTransformOrigin="0.92,0.753" Grid.RowSpan="3"/>
+        <Grid Margin="-167,-61,187,1546">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                        <!-- Title (Add User) -->
-                        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="120,57,0,0" TextWrapping="Wrap" Text="Add User" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana" FontSize="30" FontWeight="Bold"/>
+            <!-- Add User UI -->
+            <Grid Grid.Column="0" Background="#212121" Margin="167,367,205,382" Grid.ColumnSpan="2">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="316" Width="392">
+                    <!-- Grid Definitions -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="357.944666666667"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="394.433333333334"/>
+                    </Grid.ColumnDefinitions>
 
-                        <!-- ID -->
-                        <Label Grid.Row="2" Grid.Column="0" Content="ID" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="-7,25,7,0" Grid.RowSpan="2"/>
-                        <TextBox x:Name="adduser_idBox" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="3,23,-30,23" Grid.RowSpan="2"/>
+                    <!-- Image -->
+                    <Image x:Name="addUser" HorizontalAlignment="Left" VerticalAlignment="Top" Height="95" Width="57" Source="/Images/addUser.png" Margin="61,10,0,0" RenderTransformOrigin="0.92,0.753"/>
 
-                        <!-- Username -->
-                        <Label Grid.Row="3" Grid.Column="0" Content="Username" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="-10,24,10,0" Grid.RowSpan="2" RenderTransformOrigin="0.486,0.142"/>
-                        <TextBox x:Name="adduser_usernameBox" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="3,0,-30,165"/>
+                    <!-- Title (Add User) -->
+                    <TextBlock HorizontalAlignment="Left" Margin="123,30,0,0" TextWrapping="Wrap" Text="Add User" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana" FontSize="30" FontWeight="Bold" Height="36" Width="174"/>
 
-                        <!-- Password -->
-                        <Label Grid.Row="4" Grid.Column="0" Content="Password" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="-7,50,7,0"/>
-                        <TextBox x:Name="adduser_passwordBox" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="3,53,-30,115" RenderTransformOrigin="0.5,0.5">
-                            <TextBox.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform ScaleY="-1"/>
-                                    <SkewTransform/>
-                                    <RotateTransform/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </TextBox.RenderTransform>
-                        </TextBox>
+                    <!-- ID -->
+                    <Label Grid.Column="0" Content="ID" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="12,83,303,0" Height="31"/>
+                    <TextBox x:Name="adduser_idBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="143,83,55,244"/>
 
-                        <!-- Add Button -->
-                        <Button x:Name="adduserbutton" Grid.Row="4" Grid.ColumnSpan="2" Click="addUser_Click" Content="Add" HorizontalAlignment="Left" Background="Orange" Width="75" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" FontSize="18" Margin="123,111,0,40"/>
-                    </Grid>
+                    <!-- Username -->
+                    <Label Grid.Column="0" Content="Username" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="10,119,261,0" RenderTransformOrigin="0.486,0.142" Height="34"/>
+                    <TextBox x:Name="adduser_usernameBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="143,119,54,204"/>
+
+                    <!-- Password -->
+                    <Label Grid.Column="0" Content="Password" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="12,158,260,0" Height="34"/>
+                    <TextBox x:Name="adduser_passwordBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="143,162,54,162" RenderTransformOrigin="0.5,0.5">
+                        <TextBox.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="-1"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </TextBox.RenderTransform>
+                    </TextBox>
+
+                    <!-- Add Button -->
+                    <Button x:Name="adduserbutton" Click="addUser_Click" Content="Add" HorizontalAlignment="Left" Background="Orange" Width="75" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" FontSize="18" Margin="135,201,0,126"/>
                 </Grid>
-            </TabItem>
+            </Grid>
 
-            <!-- Navigation button(TabControl) Edit -->
-            <TabItem Header="Edit" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="18" FontFamily="Verdana" FontWeight="Bold">
-                <Grid Background="#212121">
-                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="392" Width="370">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="150"/>
-                        </Grid.ColumnDefinitions>
+            <!-- Edit User UI -->
+            <Grid Background="#212121" Margin="204,367,-185,296" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="392" Width="370">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="273.376666666667"/>
+                    </Grid.ColumnDefinitions>
 
-                        <!-- Image -->
-                        <Image x:Name="editUser" HorizontalAlignment="Left" VerticalAlignment="Center" Height="67" Width="48" Source="/Images/editUser.png" Margin="23,0,0,0" RenderTransformOrigin="0.92,0.753"/>
+                    <!-- Image -->
+                    <Image x:Name="editUser" HorizontalAlignment="Left" VerticalAlignment="Top" Height="68" Width="55" Source="/Images/editUser.png" Margin="51,10,0,0" RenderTransformOrigin="0.693,0.009" Grid.RowSpan="5"/>
 
 
-                        <!-- Title (Edit User) -->
-                        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="78,0,0,0" TextWrapping="Wrap" Text="Edit User" VerticalAlignment="Center" Foreground="Orange" FontFamily="Verdana" FontSize="30" FontWeight="Bold"/>
+                    <!-- Title (Edit User) -->
+                    <TextBlock Grid.Row="4" HorizontalAlignment="Left" Margin="108,23,0,0" TextWrapping="Wrap" Text="Edit User" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana" FontSize="30" FontWeight="Bold" Width="156" Height="42"/>
 
-                        <!-- ID -->
-                        <Label Grid.Row="1" Grid.Column="0" Content="ID" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="0,17,0,0" Grid.RowSpan="4"/>
-                        <TextBox x:Name="edituser_idBox" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="10,13,0,114"/>
+                    <!-- ID -->
+                    <Label Grid.Row="1" Grid.Column="0" Content="ID" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="14,76,171,0" Grid.RowSpan="4"/>
+                    <TextBox x:Name="edituser_idBox" Grid.Row="4" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="151,79,-77,178"/>
 
-                        <!-- Username -->
-                        <Label Grid.Row="4" Grid.Column="0" Content="Username" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="0,67,0,0" RenderTransformOrigin="0.508,1.293"/>
-                        <TextBox x:Name="edituser_usernameBox" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="10,65,0,58"/>
+                    <!-- Username -->
+                    <Label Grid.Row="4" Grid.Column="0" Content="Username" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="14,118,135,0" RenderTransformOrigin="0.508,1.293"/>
+                    <TextBox x:Name="edituser_usernameBox" Grid.Row="4" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="151,119,-77,137"/>
 
-                        <!-- Password -->
-                        <Label Grid.Row="4" Grid.Column="0" Content="Password" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="0,121,0,0"/>
-                        <TextBox x:Name="edituser_passwordBox" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="10,122,0,2"/>
+                    <!-- Password -->
+                    <Label Grid.Row="4" Grid.Column="0" Content="Password" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="14,157,135,0"/>
+                    <TextBox x:Name="edituser_passwordBox" Grid.Row="4" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="152,158,-77,97"/>
 
-                        <!-- Edit Button -->
-                        <Button x:Name="edituserbutton" Grid.Row="4" Grid.ColumnSpan="2" Click="editUser_Click" Content="Edit" HorizontalAlignment="Left" Background="Orange" Width="70" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" FontSize="18" Margin="119,198,0,-78"/>
-                    </Grid>
+                    <!-- Edit Button -->
+                    <Button x:Name="edituserbutton" Grid.Row="4" Click="editUser_Click" Content="Save" HorizontalAlignment="Left" Background="Orange" Width="58" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" FontSize="18" Margin="152,196,0,62"/>
                 </Grid>
-            </TabItem>
-
-
-            <!-- Navigation button(TabControl) Delete -->
-            <TabItem Header="Delete" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="18" FontFamily="Verdana" FontWeight="Bold">
-                <Grid Background="#212121">
-                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="424" Width="536" Margin="163,0,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Image -->
-                        <Image x:Name="deleteUser" HorizontalAlignment="Left" VerticalAlignment="Top" Height="109" Width="108" Source="/Images/userDelete.png" Margin="22,24,0,0" RenderTransformOrigin="0.92,0.753" Grid.Column="1" Grid.RowSpan="5"/>
-
-                        <!-- Title (Delete User) -->
-                        <TextBlock Grid.Row="0" HorizontalAlignment="Left" Margin="135,60,0,0" TextWrapping="Wrap" Text="Delete User" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana" FontSize="30" FontWeight="Bold" Grid.Column="1" Width="224"/>
-
-                        <!-- ID -->
-                        <Label Grid.Row="4" Grid.Column="1" Content="ID" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="40,59,271,0"/>
-                        <TextBox x:Name="deleteuser_idBox" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="111,54,0,-10"/>
-
-                        <!-- Delete Button -->
-                        <Button x:Name="deleteuserbutton" Grid.Row="4" Click="deleteUser_Click" Content="Delete" HorizontalAlignment="Left" Background="Orange" Width="78" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" FontSize="18" Margin="180,145,0,-89" Grid.Column="1"/>
-                    </Grid>
-                </Grid>
-            </TabItem>
-        </TabControl>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

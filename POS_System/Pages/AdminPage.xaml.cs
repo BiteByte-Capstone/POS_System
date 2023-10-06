@@ -62,6 +62,8 @@ namespace POS_System.Pages
 
             //Close connection to user table
             connection.Close();
+
+            userGrid.DataContext = dt;
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -112,29 +114,9 @@ namespace POS_System.Pages
             }
         }
 
-        private void deleteUser_Click(object sender, RoutedEventArgs e)
+        private void adduser_idBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            String id = deleteuser_idBox.Text;
 
-            //String to make connection to database
-            string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
-            //Create a connection object
-            MySqlConnection connection = new MySqlConnection(connectionString);
-
-            //SQL query
-            MySqlCommand cmd = new MySqlCommand("delete from user where user_id = " + id, connection);
-
-            //Open up connection with the user table
-            connection.Open();
-
-            //Execute the command
-            cmd.ExecuteNonQuery();
-
-            //Close connection to user table
-            connection.Close();
-
-            getAllUser();
         }
 
         private void editUser_Click(object sender, RoutedEventArgs e)
@@ -211,9 +193,43 @@ namespace POS_System.Pages
             }
         }
 
-        private void adduser_idBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
 
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Ensure that the button clicked is actually in the DataGrid
+            if (sender is Button button && button.DataContext is DataRowView dataRow)
+            {
+                var id = dataRow["user_id"];
+
+                // Confirm user wants to delete
+                MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Delete Confirmation", MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    // If yes, delete row
+                    // String to make connection to database
+                    string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+                    try
+                    {
+                        // Create a connection object
+                        using (MySqlConnection connection = new MySqlConnection(connectionString))
+                        {
+                            connection.Open();
+                            using (MySqlCommand cmd = new MySqlCommand("DELETE FROM user WHERE user_id = @Id", connection))
+                            {
+                                cmd.Parameters.AddWithValue("@Id", id);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        getAllUser();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log or display the error message
+                        Console.WriteLine(ex.Message);
+                        MessageBox.Show("An error occurred while deleting the user. Please try again.");
+                    }
+                }
+            }
         }
     }
 }
