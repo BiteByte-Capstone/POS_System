@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 
+
+
 namespace POS_System.Pages
 {
     public partial class TablePage : Window
@@ -21,7 +23,10 @@ namespace POS_System.Pages
         public TablePage()
         {
             InitializeComponent();
+            UpdateTableColors();
         }
+
+
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
@@ -31,6 +36,8 @@ namespace POS_System.Pages
             loginScreen.Show();
             this.Close();
         }
+
+
 
         // Handle table number, order number, order type
         private void Open_Table(object sender, RoutedEventArgs e)
@@ -44,6 +51,8 @@ namespace POS_System.Pages
                 string tableNumber = tableName.Substring(index + 1);
                 orderType = tableName.Substring(0, index);
 
+
+
                 String Type = "";
                 if (orderType.Equals("table"))
                 {
@@ -54,7 +63,11 @@ namespace POS_System.Pages
                     Type = "Take-Out";
                 }
 
+
+
                 bool hasUnpaidOrders = CheckForUnpaidOrders(tableNumber);
+
+
 
                 if (hasUnpaidOrders)
                 {
@@ -73,11 +86,15 @@ namespace POS_System.Pages
             }
         }
 
+
+
         // Check if there are unpaid orders for the specified table
         private bool CheckForUnpaidOrders(string tableNumber)
         {
             // Create a connection string
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+
 
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -85,11 +102,15 @@ namespace POS_System.Pages
                 {
                     conn.Open();
 
+
+
                     // Check if there are unpaid orders for the specified table
                     string checkUnpaidOrdersSql = "SELECT order_id FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
                     MySqlCommand checkUnpaidOrdersCmd = new MySqlCommand(checkUnpaidOrdersSql, conn);
                     checkUnpaidOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
                     object unpaidOrderId = checkUnpaidOrdersCmd.ExecuteScalar();
+
+
 
                     return (unpaidOrderId != null);
                 }
@@ -97,6 +118,70 @@ namespace POS_System.Pages
                 {
                     MessageBox.Show("Error checking for unpaid orders: " + ex.ToString());
                     return false;
+                }
+            }
+        }
+
+
+
+
+        // Method to update table colors based on the database
+        private void UpdateTableColors()
+        {
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+
+                    // Query the database for tables with paid=n
+                    string query = "SELECT table_num FROM `order` WHERE paid = 'n';";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+
+
+                    while (reader.Read())
+                    {
+                        // Get the table number from the query result
+                        int tableNumber = reader.GetInt32(0);
+
+
+
+                        // Find the corresponding table UI element in your XAML
+                        string buttonName = "table_" + tableNumber;
+
+
+
+                        // Try to find the button by name
+                        Button tableButton = FindName(buttonName) as Button;
+
+
+
+                        if (tableButton != null)
+                        {
+                            // Change the background color to green
+                            tableButton.Background = Brushes.Green;
+                        }
+                    }
+
+
+
+                    reader.Close();
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
                 }
             }
         }
