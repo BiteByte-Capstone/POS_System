@@ -25,8 +25,6 @@ namespace POS_System.Pages
     public partial class AdminPage : Window
     {
 
-        private DatabaseHelper db;
-
         public AdminPage()
         {
             InitializeComponent();
