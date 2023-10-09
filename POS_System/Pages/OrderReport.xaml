@@ -8,16 +8,19 @@
         Title="Report" Width="850" Height="650" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="19*"/>
-            <RowDefinition Height="198*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid Name="orderGrid" ItemsSource="{Binding}" Margin="18,147,18,28" Grid.Row="1">
-            <DataGrid.Resources>
-                <Style TargetType="DataGridRow">
-                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
-                </Style>
-            </DataGrid.Resources>
+        
+        <DataGrid Name="orderGrid" ItemsSource="{Binding}" Margin="18,147,18,28" Grid.Row="1" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
+                <DataGridTextColumn Header="Table Number" Binding="{Binding table_num}" />
+                <DataGridTextColumn Header="Order TImeStamp" Binding="{Binding order_timestamp}" />
+                <DataGridTextColumn Header="Total Amount" Binding="{Binding total_amount}" />
+            </DataGrid.Columns>
         </DataGrid>
+        
         <DatePicker Name="fromDate"  HorizontalAlignment="Left" Margin="195,9,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="Short" Grid.Row="1"/>
         <DatePicker Name="untilDate" HorizontalAlignment="Left" Margin="515,9,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="short" Grid.Row="1"/>
         <Button Name="filterBtn" Content="Filter" HorizontalAlignment="Left" Margin="680,76,0,0" VerticalAlignment="Top" Height="24" Width="102" Click="filterBtn_Click" Grid.Row="1"/>
@@ -33,7 +36,7 @@
         <TextBlock TextWrapping="Wrap" Text="Total Amount" Margin="38,107,656,265" Grid.Row="1"/>
         <TextBlock TextWrapping="Wrap" Text="From Amount:" Margin="151,107,535,265" Grid.Row="1"/>
         <TextBox x:Name="fromAmountBoxFilter" HorizontalAlignment="Left" Margin="262,105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
-        <TextBlock TextWrapping="Wrap" Text="To Table:" Margin="430,107,284,265" Grid.Row="1"/>
+        <TextBlock TextWrapping="Wrap" Text="To Amount:" Margin="430,107,284,265" Grid.Row="1"/>
         <TextBox x:Name="toAmountBoxFilter" HorizontalAlignment="Left" Margin="496,105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
         <TextBlock TextWrapping="Wrap" Text="Table Number" Margin="38,47,656,325" Grid.Row="1"/>
         <TextBlock TextWrapping="Wrap" Text="Specific table(s):" Margin="151,47,535,325" Grid.Row="1"/>
