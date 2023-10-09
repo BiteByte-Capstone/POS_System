@@ -12,7 +12,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <DataGrid Name="orderGrid" ItemsSource="{Binding}" Margin="18,147,18,28" Grid.Row="1" AutoGenerateColumns="False">
+        <DataGrid Name="orderGrid" ItemsSource="{Binding}" Margin="18,147,18,28" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
                 <DataGridTextColumn Header="Table Number" Binding="{Binding table_num}" />
