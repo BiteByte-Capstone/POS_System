@@ -31,7 +31,7 @@ namespace POS_System.Pages
             InitializeComponent();
             this.DataContext = this;
             this.Loaded += Window_Loaded; // Subscribe to the Loaded event
-
+            
         }
 
         public MenuPage(string tableNumber, string orderType, bool hasUnpaidOrders) : this()
@@ -163,7 +163,7 @@ namespace POS_System.Pages
             }
         }
 
-
+        
 
 
 
@@ -175,7 +175,7 @@ namespace POS_System.Pages
         }
 
         public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
-        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category>();
+        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category> ();
 
         private void LoadCategoryData()
         {
@@ -209,7 +209,7 @@ namespace POS_System.Pages
                     Button newCategoryButton = new Button();
                     newCategoryButton.Content = rdr["category_name"].ToString(); // Set the text of the button to the item name
                     newCategoryButton.Tag = category;
-                    /* newCategoryButton.Click += CategoryClick; // Assign a click event handler*/
+                   /* newCategoryButton.Click += CategoryClick; // Assign a click event handler*/
                     newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
                     newCategoryButton.Width = 150; // Set other properties as needed
                     newCategoryButton.Height = 30;
@@ -234,7 +234,7 @@ namespace POS_System.Pages
 
         private void LoadItemsData()
         {
-
+            
             // Your connection string here
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
             MySqlConnection conn = new MySqlConnection(connStr);
@@ -260,8 +260,8 @@ namespace POS_System.Pages
                         Category = rdr["item_category"].ToString()
                     };
 
-                    /*                    // Add item to Items collection
-                                        Items.Add(item);*/
+/*                    // Add item to Items collection
+                    Items.Add(item);*/
 
                     // Creating a new button for each item in database
                     Button newItemButton = new Button();
@@ -331,39 +331,39 @@ namespace POS_System.Pages
             conn.Close();
         }
 
-        /*        private void CategoryClick(object sender, RoutedEventArgs e)
+/*        private void CategoryClick(object sender, RoutedEventArgs e)
+        {
+            ItemButtonPanel.Children.Clear();
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+            MySqlConnection conn = new MySqlConnection(connStr);
+
+            try
+            {
+                conn.Open();
+                string sql = "SELECT item_name FROM item WHERE item_category = @category;";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@category", categoryName);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
                 {
-                    ItemButtonPanel.Children.Clear();
-                    string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-                    MySqlConnection conn = new MySqlConnection(connStr);
+                    Button newButton = new Button();
+                    newButton.Content = rdr["item_name"].ToString();
+                    newButton.Width = 150;
+                    newButton.Height = 60;
+                    SetButtonStyle(newButton);
+                    newButton.Click += ItemClick;
+                    ItemButtonPanel.Children.Add(newButton);
+                }
 
-                    try
-                    {
-                        conn.Open();
-                        string sql = "SELECT item_name FROM item WHERE item_category = @category;";
-                        MySqlCommand cmd = new MySqlCommand(sql, conn);
-                        cmd.Parameters.AddWithValue("@category", categoryName);
-                        MySqlDataReader rdr = cmd.ExecuteReader();
-
-                        while (rdr.Read())
-                        {
-                            Button newButton = new Button();
-                            newButton.Content = rdr["item_name"].ToString();
-                            newButton.Width = 150;
-                            newButton.Height = 60;
-                            SetButtonStyle(newButton);
-                            newButton.Click += ItemClick;
-                            ItemButtonPanel.Children.Add(newButton);
-                        }
-
-                        rdr.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.ToString());
-                    }
-                    conn.Close();
-                }*/
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            conn.Close();
+        }*/
 
         /*Button clickedButton = sender as Button;
             if (clickedButton != null && clickedButton.Tag is Category)
