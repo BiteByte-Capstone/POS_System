@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using POS.Models;
 using POS_System.Models;
+using POS_System.Pages
 using System;
 using System.Collections.Generic;
 using System.Data;
