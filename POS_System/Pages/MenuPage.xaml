@@ -97,7 +97,7 @@
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Name}" Width="150"/>
-                            <TextBlock Text="{Binding Quantity}" Width="50"/>
+                            <!--<TextBlock Text="{Binding Quantity}" Width="50"/>-->
                             <TextBlock Text="{Binding Price}" Width="100"/>
                         </StackPanel>
                     </DataTemplate>

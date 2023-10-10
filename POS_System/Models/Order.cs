@@ -9,25 +9,33 @@ namespace POS_System.Models
 {
     public class Order : INotifyPropertyChanged
     {
+        private bool _paid;
 
         public int Id { get; set; }
         public int tableNumber { get; set; }
         public DateTime timeStamp { get; set; }
         public double price { get; set; }
 
-        private string databaseValue;
 
 
-        public bool IsPaid
+        public string IsPaid
         {
-            get
-            {
-                return databaseValue == "y";
-            }
+            get => _paid ? "y" : "n";
             set
             {
-                databaseValue = value ? "y" : "n";
+                bool newValue = value == "y";
+                if (_paid != newValue)
+                {
+                    _paid = newValue;
+                }
             }
+        }
+
+        // This property provides a more intuitive way to check payment status in code
+        public bool Paid
+        {
+            get => _paid;
+            set => _paid = value;
         }
 
         public Order() { }

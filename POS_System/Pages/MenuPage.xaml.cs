@@ -28,40 +28,97 @@ namespace POS_System.Pages
     {
         public MenuPage()
         {
-            InitializeComponent();
+            
             this.DataContext = this;
             this.Loaded += Window_Loaded; // Subscribe to the Loaded event
             /*LoadItemsFromDatabase(orderId);*/
-            
+            InitializeComponent();
+
         }
 
-        //Constructor for tableNumber and Type, to show on menu page
-        public MenuPage(string tableNumber, string Type, string Occrupied ,bool hasUnpaidOrders) : this()
+        public MenuPage(int tableNumber):this()
+        {
+
+        }
+
+        //For table page to show table number and type from table button name. (before save order)
+        public MenuPage(string tableNumber, string Type) : this()
         {
             TableNumberTextBox.Text = tableNumber;
+            TypeTextBox.Text = Type;
+        }
+
+        //Constructor for after place order and get back to table
+        public MenuPage(int orderId, int tableNumber, string Type, DateTime dateTime, double price, bool hasUnpaidOrders, string Occrupied) : this()
+        {
+            TableNumberTextBox.Text = tableNumber.ToString();
             TypeTextBox.Text = Type;
             StatusTextBox.Text = Occrupied;
 
 
-            if (hasUnpaidOrders)
+/*            if (hasUnpaidOrders)
             {
                 // Call the method to load unpaid orders for this table.
                 LoadUnpaidOrders(tableNumber);
+            }*/
+        }
+
+        //Constructor for get opened order. 
+        public MenuPage(long currentOrderId, string tableNumber):this()
+        {
+            this.currentOrderId = currentOrderId;
+            this.tableNumber = tableNumber;
+            loadItemback(currentOrderId, tableNumber);
+        }
+
+        public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
+        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category>();
+        public ObservableCollection<Order> Order { get; set; } = new ObservableCollection<Order>();
+
+        //To show the order history back to list
+        private void loadItemback(long currentOrderId, string tableNumber)
+        {
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string getItemSql = "SELECT * FROM `ordered_itemlist` WHERE order_id = @orderId ;";
+                    MySqlCommand getItemCmd = new MySqlCommand(getItemSql, conn);
+                    getItemCmd.Parameters.AddWithValue("@orderId", currentOrderId);
+                    MySqlDataReader rdr = getItemCmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        OrderedItem order = new OrderedItem()
+                        {
+                            /*order_id = Convert.ToInt32(rdr["order_id"]),*/
+                            item_id = Convert.ToInt32(rdr["item_id"]),
+                           
+                            /*Quantity = rdr.GetInt16(2),*/
+                           ItemPrice=rdr.GetDouble(3),
+                        };
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            OrdersListBox.Items.Add(order);
+                        });
+
+
+                    }
+                    conn.Close();
+                }
+
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+
             }
         }
 
-
-/*        //To show the table number, order type on menu page.
-        public MenuPage(string tableNumber, string Type, string orderId) : this()
-        {
-            TableNumberTextBox.Text = tableNumber;
-            TypeTextBox.Text = Type;
-            orderIdTextBox.Text = orderId;
-        }
-*/
-        public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
-        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category>();
-        public ObservableCollection<Order> Order { get; set; } = new ObservableCollection<Order> ();
 
         //To show number and type
         private void Open_Table(object sender, RoutedEventArgs e)
@@ -93,7 +150,7 @@ namespace POS_System.Pages
                 string Occrupied = "o";
 
                 // Open the MenuPage with the table number and Type
-                MenuPage menuPage = new MenuPage(tableNumber, Type, Occrupied,hasUnpaidOrders);
+                MenuPage menuPage = new MenuPage(tableNumber, Type);
                 menuPage.Show();
 
                 //show up the items that order before.
@@ -103,7 +160,7 @@ namespace POS_System.Pages
             }
         }
 
-        //Howard work on it. To load the item to the table
+/*        //Howard work on it. To load the item to the table
         private void LoadItemsFromDatabase(object orderId)
         {
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
@@ -123,7 +180,7 @@ namespace POS_System.Pages
                     conn.Close();
                 }
             }
-        }
+        }*/
 
         private bool CheckForUnpaidOrders(string tableNumber)
         {
@@ -435,6 +492,8 @@ namespace POS_System.Pages
 
 
         private double TotalAmount = 0.0;
+        private long currentOrderId;
+        private string tableNumber;
 
         private void ItemClick(object sender, RoutedEventArgs e)
         {
@@ -514,6 +573,7 @@ namespace POS_System.Pages
         //Button: Send item to database 
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
+            string tableNumber = TableNumberTextBox.Text;
             // Create a connection string
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
@@ -526,7 +586,7 @@ namespace POS_System.Pages
                     // Insert the order information into the database
                     string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, 'n');";
                     MySqlCommand orderCmd = new MySqlCommand(orderSql, conn);
-                    orderCmd.Parameters.AddWithValue("@tableNum", TableNumberTextBox.Text);
+                    orderCmd.Parameters.AddWithValue("@tableNum", tableNumber);
                     orderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now); // You can adjust this based on your requirement
                     orderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount); // Assuming TotalAmount is of type double
                     orderCmd.ExecuteNonQuery();
@@ -566,12 +626,12 @@ namespace POS_System.Pages
                     MessageBox.Show("Order sent successfully!");
 
                     // Reset the items list and total amount
-                    Items.Clear();
+                    
                     TotalAmount = 0.0;
                     TotalAmountTextBlock.Text = TotalAmount.ToString("C");
 
                     // Open the TablePage
-                    TablePage tablePage = new TablePage();
+                    TablePage tablePage = new TablePage(tableNumber, orderId);
                     tablePage.Show();
                     this.Close();
                 }
@@ -598,7 +658,14 @@ namespace POS_System.Pages
             button.BorderBrush = Brushes.Orange;
             button.Margin = new Thickness(5);
         }
-
+        /*        //To show the table number, order type on menu page.
+        public MenuPage(string tableNumber, string Type, string orderId) : this()
+        {
+            TableNumberTextBox.Text = tableNumber;
+            TypeTextBox.Text = Type;
+            orderIdTextBox.Text = orderId;
+        }
+*/
 
     }
 }
