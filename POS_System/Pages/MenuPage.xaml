@@ -94,9 +94,9 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}" Width="150"/>
-                            <TextBlock Text="{Binding Quantity}" Width="50"/>
-                            <TextBlock Text="{Binding Price, StringFormat=C}" Width="100"/>
+                            <TextBlock Text="{Binding item_name}" Width="150"/>
+                            <TextBlock Text="{Binding quantity}" Width="50"/>
+                            <TextBlock Text="{Binding item_price, StringFormat=C}" Width="100"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

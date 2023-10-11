@@ -45,7 +45,8 @@ namespace POS_System.Pages
                 LoadUnpaidOrders(tableNumber);
             }
         }
-
+        public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
+        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category>();
 
         private bool CheckForUnpaidOrders(string tableNumber)
         {
@@ -174,8 +175,7 @@ namespace POS_System.Pages
             /*LoadItemsData(); // Call LoadFoodData when the window is loaded*/
         }
 
-        public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
-        public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category> ();
+
 
         private void LoadCategoryData()
         {
@@ -253,11 +253,11 @@ namespace POS_System.Pages
                     // Create an Item object for each item in database
                     Item item = new Item()
                     {
-                        Id = Convert.ToInt32(rdr["item_id"]),
-                        Name = rdr["item_name"].ToString(),
-                        Price = Convert.ToDouble(rdr["item_price"]),
-                        Description = rdr["item_description"].ToString(),
-                        Category = rdr["item_category"].ToString()
+                        item_id = Convert.ToInt32(rdr["item_id"]),
+                        item_name = rdr["item_name"].ToString(),
+                        item_price = Convert.ToDouble(rdr["item_price"]),
+                        item_description = rdr["item_description"].ToString(),
+                        item_category = rdr["item_category"].ToString()
                     };
 
 /*                    // Add item to Items collection
@@ -305,11 +305,11 @@ namespace POS_System.Pages
 
                     Item item = new Item()
                     {
-                        Id = Convert.ToInt32(rdr["item_id"]),
-                        Name = rdr["item_name"].ToString(),
-                        Price = Convert.ToDouble(rdr["item_price"]),
-                        Description = rdr["item_description"].ToString(),
-                        Category = rdr["item_category"].ToString()
+                        item_id = Convert.ToInt32(rdr["item_id"]),
+                        item_name = rdr["item_name"].ToString(),
+                        item_price = Convert.ToDouble(rdr["item_price"]),
+                        item_description = rdr["item_description"].ToString(),
+                        item_category = rdr["item_category"].ToString()
                     };
 
                     Button newItemButton = new Button();
@@ -403,7 +403,7 @@ namespace POS_System.Pages
                     Items.Add(item);
 
                     // Assuming your Item class has properties Name, Quantity, and Price
-                    TotalAmount += item.Price;
+                    TotalAmount += item.item_price;
                     TotalAmountTextBlock.Text = TotalAmount.ToString("C");
                 }
             }
@@ -452,7 +452,7 @@ namespace POS_System.Pages
                 /*OrdersListBox.Items.Remove(selectedOrderedItem);*/
 
                 // Subtract the item price from the total amount
-                TotalAmount -= selectedItem.Price;
+                TotalAmount -= selectedItem.item_price;
                 TotalAmountTextBlock.Text = TotalAmount.ToString("C");
             }
             else
@@ -489,7 +489,7 @@ namespace POS_System.Pages
                         // Ensure that the item exists in the `item` table
                         string checkItemSql = "SELECT item_id FROM item WHERE item_name = @itemName;";
                         MySqlCommand checkItemCmd = new MySqlCommand(checkItemSql, conn);
-                        checkItemCmd.Parameters.AddWithValue("@itemName", orderedItem.Name);
+                        checkItemCmd.Parameters.AddWithValue("@itemName", orderedItem.item_name);
                         object itemId = checkItemCmd.ExecuteScalar();
 
                         if (itemId != null) // Item exists
@@ -500,12 +500,12 @@ namespace POS_System.Pages
                             itemCmd.Parameters.AddWithValue("@orderId", orderId);
                             itemCmd.Parameters.AddWithValue("@itemId", itemId);
                             itemCmd.Parameters.AddWithValue("@quantity", 1); // You can modify this if you track item quantity
-                            itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.Price);
+                            itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.item_price);
                             itemCmd.ExecuteNonQuery();
                         }
                         else
                         {
-                            MessageBox.Show($"Item '{orderedItem.Name}' does not exist in the database.");
+                            MessageBox.Show($"Item '{orderedItem.item_name}' does not exist in the database.");
                         }
                     }
 
