@@ -90,7 +90,7 @@
 
             </Grid>
 
-            <ListBox x:Name="OrdersListBox" Width="400" Height="399" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16">
+            <ListBox x:Name="OrdersListBox" Width="400" Height="399" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16" SelectionChanged="OrdersListBox_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">

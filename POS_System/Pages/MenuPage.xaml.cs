@@ -48,6 +48,8 @@ namespace POS_System.Pages
         public ObservableCollection<Item> Items { get; set; } = new ObservableCollection<Item>();
         public ObservableCollection<Category> Category { get; set; } = new ObservableCollection<Category>();
 
+        public ObservableCollection<OrderedItem> OrderedItems { get; set; } = new ObservableCollection<OrderedItem>();
+
         private bool CheckForUnpaidOrders(string tableNumber)
         {
             // Implement the logic to check for unpaid orders for the specified table number.
@@ -92,7 +94,7 @@ namespace POS_System.Pages
                     conn.Open();
 
                     // Use a SQL query to retrieve unpaid orders for the specified table number
-                    string unpaidOrdersSql = "SELECT o.order_id, i.item_name, i.item_price " +
+                    string unpaidOrdersSql = "SELECT o.order_id, i.item_name, oi.quantity, i.item_price " +
                           "FROM `order` o " +
                           "INNER JOIN ordered_itemlist oi ON o.order_id = oi.order_id " +
                           "INNER JOIN item i ON oi.item_id = i.item_id " +
@@ -100,23 +102,34 @@ namespace POS_System.Pages
 
                     MySqlCommand unpaidOrdersCmd = new MySqlCommand(unpaidOrdersSql, conn);
                     unpaidOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
+                   
+                    MySqlDataReader rdr = unpaidOrdersCmd.ExecuteReader();
 
-                    MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
-                    DataTable unpaidOrdersTable = new DataTable();
-                    unpaidOrdersTable.Load(unpaidOrdersCmd.ExecuteReader());
+
+                    OrderedItem ordereditem = new OrderedItem()
+                    {
+                        order_id = Convert.ToInt32(rdr["order_id"]),
+                        item_name = rdr["item_name"].ToString(),
+                        Quantity = Convert.ToInt32(rdr["quantity"]),
+                        ItemPrice= Convert.ToDouble(rdr["item_price"])
+    
+                    };
+
+                    OrderedItems.Add(ordereditem);
+                    OrdersListBox.ItemsSource = OrderedItems;
 
                     // Bind the DataTable to the OrderListBox
-                    OrdersListBox.ItemsSource = unpaidOrdersTable.DefaultView;
+                    /*OrdersListBox.ItemsSource = unpaidOrdersTable.DefaultView;*/
 
                     // Display the orderid in the TextBlock (assuming there's only one orderid)
-                    if (unpaidOrdersTable.Rows.Count > 0)
+/*                    if (unpaidOrdersTable.Rows.Count > 0)
                     {
                         OrderIdTextBlock.Text = "Order ID: " + unpaidOrdersTable.Rows[0]["order_id"].ToString();
                     }
                     else
                     {
                         OrderIdTextBlock.Text = "No unpaid orders found.";
-                    }
+                    }*/
                 }
                 catch (Exception ex)
                 {
@@ -406,6 +419,7 @@ namespace POS_System.Pages
                     TotalAmount += item.item_price;
                     TotalAmountTextBlock.Text = TotalAmount.ToString("C");
                 }
+                OrdersListBox.ItemsSource = Items;
             }
         }
 
