@@ -20,11 +20,26 @@ namespace POS_System.Pages
 {
     public partial class TablePage : Window
     {
+        private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+        // Define properties to store table number and order type
+        public string TableNumber { get; private set; }
+        public string OrderType { get; private set; }
+
         public TablePage()
         {
             InitializeComponent();
             UpdateTableColors();
         }
+
+        public TablePage(string tableNumber, string orderType)
+        {
+            InitializeComponent();
+            UpdateTableColors();
+            // Store the table number and order type for future use
+            this.TableNumber = tableNumber;
+            this.OrderType = orderType;
+        }
+
 
 
 
@@ -51,9 +66,7 @@ namespace POS_System.Pages
                 string tableNumber = tableName.Substring(index + 1);
                 orderType = tableName.Substring(0, index);
 
-
-
-                String Type = "";
+                string Type = "";
                 if (orderType.Equals("table"))
                 {
                     Type = "Dine-In";
@@ -63,28 +76,54 @@ namespace POS_System.Pages
                     Type = "Take-Out";
                 }
 
-
-
                 bool hasUnpaidOrders = CheckForUnpaidOrders(tableNumber);
 
-
-
+                // If there are unpaid orders, open the existing order
                 if (hasUnpaidOrders)
                 {
-                    // If there are unpaid orders, navigate to MenuPage with unpaid order details
                     MenuPage menuPage = new MenuPage(tableNumber, Type, hasUnpaidOrders);
                     menuPage.Show();
-                    this.Close();
                 }
                 else
                 {
-                    // If there are no unpaid orders, simply navigate to MenuPage
-                    MenuPage menuPage = new MenuPage(tableNumber, Type);
+                    // If no unpaid orders exist, create a new order
+                    CreateNewOrder(tableNumber, Type);
+                }
+
+                this.Close();
+            }
+        }
+
+        private void CreateNewOrder(string tableNumber, string orderType)
+        {
+            // Create a new order
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string createOrderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, 0, 'n');";
+                    MySqlCommand createOrderCmd = new MySqlCommand(createOrderSql, conn);
+                    createOrderCmd.Parameters.AddWithValue("@tableNum", tableNumber);
+                    createOrderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
+                    createOrderCmd.ExecuteNonQuery();
+
+                    // Pass the table number, order type, and unpaid orders status to MenuPage
+                    MenuPage menuPage = new MenuPage(tableNumber, orderType, true);
                     menuPage.Show();
-                    this.Close();
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error creating a new order: " + ex.ToString());
                 }
             }
         }
+
+
 
 
 
@@ -94,15 +133,11 @@ namespace POS_System.Pages
             // Create a connection string
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
-
-
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
                 {
                     conn.Open();
-
-
 
                     // Check if there are unpaid orders for the specified table
                     string checkUnpaidOrdersSql = "SELECT order_id FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
@@ -110,17 +145,21 @@ namespace POS_System.Pages
                     checkUnpaidOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
                     object unpaidOrderId = checkUnpaidOrdersCmd.ExecuteScalar();
 
-
-
                     return (unpaidOrderId != null);
+                }
+                catch (MySqlException ex)
+                {
+                    Console.WriteLine("MySQL Error: " + ex.Message);
+                    return false;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error checking for unpaid orders: " + ex.ToString());
+                    Console.WriteLine("Error checking for unpaid orders: " + ex.ToString());
                     return false;
                 }
             }
         }
+
 
 
 
@@ -185,8 +224,6 @@ namespace POS_System.Pages
                 }
             }
         }
-
-
 
     }
 }
