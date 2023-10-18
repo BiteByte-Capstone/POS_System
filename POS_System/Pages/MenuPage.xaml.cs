@@ -23,7 +23,7 @@ namespace POS_System.Pages
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         private ObservableCollection<Item> items = new ObservableCollection<Item>();
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
-        private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
+        
         private double TotalAmount = 0.0;
 
         public MenuPage()
@@ -49,26 +49,7 @@ namespace POS_System.Pages
             }
         }
 
-        private bool CheckForUnpaidOrders(string tableNumber)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-                    string checkOrdersSql = "SELECT COUNT(*) FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
-                    MySqlCommand checkOrdersCmd = new MySqlCommand(checkOrdersSql, conn);
-                    checkOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
-                    int unpaidOrderCount = Convert.ToInt32(checkOrdersCmd.ExecuteScalar());
-                    return unpaidOrderCount > 0;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error checking for unpaid orders: " + ex.ToString());
-                    return false;
-                }
-            }
-        }
+
 
         private void LoadUnpaidOrders(string tableNumber)
         {
@@ -136,54 +117,7 @@ namespace POS_System.Pages
             }
         }
 
-        private void LoadUnpaidItems(long orderId)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-                    string loadUnpaidItemsSql = "SELECT i.item_id, i.item_name, i.item_price, i.item_description, i.item_category " +
-                        "FROM item i " +
-                        "INNER JOIN unpaid_itemlist u ON i.item_id = u.item_id " +
-                        "WHERE u.order_id = @orderId;";
-                    MySqlCommand loadUnpaidItemsCmd = new MySqlCommand(loadUnpaidItemsSql, conn);
-                    loadUnpaidItemsCmd.Parameters.AddWithValue("@orderId", orderId);
-
-                    MySqlDataAdapter unpaidDataAdapter = new MySqlDataAdapter(loadUnpaidItemsCmd);
-                    DataTable unpaidItemsTable = new DataTable();
-                    unpaidDataAdapter.Fill(unpaidItemsTable);
-
-                    items.Clear();
-
-                    if (unpaidItemsTable.Rows.Count > 0)
-                    {
-                        OrderIdTextBlock.Text = "Order ID: " + orderId.ToString();
-                    }
-                    else
-                    {
-                        OrderIdTextBlock.Text = "No unpaid orders found.";
-                    }
-
-                    foreach (DataRow row in unpaidItemsTable.Rows)
-                    {
-                        Item item = new Item
-                        {
-                            Id = Convert.ToInt32(row["item_id"]),
-                            Name = row["item_name"].ToString(),
-                            Price = Convert.ToDouble(row["item_price"]),
-                            Description = row["item_description"].ToString(),
-                            Category = row["item_category"].ToString()
-                        };
-                        items.Add(item);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error loading unpaid items: " + ex.ToString());
-                }
-            }
-        }
+       
 
 
         private void LoadCategoryData()
@@ -273,18 +207,10 @@ namespace POS_System.Pages
             conn.Close();
         }
 
-        private void SetButtonStyle(Button button)
-        {
-            button.FontFamily = new FontFamily("Verdana");
-            button.FontSize = 20;
-            button.Background = Brushes.Orange;
-            button.FontWeight = FontWeights.Bold;
-            button.BorderBrush = Brushes.Orange;
-            button.Margin = new Thickness(5);
-        }
+
 
         
-
+        //add item on list box
         private void ItemClick(object sender, RoutedEventArgs e)
         {
             Button clickedButton = sender as Button;
@@ -360,12 +286,14 @@ namespace POS_System.Pages
             }
         }
 
+        //back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
             TablePage tablePage = new TablePage(TableNumberTextBox.Text, TypeTextBox.Text);
             tablePage.Show();
             this.Close();
         }
+
 
         private void PaymentButton(object sender, RoutedEventArgs e)
         {
@@ -414,7 +342,7 @@ namespace POS_System.Pages
             }
         }
 
-        private void SendButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
@@ -511,40 +439,8 @@ namespace POS_System.Pages
             return orderId;
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            long orderId = GetOrderId(TableNumberTextBox.Text);
-
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-
-                    // Save the current unpaid items to the 'ordered_itemlist' table with the same order_id
-                    string saveUnpaidItemsSql = "INSERT INTO ordered_itemlist (order_id, item_id, quantity, item_price) " +
-                        "SELECT @orderId, oi.item_id, oi.quantity, oi.item_price FROM ordered_itemlist oi " +
-                        "WHERE oi.order_id = @orderId;";
-                    MySqlCommand saveUnpaidItemsCmd = new MySqlCommand(saveUnpaidItemsSql, conn);
-                    saveUnpaidItemsCmd.Parameters.AddWithValue("@orderId", orderId);
-                    saveUnpaidItemsCmd.ExecuteNonQuery();
-
-                    items.Clear(); // Clear the list after saving
-
-                    // Continue with other operations
-                    // ...
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error saving unpaid items: " + ex.ToString());
-                }
-            }
-        }
-
+       
+        // Print customer receipt
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
             PrintDialog printDialog = new PrintDialog();
@@ -645,25 +541,6 @@ namespace POS_System.Pages
             }
         }
 
-        private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
-        {
-            TableRow row = new TableRow();
-
-            // Label cell
-            TableCell labelCell = new TableCell(labelParagraph);
-            labelCell.TextAlignment = TextAlignment.Right;
-            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
-            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
-            row.Cells.Add(labelCell);
-
-            // Value cell
-            TableCell valueCell = new TableCell(valueParagraph);
-            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
-            row.Cells.Add(valueCell);
-
-            return row;
-        }
-
 
         private TableRow CreateTableRow(string label, string value)
         {
@@ -683,6 +560,38 @@ namespace POS_System.Pages
 
             return row;
         }
+        
+
+        // For Styling
+        private void SetButtonStyle(Button button)
+        {
+            button.FontFamily = new FontFamily("Verdana");
+            button.FontSize = 20;
+            button.Background = Brushes.Orange;
+            button.FontWeight = FontWeights.Bold;
+            button.BorderBrush = Brushes.Orange;
+            button.Margin = new Thickness(5);
+        }
+
+        private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
+        {
+            TableRow row = new TableRow();
+
+            // Label cell
+            TableCell labelCell = new TableCell(labelParagraph);
+            labelCell.TextAlignment = TextAlignment.Right;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+            row.Cells.Add(labelCell);
+
+            // Value cell
+            TableCell valueCell = new TableCell(valueParagraph);
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+            row.Cells.Add(valueCell);
+
+            return row;
+        }
+
         private TableRow CreateEmptyTableRow()
         {
             TableRow row = new TableRow();
@@ -694,8 +603,6 @@ namespace POS_System.Pages
 
             return row;
         }
-
-
 
 
 
