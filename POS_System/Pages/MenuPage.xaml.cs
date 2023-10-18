@@ -554,13 +554,27 @@ namespace POS_System.Pages
                 // Calculate GST (5% of TotalAmount)
                 double gstRate = 0.05;  // GST rate as 5%
                 double gstAmount = TotalAmount * gstRate;
+                // Calculate TotalAmount with GST included
+                double totalAmountWithGST = TotalAmount + gstAmount;
+
                 // Create a FlowDocument
                 FlowDocument flowDocument = new FlowDocument();
 
                 // Create a Paragraph for the header
-                Paragraph headerParagraph = new Paragraph(new Run("Order Receipt"));
-                headerParagraph.FontSize = 20;
+                Paragraph headerParagraph = new Paragraph();
+                headerParagraph.FontSize = 30;
                 headerParagraph.TextAlignment = TextAlignment.Center;
+
+                // Create a Run for the header text
+                Run headerRun = new Run("Order Receipt");
+
+                // Create an Underline element
+                Underline underline = new Underline(headerRun);
+
+                // Add the Underline to the Paragraph
+                headerParagraph.Inlines.Add(underline);
+
+                // Add the Paragraph to the FlowDocument
                 flowDocument.Blocks.Add(headerParagraph);
 
                 // Create a Section for the order details
@@ -577,23 +591,46 @@ namespace POS_System.Pages
                     // Access the text of the OrderIdTextBlock
                     tableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
                 }
+                // Add space (empty TableRow) for the gap
+                tableRowGroup.Rows.Add(CreateEmptyTableRow());
 
-                // Access the 'Items' collection or replace it with the correct collection
-                // and loop through it to add item rows.
-                // Access the 'items' collection and loop through it to add item rows.
+                // Access the 'Items' collection and loop through it to add item rows.
                 foreach (var item in items)
                 {
                     tableRowGroup.Rows.Add(CreateTableRow(item.Name, item.Price.ToString("C")));
                 }
 
-                // Update your TotalAmount with GST included
-                double totalAmountWithGST = TotalAmount + gstAmount;
-                // Calculate TotalAmount here if it's not already calculated.
-                tableRowGroup.Rows.Add(CreateTableRow("Sub Total:", TotalAmount.ToString("C")));
-                // Calculate GST.
-                tableRowGroup.Rows.Add(CreateTableRow("GST:", gstAmount.ToString("C")));
-                tableRowGroup.Rows.Add(CreateTableRow("Total Amount:", totalAmountWithGST.ToString("C")));
-              
+                // Add space (empty TableRow) for the gap
+                tableRowGroup.Rows.Add(CreateEmptyTableRow());
+
+                // Create a Paragraph for "Sub Total" with underline
+                // Create a Paragraph for "Sub Total" with underline
+                Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
+                subTotalParagraph.FontSize = 20; // Increase the font size
+                subTotalParagraph.TextAlignment = TextAlignment.Right;
+
+                Paragraph subTotalValueParagraph = new Paragraph(new Run(TotalAmount.ToString("C")));
+                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+                // Create a Paragraph for "GST"
+                Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
+                gstLabelParagraph.FontSize = 20; // Increase the font size
+                gstLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                Paragraph gstValueParagraph = new Paragraph(new Run(gstAmount.ToString("C")));
+
+                // Add the "GST" label and value to the TableRowGroup
+                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
+
+                // Create a Paragraph for "Total Amount"
+                Paragraph totalAmountLabelParagraph = new Paragraph(new Run("Total Amount:"));
+                totalAmountLabelParagraph.FontSize = 20; // Increase the font size
+                totalAmountLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                Paragraph totalAmountValueParagraph = new Paragraph(new Run(totalAmountWithGST.ToString("C")));
+
+                // Add the "Total Amount" label and value to the TableRowGroup
+                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
+
                 detailsTable.RowGroups.Add(tableRowGroup);
                 orderDetailsSection.Blocks.Add(detailsTable);
 
@@ -608,6 +645,26 @@ namespace POS_System.Pages
             }
         }
 
+        private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
+        {
+            TableRow row = new TableRow();
+
+            // Label cell
+            TableCell labelCell = new TableCell(labelParagraph);
+            labelCell.TextAlignment = TextAlignment.Right;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+            row.Cells.Add(labelCell);
+
+            // Value cell
+            TableCell valueCell = new TableCell(valueParagraph);
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+            row.Cells.Add(valueCell);
+
+            return row;
+        }
+
+
         private TableRow CreateTableRow(string label, string value)
         {
             TableRow row = new TableRow();
@@ -615,15 +672,25 @@ namespace POS_System.Pages
             // Label cell
             TableCell labelCell = new TableCell(new Paragraph(new Run(label)));
             labelCell.TextAlignment = TextAlignment.Right;
-            labelCell.BorderThickness = new Thickness(0, 0, 1, 1);
-            labelCell.BorderBrush = Brushes.Black;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
             row.Cells.Add(labelCell);
 
             // Value cell
             TableCell valueCell = new TableCell(new Paragraph(new Run(value)));
-            valueCell.BorderThickness = new Thickness(0, 0, 0, 1);
-            valueCell.BorderBrush = Brushes.Black;
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
             row.Cells.Add(valueCell);
+
+            return row;
+        }
+        private TableRow CreateEmptyTableRow()
+        {
+            TableRow row = new TableRow();
+
+            TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
+            emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+
+            row.Cells.Add(emptyCell);
 
             return row;
         }
