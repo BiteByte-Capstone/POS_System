@@ -77,7 +77,7 @@ namespace POS_System.Pages
             //Tutorial used https://www.includehelp.com/dot-net/insert-records-into-mysql-database-in-csharp.aspx
 
             String username = adduser_usernameBox.Text;
-            String password = adduser_passwordBox.Text;
+            String password = adduser_passwordBox.Password;
             String id = adduser_idBox.Text;
 
             try
@@ -122,7 +122,7 @@ namespace POS_System.Pages
         private void editUser_Click(object sender, RoutedEventArgs e)
         {
             String username = edituser_usernameBox.Text;
-            String password = edituser_passwordBox.Text;
+            String password = edituser_passwordBox.Password;
             String id = edituser_idBox.Text;
 
             //String to make connection to database
@@ -179,7 +179,7 @@ namespace POS_System.Pages
                 while (dr.Read())
                 {
                     edituser_usernameBox.Text = dr.GetValue(1).ToString();
-                    edituser_passwordBox.Text = dr.GetValue(2).ToString();
+                    edituser_passwordBox.Password = dr.GetValue(2).ToString();
                 }
 
                 //Close connection to user table
@@ -212,9 +212,10 @@ namespace POS_System.Pages
             if (sender is Button button && button.DataContext is DataRowView dataRow)
             {
                 var id = dataRow["user_id"];
+                var username = dataRow["user_name"].ToString();
 
-                // Confirm user wants to delete
-                MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Delete Confirmation", MessageBoxButton.YesNo);
+                // Confirm user wants to delete with the user's name included
+                MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {username}?", "Delete Confirmation", MessageBoxButton.YesNo);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     // If yes, delete row

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <None Remove="Images\addUser.png" />
+    <None Remove="Images\deleteIcon.png" />
     <None Remove="Images\editIcon.png" />
     <None Remove="Images\editUser.png" />
     <None Remove="Images\logo.png" />
@@ -30,6 +31,9 @@
   <ItemGroup>
     <Resource Include="Images\addUser.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\deleteIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\editIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

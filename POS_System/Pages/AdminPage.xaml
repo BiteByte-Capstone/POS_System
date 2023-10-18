@@ -38,20 +38,26 @@
                 <DataGridTextColumn Header="User ID" Binding="{Binding user_id}" Width="*"/>
                 <DataGridTextColumn Header="Username" Binding="{Binding user_name}" Width="*" />
                 <DataGridTextColumn Header="Password" Binding="{Binding user_password}"  Width="*" />
-                    
-                    <!-- Combined Edit and Delete Buttons -->
-                    <DataGridTemplateColumn Header="Actions" Width="SizeToCells" IsReadOnly="True" >
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                <!-- Combined Edit and Delete Buttons -->
+                <DataGridTemplateColumn Header="Actions" Width="SizeToCells" IsReadOnly="True" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Click="AdminEditButton_Click" Background="Transparent" BorderBrush="Transparent">
                                     <Image Source="pack://application:,,,/Images/editIcon.png" Width="80" Height="20"/>
                                 </Button>
-                                <Button Content="X" Click="DeleteButton_Click" Background="Red" Foreground="White" Width="80" Height="20"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+
+                                <!-- Divider Line -->
+                                <Line X1="0" Y1="0" X2="0" Y2="20" Stroke="Gray" StrokeThickness="1" Margin="5,0"/>
+
+                                <Button Click="DeleteButton_Click" Background="Transparent" BorderBrush="Transparent">
+                                    <Image Source="pack://application:,,,/Images/deleteIcon.png" Width="80" Height="20"/>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
@@ -88,16 +94,16 @@
 
                     <!-- Password -->
                     <Label Grid.Column="0" Content="Password" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="12,158,260,0" Height="34"/>
-                    <TextBox x:Name="adduser_passwordBox" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="143,162,54,162" RenderTransformOrigin="0.5,0.5">
-                        <TextBox.RenderTransform>
+                    <PasswordBox x:Name="adduser_passwordBox" PasswordChar="*" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="142,163,53,161" RenderTransformOrigin="0.5,0.5">
+                        <PasswordBox.RenderTransform>
                             <TransformGroup>
-                                <ScaleTransform ScaleY="-1"/>
+                                <ScaleTransform ScaleY="-1" ScaleX="-1"/>
                                 <SkewTransform/>
-                                <RotateTransform/>
+                                <RotateTransform Angle="540.103"/>
                                 <TranslateTransform/>
                             </TransformGroup>
-                        </TextBox.RenderTransform>
-                    </TextBox>
+                        </PasswordBox.RenderTransform>
+                    </PasswordBox>
 
                     <!-- Add Button -->
                     <Button x:Name="adduserbutton" Click="addUser_Click" Content="Add" HorizontalAlignment="Left" Background="Orange" Width="75" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" FontSize="18" Margin="135,201,0,126"/>
@@ -133,7 +139,7 @@
 
                     <!-- ID -->
                     <Label Grid.Row="1" Grid.Column="0" Content="ID" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="14,76,171,0" Grid.RowSpan="4"/>
-                    <TextBox x:Name="edituser_idBox" Grid.Row="4" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="151,79,-77,178"/>
+                    <TextBox x:Name="edituser_idBox" IsReadOnly="True" Grid.Row="4" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="151,79,-77,178"/>
 
                     <!-- Username -->
                     <Label Grid.Row="4" Grid.Column="0" Content="Username" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="14,118,135,0" RenderTransformOrigin="0.508,1.293"/>
@@ -141,7 +147,7 @@
 
                     <!-- Password -->
                     <Label Grid.Row="4" Grid.Column="0" Content="Password" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="14,157,135,0"/>
-                    <TextBox x:Name="edituser_passwordBox" Grid.Row="4" TextWrapping="Wrap" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="152,158,-77,97"/>
+                    <PasswordBox x:Name="edituser_passwordBox" Grid.Row="4" PasswordChar="*" Foreground="Orange" Background="#383838" BorderBrush="Orange" FontSize="24" FontFamily="Verdana" Margin="152,158,-77,97"/>
 
                     <!-- Edit Button -->
                     <Button x:Name="edituserbutton" Grid.Row="4" Click="editUser_Click" Content="Save" HorizontalAlignment="Left" Background="Orange" Width="58" BorderBrush="#FF4C4B56" FontFamily="Verdana" FontWeight="Bold" FontSize="18" Margin="152,196,0,62"/>
