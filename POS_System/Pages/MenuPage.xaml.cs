@@ -113,11 +113,11 @@ namespace POS_System.Pages
                     {
                         Item item = new Item
                         {
-                            Id = Convert.ToInt32(row["item_id"]),
-                            Name = row["item_name"].ToString(),
-                            Price = Convert.ToDouble(row["item_price"]),
-                            Description = row["item_description"].ToString(),
-                            Category = row["item_category"].ToString()
+                            item_id = Convert.ToInt32(row["item_id"]),
+                            item_name = row["item_name"].ToString(),
+                            item_price = Convert.ToDouble(row["item_price"]),
+                            item_description = row["item_description"].ToString(),
+                            item_category = row["item_category"].ToString()
                         };
                         items.Add(item);
                     }
@@ -162,11 +162,11 @@ namespace POS_System.Pages
                     {
                         Item item = new Item
                         {
-                            Id = Convert.ToInt32(row["item_id"]),
-                            Name = row["item_name"].ToString(),
-                            Price = Convert.ToDouble(row["item_price"]),
-                            Description = row["item_description"].ToString(),
-                            Category = row["item_category"].ToString()
+                            item_id = Convert.ToInt32(row["item_id"]),
+                            item_name = row["item_name"].ToString(),
+                            item_price = Convert.ToDouble(row["item_price"]),
+                            item_description = row["item_description"].ToString(),
+                            item_category = row["item_category"].ToString()
                         };
                         items.Add(item);
                     }
@@ -240,11 +240,11 @@ namespace POS_System.Pages
                 {
                     Item item = new Item
                     {
-                        Id = Convert.ToInt32(rdr["item_id"]),
-                        Name = rdr["item_name"].ToString(),
-                        Price = Convert.ToDouble(rdr["item_price"]),
-                        Description = rdr["item_description"].ToString(),
-                        Category = rdr["item_category"].ToString()
+                        item_id = Convert.ToInt32(row["item_id"]),
+                        item_name = row["item_name"].ToString(),
+                        item_price = Convert.ToDouble(row["item_price"]),
+                        item_description = row["item_description"].ToString(),
+                        item_category = row["item_category"].ToString()
                     };
 
                     Button newItemButton = new Button();
