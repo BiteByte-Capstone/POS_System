@@ -193,6 +193,18 @@ namespace POS_System.Pages
             }
         }
 
+        // Inside dataGrid Edit button
+        private void AdminEditButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataRowView selectedRow = (DataRowView)userGrid.SelectedItem;
+            if (selectedRow != null)
+            {
+                edituser_idBox.Text = selectedRow["user_id"].ToString();
+                edituser_usernameBox.Text = selectedRow["user_name"].ToString();
+            }
+        }
+
+
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {

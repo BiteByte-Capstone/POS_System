@@ -23,6 +23,7 @@
                     <Setter Property="Foreground" Value="White"/>
                     <Setter Property="FontSize" Value="15"/>
                     <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 </Style>
 
                 <Style TargetType="DataGridRow">
@@ -34,16 +35,23 @@
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="User ID" Binding="{Binding user_id}" Width="100"/>
-                <DataGridTextColumn Header="Username" Binding="{Binding user_name}" Width="200" />
-                <DataGridTextColumn Header="Password" Binding="{Binding user_password}"  Width="200" />
-                <DataGridTemplateColumn Header="Delete" Width="SizeToCells" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="X" Click="DeleteButton_Click" Background="Red" Foreground="White" Width="80" Height="20"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="User ID" Binding="{Binding user_id}" Width="*"/>
+                <DataGridTextColumn Header="Username" Binding="{Binding user_name}" Width="*" />
+                <DataGridTextColumn Header="Password" Binding="{Binding user_password}"  Width="*" />
+                    
+                    <!-- Combined Edit and Delete Buttons -->
+                    <DataGridTemplateColumn Header="Actions" Width="SizeToCells" IsReadOnly="True" >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Click="AdminEditButton_Click" Background="Transparent" BorderBrush="Transparent">
+                                    <Image Source="pack://application:,,,/Images/editIcon.png" Width="80" Height="20"/>
+                                </Button>
+                                <Button Content="X" Click="DeleteButton_Click" Background="Red" Foreground="White" Width="80" Height="20"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
