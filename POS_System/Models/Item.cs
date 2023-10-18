@@ -9,28 +9,28 @@ namespace POS.Models
 {
     public class Item : INotifyPropertyChanged
     {
-        public int item_id { get;  set; }       
-        public string item_description { get;  set; }
-        public string item_category { get;  set; }
+        public int Id { get;  set; }       
+        public string Description { get;  set; }
+        public string Category { get;  set; }
         private string _name;
-        public string item_name
+        public string Name
         {
             get { return _name; }
             set
             {
                 _name = value;
-                OnPropertyChanged(nameof(item_name));
+                OnPropertyChanged(nameof(Name));
             }
         }
 
         private double _price;
-        public double item_price
+        public double Price
         {
             get { return _price; }
             set
             {
                 _price = value;
-                OnPropertyChanged(nameof(item_price));
+                OnPropertyChanged(nameof(Price));
             }
         }
 
@@ -43,11 +43,11 @@ namespace POS.Models
 
         public Item(int id, string name, double price, string description, string category)
         {
-            item_id = id;
-            item_name = name;
-            item_price = price;
-            item_description = description;
-            item_category = category;
+            Id = id;
+            Name = name;
+            Price = price;
+            Description = description;
+            Category = category;
         }
 
         public Item() { }

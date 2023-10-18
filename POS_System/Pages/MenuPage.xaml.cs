@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 using System.Printing;
+using System.Linq;
 
 namespace POS_System.Pages
 {
@@ -22,6 +23,8 @@ namespace POS_System.Pages
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         private ObservableCollection<Item> items = new ObservableCollection<Item>();
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
+        
+        private double TotalAmount = 0.0;
 
         public MenuPage()
         {
@@ -31,6 +34,8 @@ namespace POS_System.Pages
 
             // Bind the ObservableCollection to the OrdersListBox
             OrdersListBox.ItemsSource = items;
+
+            
         }
 
         public MenuPage(string tableNumber, string orderType, bool hasUnpaidOrders) : this()
@@ -44,26 +49,7 @@ namespace POS_System.Pages
             }
         }
 
-        private bool CheckForUnpaidOrders(string tableNumber)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-                    string checkOrdersSql = "SELECT COUNT(*) FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
-                    MySqlCommand checkOrdersCmd = new MySqlCommand(checkOrdersSql, conn);
-                    checkOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
-                    int unpaidOrderCount = Convert.ToInt32(checkOrdersCmd.ExecuteScalar());
-                    return unpaidOrderCount > 0;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error checking for unpaid orders: " + ex.ToString());
-                    return false;
-                }
-            }
-        }
+
 
         private void LoadUnpaidOrders(string tableNumber)
         {
@@ -113,14 +99,16 @@ namespace POS_System.Pages
                     {
                         Item item = new Item
                         {
-                            item_id = Convert.ToInt32(row["item_id"]),
-                            item_name = row["item_name"].ToString(),
-                            item_price = Convert.ToDouble(row["item_price"]),
-                            item_description = row["item_description"].ToString(),
-                            item_category = row["item_category"].ToString()
+                            Id = Convert.ToInt32(row["item_id"]),
+                            Name = row["item_name"].ToString(),
+                            Price = Convert.ToDouble(row["item_price"]),
+                            Description = row["item_description"].ToString(),
+                            Category = row["item_category"].ToString()
                         };
                         items.Add(item);
+                        TotalAmount += item.Price;
                     }
+                    TotalAmountTextBlock.Text = TotalAmount.ToString();
                 }
                 catch (Exception ex)
                 {
@@ -129,54 +117,7 @@ namespace POS_System.Pages
             }
         }
 
-        private void LoadUnpaidItems(long orderId)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-                    string loadUnpaidItemsSql = "SELECT i.item_id, i.item_name, i.item_price, i.item_description, i.item_category " +
-                        "FROM item i " +
-                        "INNER JOIN unpaid_itemlist u ON i.item_id = u.item_id " +
-                        "WHERE u.order_id = @orderId;";
-                    MySqlCommand loadUnpaidItemsCmd = new MySqlCommand(loadUnpaidItemsSql, conn);
-                    loadUnpaidItemsCmd.Parameters.AddWithValue("@orderId", orderId);
-
-                    MySqlDataAdapter unpaidDataAdapter = new MySqlDataAdapter(loadUnpaidItemsCmd);
-                    DataTable unpaidItemsTable = new DataTable();
-                    unpaidDataAdapter.Fill(unpaidItemsTable);
-
-                    items.Clear();
-
-                    if (unpaidItemsTable.Rows.Count > 0)
-                    {
-                        OrderIdTextBlock.Text = "Order ID: " + orderId.ToString();
-                    }
-                    else
-                    {
-                        OrderIdTextBlock.Text = "No unpaid orders found.";
-                    }
-
-                    foreach (DataRow row in unpaidItemsTable.Rows)
-                    {
-                        Item item = new Item
-                        {
-                            item_id = Convert.ToInt32(row["item_id"]),
-                            item_name = row["item_name"].ToString(),
-                            item_price = Convert.ToDouble(row["item_price"]),
-                            item_description = row["item_description"].ToString(),
-                            item_category = row["item_category"].ToString()
-                        };
-                        items.Add(item);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error loading unpaid items: " + ex.ToString());
-                }
-            }
-        }
+       
 
 
         private void LoadCategoryData()
@@ -240,11 +181,11 @@ namespace POS_System.Pages
                 {
                     Item item = new Item
                     {
-                        item_id = Convert.ToInt32(row["item_id"]),
-                        item_name = row["item_name"].ToString(),
-                        item_price = Convert.ToDouble(row["item_price"]),
-                        item_description = row["item_description"].ToString(),
-                        item_category = row["item_category"].ToString()
+                        Id = Convert.ToInt32(rdr["item_id"]),
+                        Name = rdr["item_name"].ToString(),
+                        Price = Convert.ToDouble(rdr["item_price"]),
+                        Description = rdr["item_description"].ToString(),
+                        Category = rdr["item_category"].ToString()
                     };
 
                     Button newItemButton = new Button();
@@ -266,18 +207,10 @@ namespace POS_System.Pages
             conn.Close();
         }
 
-        private void SetButtonStyle(Button button)
-        {
-            button.FontFamily = new FontFamily("Verdana");
-            button.FontSize = 20;
-            button.Background = Brushes.Orange;
-            button.FontWeight = FontWeights.Bold;
-            button.BorderBrush = Brushes.Orange;
-            button.Margin = new Thickness(5);
-        }
 
-        private double TotalAmount = 0.0;
 
+        
+        //add item on list box
         private void ItemClick(object sender, RoutedEventArgs e)
         {
             Button clickedButton = sender as Button;
@@ -300,13 +233,37 @@ namespace POS_System.Pages
 
                             if (itemId != null)
                             {
-                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, quantity, item_price) VALUES (@orderId, @itemId, @quantity, @itemPrice);";
-                                MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
-                                itemCmd.Parameters.AddWithValue("@orderId", orderId);
-                                itemCmd.Parameters.AddWithValue("@itemId", itemId);
-                                itemCmd.Parameters.AddWithValue("@quantity", 1);
-                                itemCmd.Parameters.AddWithValue("@itemPrice", item.Price);
-                                itemCmd.ExecuteNonQuery();
+                                // Check if the item already exists in the order
+                                string existingItemSql = "SELECT quantity FROM ordered_itemlist WHERE order_id = @orderId AND item_id = @itemId;";
+                                MySqlCommand existingItemCmd = new MySqlCommand(existingItemSql, conn);
+                                existingItemCmd.Parameters.AddWithValue("@orderId", orderId);
+                                existingItemCmd.Parameters.AddWithValue("@itemId", itemId);
+                                object existingQuantity = existingItemCmd.ExecuteScalar();
+                                // Check if an item with the same name already exists in the order
+                                //var existingOrderedItem = orderedItems.FirstOrDefault(oi => oi.Item.Name == item.Name);
+
+                                if (existingQuantity != null)
+                                {
+                                    // If the item already exists, update its quantity
+                                    int newQuantity = Convert.ToInt32(existingQuantity) + 1;
+                                    string updateQuantitySql = "UPDATE ordered_itemlist SET quantity = @newQuantity WHERE order_id = @orderId AND item_id = @itemId;";
+                                    MySqlCommand updateQuantityCmd = new MySqlCommand(updateQuantitySql, conn);
+                                    updateQuantityCmd.Parameters.AddWithValue("@orderId", orderId);
+                                    updateQuantityCmd.Parameters.AddWithValue("@itemId", itemId);
+                                    updateQuantityCmd.Parameters.AddWithValue("@newQuantity", newQuantity);
+                                    updateQuantityCmd.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    // If the item does not exist in the order, add a new entry
+                                    string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, quantity, item_price) VALUES (@orderId, @itemId, @quantity, @itemPrice);";
+                                    MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
+                                    itemCmd.Parameters.AddWithValue("@orderId", orderId);
+                                    itemCmd.Parameters.AddWithValue("@itemId", itemId);
+                                    itemCmd.Parameters.AddWithValue("@quantity", 1);
+                                    itemCmd.Parameters.AddWithValue("@itemPrice", item.Price);
+                                    itemCmd.ExecuteNonQuery();
+                                }
 
                                 TotalAmount += item.Price;
                                 TotalAmountTextBlock.Text = TotalAmount.ToString("C");
@@ -329,12 +286,14 @@ namespace POS_System.Pages
             }
         }
 
+        //back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
             TablePage tablePage = new TablePage(TableNumberTextBox.Text, TypeTextBox.Text);
             tablePage.Show();
             this.Close();
         }
+
 
         private void PaymentButton(object sender, RoutedEventArgs e)
         {
@@ -383,7 +342,7 @@ namespace POS_System.Pages
             }
         }
 
-        private void SendButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
@@ -480,53 +439,38 @@ namespace POS_System.Pages
             return orderId;
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            long orderId = GetOrderId(TableNumberTextBox.Text);
-
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-
-                    // Save the current unpaid items to the 'ordered_itemlist' table with the same order_id
-                    string saveUnpaidItemsSql = "INSERT INTO ordered_itemlist (order_id, item_id, quantity, item_price) " +
-                        "SELECT @orderId, oi.item_id, oi.quantity, oi.item_price FROM ordered_itemlist oi " +
-                        "WHERE oi.order_id = @orderId;";
-                    MySqlCommand saveUnpaidItemsCmd = new MySqlCommand(saveUnpaidItemsSql, conn);
-                    saveUnpaidItemsCmd.Parameters.AddWithValue("@orderId", orderId);
-                    saveUnpaidItemsCmd.ExecuteNonQuery();
-
-                    items.Clear(); // Clear the list after saving
-
-                    // Continue with other operations
-                    // ...
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error saving unpaid items: " + ex.ToString());
-                }
-            }
-        }
-
+       
+        // Print customer receipt
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
             PrintDialog printDialog = new PrintDialog();
 
             if (printDialog.ShowDialog() == true)
             {
+                // Calculate GST (5% of TotalAmount)
+                double gstRate = 0.05;  // GST rate as 5%
+                double gstAmount = TotalAmount * gstRate;
+                // Calculate TotalAmount with GST included
+                double totalAmountWithGST = TotalAmount + gstAmount;
+
                 // Create a FlowDocument
                 FlowDocument flowDocument = new FlowDocument();
 
                 // Create a Paragraph for the header
-                Paragraph headerParagraph = new Paragraph(new Run("Order Receipt"));
-                headerParagraph.FontSize = 20;
+                Paragraph headerParagraph = new Paragraph();
+                headerParagraph.FontSize = 30;
                 headerParagraph.TextAlignment = TextAlignment.Center;
+
+                // Create a Run for the header text
+                Run headerRun = new Run("Order Receipt");
+
+                // Create an Underline element
+                Underline underline = new Underline(headerRun);
+
+                // Add the Underline to the Paragraph
+                headerParagraph.Inlines.Add(underline);
+
+                // Add the Paragraph to the FlowDocument
                 flowDocument.Blocks.Add(headerParagraph);
 
                 // Create a Section for the order details
@@ -543,18 +487,45 @@ namespace POS_System.Pages
                     // Access the text of the OrderIdTextBlock
                     tableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
                 }
+                // Add space (empty TableRow) for the gap
+                tableRowGroup.Rows.Add(CreateEmptyTableRow());
 
-                // Access the 'Items' collection or replace it with the correct collection
-                // and loop through it to add item rows.
-                // Access the 'items' collection and loop through it to add item rows.
+                // Access the 'Items' collection and loop through it to add item rows.
                 foreach (var item in items)
                 {
                     tableRowGroup.Rows.Add(CreateTableRow(item.Name, item.Price.ToString("C")));
                 }
 
+                // Add space (empty TableRow) for the gap
+                tableRowGroup.Rows.Add(CreateEmptyTableRow());
 
-                // Calculate TotalAmount here if it's not already calculated.
-                tableRowGroup.Rows.Add(CreateTableRow("Total Amount:", TotalAmount.ToString("C")));
+                // Create a Paragraph for "Sub Total" with underline
+                // Create a Paragraph for "Sub Total" with underline
+                Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
+                subTotalParagraph.FontSize = 20; // Increase the font size
+                subTotalParagraph.TextAlignment = TextAlignment.Right;
+
+                Paragraph subTotalValueParagraph = new Paragraph(new Run(TotalAmount.ToString("C")));
+                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+                // Create a Paragraph for "GST"
+                Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
+                gstLabelParagraph.FontSize = 20; // Increase the font size
+                gstLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                Paragraph gstValueParagraph = new Paragraph(new Run(gstAmount.ToString("C")));
+
+                // Add the "GST" label and value to the TableRowGroup
+                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
+
+                // Create a Paragraph for "Total Amount"
+                Paragraph totalAmountLabelParagraph = new Paragraph(new Run("Total Amount:"));
+                totalAmountLabelParagraph.FontSize = 20; // Increase the font size
+                totalAmountLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                Paragraph totalAmountValueParagraph = new Paragraph(new Run(totalAmountWithGST.ToString("C")));
+
+                // Add the "Total Amount" label and value to the TableRowGroup
+                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
 
                 detailsTable.RowGroups.Add(tableRowGroup);
                 orderDetailsSection.Blocks.Add(detailsTable);
@@ -570,6 +541,7 @@ namespace POS_System.Pages
             }
         }
 
+
         private TableRow CreateTableRow(string label, string value)
         {
             TableRow row = new TableRow();
@@ -577,20 +549,60 @@ namespace POS_System.Pages
             // Label cell
             TableCell labelCell = new TableCell(new Paragraph(new Run(label)));
             labelCell.TextAlignment = TextAlignment.Right;
-            labelCell.BorderThickness = new Thickness(0, 0, 1, 1);
-            labelCell.BorderBrush = Brushes.Black;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
             row.Cells.Add(labelCell);
 
             // Value cell
             TableCell valueCell = new TableCell(new Paragraph(new Run(value)));
-            valueCell.BorderThickness = new Thickness(0, 0, 0, 1);
-            valueCell.BorderBrush = Brushes.Black;
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+            row.Cells.Add(valueCell);
+
+            return row;
+        }
+        
+
+        // For Styling
+        private void SetButtonStyle(Button button)
+        {
+            button.FontFamily = new FontFamily("Verdana");
+            button.FontSize = 20;
+            button.Background = Brushes.Orange;
+            button.FontWeight = FontWeights.Bold;
+            button.BorderBrush = Brushes.Orange;
+            button.Margin = new Thickness(5);
+        }
+
+        private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
+        {
+            TableRow row = new TableRow();
+
+            // Label cell
+            TableCell labelCell = new TableCell(labelParagraph);
+            labelCell.TextAlignment = TextAlignment.Right;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+            row.Cells.Add(labelCell);
+
+            // Value cell
+            TableCell valueCell = new TableCell(valueParagraph);
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
             row.Cells.Add(valueCell);
 
             return row;
         }
 
+        private TableRow CreateEmptyTableRow()
+        {
+            TableRow row = new TableRow();
 
+            TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
+            emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+
+            row.Cells.Add(emptyCell);
+
+            return row;
+        }
 
 
 

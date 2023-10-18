@@ -20,6 +20,7 @@ namespace POS_System.Pages
 {
     public partial class TablePage : Window
     {
+        private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         // Define properties to store table number and order type
         public string TableNumber { get; private set; }
         public string OrderType { get; private set; }
@@ -65,7 +66,7 @@ namespace POS_System.Pages
                 string tableNumber = tableName.Substring(index + 1);
                 orderType = tableName.Substring(0, index);
 
-                String Type = "";
+                string Type = "";
                 if (orderType.Equals("table"))
                 {
                     Type = "Dine-In";
@@ -77,12 +78,51 @@ namespace POS_System.Pages
 
                 bool hasUnpaidOrders = CheckForUnpaidOrders(tableNumber);
 
-                // Pass the table number, order type, and unpaid orders status to MenuPage
-                MenuPage menuPage = new MenuPage(tableNumber, Type, hasUnpaidOrders);
-                menuPage.Show();
+                // If there are unpaid orders, open the existing order
+                if (hasUnpaidOrders)
+                {
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, hasUnpaidOrders);
+                    menuPage.Show();
+                }
+                else
+                {
+                    // If no unpaid orders exist, create a new order
+                    CreateNewOrder(tableNumber, Type);
+                }
+
                 this.Close();
             }
         }
+
+        private void CreateNewOrder(string tableNumber, string orderType)
+        {
+            // Create a new order
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string createOrderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, 0, 'n');";
+                    MySqlCommand createOrderCmd = new MySqlCommand(createOrderSql, conn);
+                    createOrderCmd.Parameters.AddWithValue("@tableNum", tableNumber);
+                    createOrderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
+                    createOrderCmd.ExecuteNonQuery();
+
+                    // Pass the table number, order type, and unpaid orders status to MenuPage
+                    MenuPage menuPage = new MenuPage(tableNumber, orderType, true);
+                    menuPage.Show();
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error creating a new order: " + ex.ToString());
+                }
+            }
+        }
+
 
 
 
