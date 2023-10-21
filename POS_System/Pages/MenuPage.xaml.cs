@@ -29,13 +29,10 @@ namespace POS_System.Pages
         public MenuPage()
         {
             InitializeComponent();
-            this.DataContext = this;
-            this.Loaded += Window_Loaded; // Subscribe to the Loaded event
+            LoadCategoryData();
 
-            // Bind the ObservableCollection to the OrdersListBox
-            OrdersListBox.ItemsSource = items;
 
-            
+
         }
 
         public MenuPage(string tableNumber, string orderType, bool hasUnpaidOrders) : this()
@@ -49,6 +46,13 @@ namespace POS_System.Pages
             }
         }
 
+        public MenuPage(string tableNumber, string orderType) : this()
+        {
+            TableNumberTextBox.Text = tableNumber;
+            TypeTextBox.Text = orderType;
+           
+        }
+
 
 
         private void LoadUnpaidOrders(string tableNumber)
@@ -57,6 +61,7 @@ namespace POS_System.Pages
             {
                 try
                 {
+
                     conn.Open();
                     string checkUnpaidOrderSql = "SELECT order_id FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
                     MySqlCommand checkUnpaidOrderCmd = new MySqlCommand(checkUnpaidOrderSql, conn);
@@ -64,12 +69,14 @@ namespace POS_System.Pages
                     object existingOrderId = checkUnpaidOrderCmd.ExecuteScalar();
                     long orderId;
 
+                    //not null means exist order.
                     if (existingOrderId != null)
                     {
                         orderId = Convert.ToInt64(existingOrderId);
                     }
                     else
                     {
+                        
                         // If no unpaid order exists, create a new order
                         string createOrderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, 0, 'n');";
                         MySqlCommand createOrderCmd = new MySqlCommand(createOrderSql, conn);
@@ -289,7 +296,7 @@ namespace POS_System.Pages
         //back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
-            TablePage tablePage = new TablePage(TableNumberTextBox.Text, TypeTextBox.Text);
+            TablePage tablePage = new TablePage();
             tablePage.Show();
             this.Close();
         }
@@ -351,6 +358,12 @@ namespace POS_System.Pages
                 try
                 {
                     conn.Open();
+                    long orderId = GetOrderId(TableNumberTextBox.Text);
+                    string deleteSql = "DELETE FROM `ordered_itemlist` WHERE order_id = @orderId";
+                    MySqlCommand deleteCmd = new MySqlCommand(deleteSql, conn);
+                    deleteCmd.Parameters.AddWithValue("@orderId", orderId.ToString());
+                    deleteCmd.ExecuteNonQuery();
+
                     string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, 'n');";
                     MySqlCommand orderCmd = new MySqlCommand(orderSql, conn);
                     orderCmd.Parameters.AddWithValue("@tableNum", TableNumberTextBox.Text);
@@ -358,7 +371,7 @@ namespace POS_System.Pages
                     orderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
                     orderCmd.ExecuteNonQuery();
 
-                    long orderId = orderCmd.LastInsertedId;
+                    long newOrderId = orderCmd.LastInsertedId;
 
                     foreach (Item orderedItem in items)
                     {
@@ -604,11 +617,5 @@ namespace POS_System.Pages
             return row;
         }
 
-
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            LoadCategoryData();
-        }
     }
 }
