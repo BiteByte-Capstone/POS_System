@@ -54,6 +54,7 @@ namespace POS_System.Pages
 
             if (hasUnpaidOrders)
             {
+                
                 LoadUnpaidOrders(tableNumber);
             }
         }
@@ -62,37 +63,33 @@ namespace POS_System.Pages
        
         private void LoadUnpaidOrders(string tableNumber)
         {
+            
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
                 {
                     conn.Open();
-                    string checkUnpaidOrderSql = "SELECT order_id FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
-                    MySqlCommand checkUnpaidOrderCmd = new MySqlCommand(checkUnpaidOrderSql, conn);
-                    checkUnpaidOrderCmd.Parameters.AddWithValue("@tableNum", tableNumber);
-                    object existingOrderId = checkUnpaidOrderCmd.ExecuteScalar();
-                    long orderId=Convert.ToInt64(existingOrderId); 
-
-
-
-
+                    long orderId = GetOrderId(tableNumber);
                     string unpaidOrdersSql = "SELECT o.order_id, o.item_id, o.quantity, o.item_price, i.item_name, i.item_description FROM ordered_itemlist o JOIN item i ON o.item_id = i.item_id WHERE o.order_id = @orderId;";
                     MySqlCommand unpaidOrdersCmd = new MySqlCommand(unpaidOrdersSql, conn);
                     unpaidOrdersCmd.Parameters.AddWithValue("@orderId", orderId);
                     MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
                     DataTable unpaidOrdersTable = new DataTable();
                     dataAdapter.Fill(unpaidOrdersTable);
-                    items.Clear();
-
+                    /*items.Clear();*/
+                    
                     if (unpaidOrdersTable.Rows.Count > 0)
                     {
+                        MessageBox.Show("Yo");
                         OrderIdTextBlock.Text = orderId.ToString();
                     }
-                    else
+                    else if (unpaidOrdersTable.Rows.Count == 0)
                     {
-                        OrderIdTextBlock.Text = "New order";
+                        MessageBox.Show("noooo");
+                        StatusTextBlock.Text = "Deleted all saved order before";
+                        OrderIdTextBlock.Text = orderId.ToString();
                     }
-
+                    
                     foreach (DataRow row in unpaidOrdersTable.Rows)
                     {
                         OrderedItem orderedItem = new OrderedItem
@@ -220,7 +217,7 @@ namespace POS_System.Pages
 
                 if (item != null)
                 {
-                    if (orderedItems.Count == 0)
+                    if (orderedItems.Count == 0 && StatusTextBlock.Text.Equals("New Order")) 
                     {
                         items.Add(item);
                         OrdersListBox.ItemsSource = items;
@@ -275,21 +272,18 @@ namespace POS_System.Pages
 
         private void VoidButton_Click(object sender, RoutedEventArgs e)
         {
-            long orderId = GetOrderId(TableNumberTextBox.Text);
-            int itemId;
-            double itemPrice;
 
             if (OrdersListBox.SelectedItem is Item selectedItem)
             {
-                itemId = selectedItem.Id;
-                itemPrice = selectedItem.ItemPrice;
                 items.Remove(selectedItem);
+                TotalAmount -= selectedItem.ItemPrice;
+                TotalAmountTextBlock.Text = TotalAmount.ToString();
             }
             else if (OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
             {
-                itemId = selectedOrderedItem.item_id;
-                itemPrice = selectedOrderedItem.ItemPrice;
                 orderedItems.Remove(selectedOrderedItem);
+                TotalAmount -= selectedOrderedItem.ItemPrice;
+                TotalAmountTextBlock.Text = TotalAmount.ToString();
             }
             else
             {
@@ -302,7 +296,13 @@ namespace POS_System.Pages
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-            
+            DataTable unpaidOrdersTable = new DataTable();
+
+            if (unpaidOrdersTable.Rows.Count > 0)
+            {
+                MessageBox.Show("There are no item on the list. /n Are you sure to quit the order input?");
+            }
+
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
