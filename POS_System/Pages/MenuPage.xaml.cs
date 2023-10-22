@@ -31,6 +31,8 @@ namespace POS_System.Pages
        
         private double TotalAmount = 0.0;
 
+
+        //Constructor 
         public MenuPage()
         {
             InitializeComponent();
@@ -57,7 +59,7 @@ namespace POS_System.Pages
         }
 
 
-
+       
         private void LoadUnpaidOrders(string tableNumber)
         {
             using (MySqlConnection conn = new MySqlConnection(connStr))
@@ -235,6 +237,7 @@ namespace POS_System.Pages
             }
         }
 
+        //(edit item list) Add item to the list
         private void AddItemToOrder(Item item)
         {
             // Convert Item to OrderedItem
@@ -272,37 +275,21 @@ namespace POS_System.Pages
 
         private void VoidButton_Click(object sender, RoutedEventArgs e)
         {
+            long orderId = GetOrderId(TableNumberTextBox.Text);
+            int itemId;
+            double itemPrice;
+
             if (OrdersListBox.SelectedItem is Item selectedItem)
             {
-                long orderId = GetOrderId(TableNumberTextBox.Text);
-                int itemId = selectedItem.Id;
-                double itemPrice = selectedItem.ItemPrice;
-
+                itemId = selectedItem.Id;
+                itemPrice = selectedItem.ItemPrice;
                 items.Remove(selectedItem);
-
-                using (MySqlConnection conn = new MySqlConnection(connStr))
-                {
-                    try
-                    {
-                        conn.Open();
-                        string deleteItemSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId AND item_id = @itemId;";
-                        MySqlCommand deleteItemCmd = new MySqlCommand(deleteItemSql, conn);
-                        deleteItemCmd.Parameters.AddWithValue("@orderId", orderId);
-                        deleteItemCmd.Parameters.AddWithValue("@itemId", itemId);
-                        deleteItemCmd.ExecuteNonQuery();
-
-                        TotalAmount -= itemPrice;
-                        TotalAmountTextBlock.Text = TotalAmount.ToString("C");
-                    }
-                    catch (MySqlException ex)
-                    {
-                        MessageBox.Show("MySQL Error: " + ex.Message);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error voiding item from the order: " + ex.ToString());
-                    }
-                }
+            }
+            else if (OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
+            {
+                itemId = selectedOrderedItem.item_id;
+                itemPrice = selectedOrderedItem.ItemPrice;
+                orderedItems.Remove(selectedOrderedItem);
             }
             else
             {
@@ -311,7 +298,7 @@ namespace POS_System.Pages
         }
 
 
-
+        //(Save button) 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
@@ -323,6 +310,7 @@ namespace POS_System.Pages
                     conn.Open();
 
                     long orderId = GetOrderId(TableNumberTextBox.Text);
+
                     if (StatusTextBlock.Text.Equals("New Table"))
                     {
                         string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, 'n');";
@@ -332,19 +320,38 @@ namespace POS_System.Pages
                         orderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
                         orderCmd.ExecuteNonQuery();
                         orderId = orderCmd.LastInsertedId;
+                        foreach (Item newOrder in items)
+                        {
+                            string checkItemSql = "SELECT item_id FROM item WHERE item_name = @itemName;";
+                            MySqlCommand checkItemCmd = new MySqlCommand(checkItemSql, conn);
+                            checkItemCmd.Parameters.AddWithValue("@itemName", newOrder.item_name);
+                            object itemId = checkItemCmd.ExecuteScalar();
+
+                            if (itemId != null)
+                            {
+                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, quantity, item_price) VALUES (@orderId, @itemId, @quantity, @itemPrice);";
+                                MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
+                                itemCmd.Parameters.AddWithValue("@orderId", orderId);
+                                itemCmd.Parameters.AddWithValue("@itemId", itemId);
+                                itemCmd.Parameters.AddWithValue("@quantity", 1);
+                                itemCmd.Parameters.AddWithValue("@itemPrice", newOrder.ItemPrice);
+                                itemCmd.ExecuteNonQuery();
+                            }
+                        }
+
                     }
                     else
                     {
-                        
-                        string removeOrderedItemlistSql = "DElETE FROM 'ordered_itemlist' WHERE order_Id = @orderId;";
+
+                        string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
                         MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
                         removeOrderCmd.Parameters.AddWithValue("@orderId", orderId);
                         removeOrderCmd.ExecuteNonQuery();
 
-                        string updateOrderSql = "UPDATE 'order' SET order_timestamp = @orderTimestamp , total_amount = @totalAmount WHERE order_id = @orderId ";
+                        string updateOrderSql = "UPDATE `order` SET order_timestamp = @orderTimestamp, total_amount = @totalAmount WHERE order_id = @orderId; ";
                         MySqlCommand updateOrderCmd = new MySqlCommand(updateOrderSql, conn);
                         updateOrderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                        updateOrderCmd.Parameters.AddWithValue("@totalAmount", DateTime.Now);
+                        updateOrderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
                         updateOrderCmd.Parameters.AddWithValue("@orderId", orderId);
                         updateOrderCmd.ExecuteNonQuery();
                     }
