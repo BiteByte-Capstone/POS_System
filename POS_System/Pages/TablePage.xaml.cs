@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -62,9 +61,10 @@ namespace POS_System.Pages
             if (button != null)
             {
                 string tableName = button.Name;
+                string orderType = button.Name;
                 int index = tableName.IndexOf('_');
                 string tableNumber = tableName.Substring(index + 1);
-                string orderType = tableName.Substring(0, index);
+                orderType = tableName.Substring(0, index);
 
                 string Type = "";
                 if (orderType.Equals("table"))
@@ -87,15 +87,14 @@ namespace POS_System.Pages
                 else
                 {
                     // If no unpaid orders exist, create a new order
-                    MenuPage menuPage = new MenuPage(tableNumber, Type);
-                    menuPage.Show();
+                    CreateNewOrder(tableNumber, Type);
                 }
-                
+
                 this.Close();
             }
         }
 
-/*        private void CreateNewOrder(string tableNumber, string orderType)
+        private void CreateNewOrder(string tableNumber, string orderType)
         {
             // Create a new order
             using (MySqlConnection conn = new MySqlConnection(connStr))
@@ -123,7 +122,7 @@ namespace POS_System.Pages
                 }
             }
         }
-*/
+
 
 
 
