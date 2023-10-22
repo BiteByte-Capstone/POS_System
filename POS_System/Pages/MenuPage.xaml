@@ -76,7 +76,7 @@
                     <ColumnDefinition Width="293*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Status:" VerticalAlignment="Top" Foreground="Orange" Height="16" FontSize="15" FontFamily="Verdana" Margin="47,25,128,0" Grid.ColumnSpan="2"/>
-                <TextBox Text="Occupied" VerticalAlignment="Top" IsReadOnly="True" Grid.Column="1" RenderTransformOrigin="0.562,0.65"  Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="52,17,0,0" Height="26" Grid.ColumnSpan="3"/>
+                <TextBox Name="StatusTextBlock" Text="Occupied" VerticalAlignment="Top" IsReadOnly="True" Grid.Column="1" RenderTransformOrigin="0.562,0.65"  Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="52,17,0,0" Height="26" Grid.ColumnSpan="3"/>
             </Grid>
             <Grid Height="85" Width="470">
                 <Grid.ColumnDefinitions>
@@ -93,8 +93,9 @@
             <ListView x:Name="OrdersListBox" Width="400" Height="399" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Item Name" Width="200" DisplayMemberBinding="{Binding Name}" />
-                        <GridViewColumn Header="Item Price" Width="100" DisplayMemberBinding="{Binding Price, StringFormat=C}" />
+
+                        <GridViewColumn Header="Item Name" Width="200" DisplayMemberBinding="{Binding item_name}" />
+                        <GridViewColumn Header="Item Price" Width="100" DisplayMemberBinding="{Binding ItemPrice, StringFormat=C}" />
                     </GridView>
                 </ListView.View>
             </ListView>

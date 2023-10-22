@@ -22,8 +22,8 @@ namespace POS_System.Pages
     {
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         // Define properties to store table number and order type
-        public string TableNumber { get; private set; }
-        public string OrderType { get; private set; }
+/*        public string TableNumber { get; private set; }
+        public string OrderType { get; private set; }*/
 
         public TablePage()
         {
@@ -36,8 +36,8 @@ namespace POS_System.Pages
             InitializeComponent();
             UpdateTableColors();
             // Store the table number and order type for future use
-            this.TableNumber = tableNumber;
-            this.OrderType = orderType;
+/*            this.TableNumber = tableNumber;
+            this.OrderType = orderType;*/
         }
 
 
@@ -61,10 +61,9 @@ namespace POS_System.Pages
             if (button != null)
             {
                 string tableName = button.Name;
-                string orderType = button.Name;
                 int index = tableName.IndexOf('_');
                 string tableNumber = tableName.Substring(index + 1);
-                orderType = tableName.Substring(0, index);
+                string orderType = tableName.Substring(0, index);
 
                 string Type = "";
                 if (orderType.Equals("table"))
@@ -81,51 +80,19 @@ namespace POS_System.Pages
                 // If there are unpaid orders, open the existing order
                 if (hasUnpaidOrders)
                 {
-                    MenuPage menuPage = new MenuPage(tableNumber, Type, hasUnpaidOrders);
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "Occupied",hasUnpaidOrders);
                     menuPage.Show();
                 }
                 else
                 {
                     // If no unpaid orders exist, create a new order
-                    CreateNewOrder(tableNumber, Type);
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "New Table", false);
+                    menuPage.Show();
                 }
 
                 this.Close();
             }
         }
-
-        private void CreateNewOrder(string tableNumber, string orderType)
-        {
-            // Create a new order
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-                    string createOrderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, 0, 'n');";
-                    MySqlCommand createOrderCmd = new MySqlCommand(createOrderSql, conn);
-                    createOrderCmd.Parameters.AddWithValue("@tableNum", tableNumber);
-                    createOrderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                    createOrderCmd.ExecuteNonQuery();
-
-                    // Pass the table number, order type, and unpaid orders status to MenuPage
-                    MenuPage menuPage = new MenuPage(tableNumber, orderType, true);
-                    menuPage.Show();
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error creating a new order: " + ex.ToString());
-                }
-            }
-        }
-
-
-
-
 
         // Check if there are unpaid orders for the specified table
         private bool CheckForUnpaidOrders(string tableNumber)

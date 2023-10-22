@@ -21,27 +21,34 @@ namespace POS_System.Pages
     {
         // Define connStr at the class level
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+        //new order
         private ObservableCollection<Item> items = new ObservableCollection<Item>();
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
-        
+
+        //existing order
+        private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
+
+       
         private double TotalAmount = 0.0;
 
         public MenuPage()
         {
             InitializeComponent();
+            
             this.DataContext = this;
             this.Loaded += Window_Loaded; // Subscribe to the Loaded event
-
-            // Bind the ObservableCollection to the OrdersListBox
-            OrdersListBox.ItemsSource = items;
-
             
+            // Bind the ObservableCollection to the OrdersListBox
+            
+
+
         }
 
-        public MenuPage(string tableNumber, string orderType, bool hasUnpaidOrders) : this()
+        public MenuPage(string tableNumber, string orderType, string status, bool hasUnpaidOrders) : this()
         {
             TableNumberTextBox.Text = tableNumber;
             TypeTextBox.Text = orderType;
+            StatusTextBlock.Text = status;
 
             if (hasUnpaidOrders)
             {
@@ -62,25 +69,14 @@ namespace POS_System.Pages
                     MySqlCommand checkUnpaidOrderCmd = new MySqlCommand(checkUnpaidOrderSql, conn);
                     checkUnpaidOrderCmd.Parameters.AddWithValue("@tableNum", tableNumber);
                     object existingOrderId = checkUnpaidOrderCmd.ExecuteScalar();
-                    long orderId;
+                    long orderId=Convert.ToInt64(existingOrderId); 
 
-                    if (existingOrderId != null)
-                    {
-                        orderId = Convert.ToInt64(existingOrderId);
-                    }
-                    else
-                    {
-                        // If no unpaid order exists, create a new order
-                        string createOrderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, 0, 'n');";
-                        MySqlCommand createOrderCmd = new MySqlCommand(createOrderSql, conn);
-                        createOrderCmd.Parameters.AddWithValue("@tableNum", tableNumber);
-                        createOrderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                        createOrderCmd.ExecuteNonQuery();
-                        orderId = createOrderCmd.LastInsertedId;
-                    }
 
-                    string unpaidOrdersSql = "SELECT item_id, item_name, item_price, item_description, item_category FROM item;";
+
+
+                    string unpaidOrdersSql = "SELECT o.order_id, o.item_id, o.quantity, o.item_price, i.item_name, i.item_description FROM ordered_itemlist o JOIN item i ON o.item_id = i.item_id WHERE o.order_id = @orderId;";
                     MySqlCommand unpaidOrdersCmd = new MySqlCommand(unpaidOrdersSql, conn);
+                    unpaidOrdersCmd.Parameters.AddWithValue("@orderId", orderId);
                     MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
                     DataTable unpaidOrdersTable = new DataTable();
                     dataAdapter.Fill(unpaidOrdersTable);
@@ -92,23 +88,24 @@ namespace POS_System.Pages
                     }
                     else
                     {
-                        OrderIdTextBlock.Text = "No unpaid orders found.";
+                        OrderIdTextBlock.Text = "New order";
                     }
 
                     foreach (DataRow row in unpaidOrdersTable.Rows)
                     {
-                        Item item = new Item
+                        OrderedItem orderedItem = new OrderedItem
                         {
-                            Id = Convert.ToInt32(row["item_id"]),
-                            Name = row["item_name"].ToString(),
-                            Price = Convert.ToDouble(row["item_price"]),
-                            Description = row["item_description"].ToString(),
-                            Category = row["item_category"].ToString()
+                            order_id = Convert.ToInt32(row["order_id"]),
+                            item_id = Convert.ToInt32(row["item_id"]),
+                            item_name = row["item_name"].ToString(),
+                            Quantity = Convert.ToInt32(row["quantity"]),
+                            ItemPrice = Convert.ToDouble(row["item_price"])
                         };
-                        items.Add(item);
-                        TotalAmount += item.Price;
+                        orderedItems.Add(orderedItem);
+                        TotalAmount += orderedItem.ItemPrice;
                     }
                     TotalAmountTextBlock.Text = TotalAmount.ToString();
+                    OrdersListBox.ItemsSource = orderedItems;
                 }
                 catch (Exception ex)
                 {
@@ -182,8 +179,8 @@ namespace POS_System.Pages
                     Item item = new Item
                     {
                         Id = Convert.ToInt32(rdr["item_id"]),
-                        Name = rdr["item_name"].ToString(),
-                        Price = Convert.ToDouble(rdr["item_price"]),
+                        item_name = rdr["item_name"].ToString(),
+                        ItemPrice = Convert.ToDouble(rdr["item_price"]),
                         Description = rdr["item_description"].ToString(),
                         Category = rdr["item_category"].ToString()
                     };
@@ -213,6 +210,7 @@ namespace POS_System.Pages
         //add item on list box
         private void ItemClick(object sender, RoutedEventArgs e)
         {
+            String tableNumber = TableNumberTextBox.Text; 
             Button clickedButton = sender as Button;
             if (clickedButton != null && clickedButton.Tag is Item)
             {
@@ -220,76 +218,46 @@ namespace POS_System.Pages
 
                 if (item != null)
                 {
-                    long orderId = GetOrderId(TableNumberTextBox.Text);
-                    using (MySqlConnection conn = new MySqlConnection(connStr))
+                    if (orderedItems.Count == 0)
                     {
-                        try
-                        {
-                            conn.Open();
-                            string checkItemSql = "SELECT item_id FROM item WHERE item_name = @itemName;";
-                            MySqlCommand checkItemCmd = new MySqlCommand(checkItemSql, conn);
-                            checkItemCmd.Parameters.AddWithValue("@itemName", item.Name);
-                            object itemId = checkItemCmd.ExecuteScalar();
+                        items.Add(item);
+                        OrdersListBox.ItemsSource = items;
+                        TotalAmount += item.ItemPrice;
+                        TotalAmountTextBlock.Text = TotalAmount.ToString();
+                    }
+                    else
+                    {
+                        AddItemToOrder(item);
 
-                            if (itemId != null)
-                            {
-                                // Check if the item already exists in the order
-                                string existingItemSql = "SELECT quantity FROM ordered_itemlist WHERE order_id = @orderId AND item_id = @itemId;";
-                                MySqlCommand existingItemCmd = new MySqlCommand(existingItemSql, conn);
-                                existingItemCmd.Parameters.AddWithValue("@orderId", orderId);
-                                existingItemCmd.Parameters.AddWithValue("@itemId", itemId);
-                                object existingQuantity = existingItemCmd.ExecuteScalar();
-                                // Check if an item with the same name already exists in the order
-                                //var existingOrderedItem = orderedItems.FirstOrDefault(oi => oi.Item.Name == item.Name);
 
-                                if (existingQuantity != null)
-                                {
-                                    // If the item already exists, update its quantity
-                                    int newQuantity = Convert.ToInt32(existingQuantity) + 1;
-                                    string updateQuantitySql = "UPDATE ordered_itemlist SET quantity = @newQuantity WHERE order_id = @orderId AND item_id = @itemId;";
-                                    MySqlCommand updateQuantityCmd = new MySqlCommand(updateQuantitySql, conn);
-                                    updateQuantityCmd.Parameters.AddWithValue("@orderId", orderId);
-                                    updateQuantityCmd.Parameters.AddWithValue("@itemId", itemId);
-                                    updateQuantityCmd.Parameters.AddWithValue("@newQuantity", newQuantity);
-                                    updateQuantityCmd.ExecuteNonQuery();
-                                }
-                                else
-                                {
-                                    // If the item does not exist in the order, add a new entry
-                                    string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, quantity, item_price) VALUES (@orderId, @itemId, @quantity, @itemPrice);";
-                                    MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
-                                    itemCmd.Parameters.AddWithValue("@orderId", orderId);
-                                    itemCmd.Parameters.AddWithValue("@itemId", itemId);
-                                    itemCmd.Parameters.AddWithValue("@quantity", 1);
-                                    itemCmd.Parameters.AddWithValue("@itemPrice", item.Price);
-                                    itemCmd.ExecuteNonQuery();
-                                }
-
-                                TotalAmount += item.Price;
-                                TotalAmountTextBlock.Text = TotalAmount.ToString("C");
-                            }
-                            else
-                            {
-                                MessageBox.Show($"Item '{item.Name}' does not exist in the database.");
-                            }
-                        }
-                        catch (MySqlException ex)
-                        {
-                            MessageBox.Show("MySQL Error: " + ex.Message);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Error adding item to the order: " + ex.ToString());
-                        }
                     }
                 }
             }
         }
 
+        private void AddItemToOrder(Item item)
+        {
+            // Convert Item to OrderedItem
+            OrderedItem orderedItem = new OrderedItem
+            {
+                 // You'll need to set this appropriately
+                item_id = item.Id,
+                item_name = item.item_name,
+                Quantity = 1, // Assuming quantity of 1 for new items
+                ItemPrice = item.ItemPrice
+            };
+
+            orderedItems.Add(orderedItem);
+            OrdersListBox.ItemsSource = orderedItems;
+            TotalAmount += orderedItem.ItemPrice;
+            TotalAmountTextBlock.Text = TotalAmount.ToString();
+        }
+
+
         //back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
-            TablePage tablePage = new TablePage(TableNumberTextBox.Text, TypeTextBox.Text);
+            TablePage tablePage = new TablePage();
             tablePage.Show();
             this.Close();
         }
@@ -308,7 +276,7 @@ namespace POS_System.Pages
             {
                 long orderId = GetOrderId(TableNumberTextBox.Text);
                 int itemId = selectedItem.Id;
-                double itemPrice = selectedItem.Price;
+                double itemPrice = selectedItem.ItemPrice;
 
                 items.Remove(selectedItem);
 
@@ -342,46 +310,57 @@ namespace POS_System.Pages
             }
         }
 
+
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
+            
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
                 {
                     conn.Open();
-                    string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, 'n');";
-                    MySqlCommand orderCmd = new MySqlCommand(orderSql, conn);
-                    orderCmd.Parameters.AddWithValue("@tableNum", TableNumberTextBox.Text);
-                    orderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                    orderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
-                    orderCmd.ExecuteNonQuery();
-
-                    long orderId = orderCmd.LastInsertedId;
-
-                    foreach (Item orderedItem in items)
+                    long orderId = GetOrderId(TableNumberTextBox.Text);
+                    if (StatusTextBlock.Text.Equals("New Table"))
                     {
-                        string checkItemSql = "SELECT item_id FROM item WHERE item_name = @itemName;";
-                        MySqlCommand checkItemCmd = new MySqlCommand(checkItemSql, conn);
-                        checkItemCmd.Parameters.AddWithValue("@itemName", orderedItem.Name);
-                        object itemId = checkItemCmd.ExecuteScalar();
-
-                        if (itemId != null)
-                        {
-                            string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, quantity, item_price) VALUES (@orderId, @itemId, @quantity, @itemPrice);";
-                            MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
-                            itemCmd.Parameters.AddWithValue("@orderId", orderId);
-                            itemCmd.Parameters.AddWithValue("@itemId", itemId);
-                            itemCmd.Parameters.AddWithValue("@quantity", 1);
-                            itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.Price);
-                            itemCmd.ExecuteNonQuery();
-                        }
-                        else
-                        {
-                            MessageBox.Show($"Item '{orderedItem.Name}' does not exist in the database.");
-                        }
+                        string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, 'n');";
+                        MySqlCommand orderCmd = new MySqlCommand(orderSql, conn);
+                        orderCmd.Parameters.AddWithValue("@tableNum", TableNumberTextBox.Text);
+                        orderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
+                        orderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
+                        orderCmd.ExecuteNonQuery();
+                        orderId = orderCmd.LastInsertedId;
                     }
+                    else
+                    {
+                        
+                        string removeOrderedItemlistSql = "DElETE FROM 'ordered_itemlist' WHERE order_Id = @orderId;";
+                        MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
+                        removeOrderCmd.Parameters.AddWithValue("@orderId", orderId);
+                        removeOrderCmd.ExecuteNonQuery();
+
+                        string updateOrderSql = "UPDATE 'order' SET order_timestamp = @orderTimestamp , total_amount = @totalAmount WHERE order_id = @orderId ";
+                        MySqlCommand updateOrderCmd = new MySqlCommand(updateOrderSql, conn);
+                        updateOrderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
+                        updateOrderCmd.Parameters.AddWithValue("@totalAmount", DateTime.Now);
+                        updateOrderCmd.Parameters.AddWithValue("@orderId", orderId);
+                        updateOrderCmd.ExecuteNonQuery();
+                    }
+                            foreach (OrderedItem orderedItem in orderedItems)
+                        {
+     
+                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, quantity, item_price) VALUES (@orderId, @itemId, @quantity, @itemPrice);";
+                                MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
+                                itemCmd.Parameters.AddWithValue("@orderId", orderId);
+                                itemCmd.Parameters.AddWithValue("@itemId", orderedItem.item_id);
+                                itemCmd.Parameters.AddWithValue("@quantity", 1);
+                                itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.ItemPrice);
+                                itemCmd.ExecuteNonQuery();
+                           
+
+                        }
+                    
 
                     MessageBox.Show("Order sent successfully!");
 
@@ -424,11 +403,11 @@ namespace POS_System.Pages
                     if (existingOrderId != null)
                     {
                         orderId = Convert.ToInt64(existingOrderId);
-                    }
-                    else
+                    } else
                     {
-                        MessageBox.Show("No unpaid order found for the table.");
+                        orderId = checkUnpaidOrderCmd.LastInsertedId;
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -493,7 +472,7 @@ namespace POS_System.Pages
                 // Access the 'Items' collection and loop through it to add item rows.
                 foreach (var item in items)
                 {
-                    tableRowGroup.Rows.Add(CreateTableRow(item.Name, item.Price.ToString("C")));
+                    tableRowGroup.Rows.Add(CreateTableRow(item.item_name, item.ItemPrice.ToString("C")));
                 }
 
                 // Add space (empty TableRow) for the gap
