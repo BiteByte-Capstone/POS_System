@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using System.Printing;
 using System.Linq;
+using System.Globalization;
 
 namespace POS_System.Pages
 {
@@ -30,13 +31,14 @@ namespace POS_System.Pages
 
        
         private double TotalAmount = 0.0;
-
+        private string tableNumber = "";
 
         //Constructor 
         public MenuPage()
         {
             InitializeComponent();
             
+            //it could load the page before show up
             this.DataContext = this;
             this.Loaded += Window_Loaded; // Subscribe to the Loaded event
             
@@ -83,7 +85,7 @@ namespace POS_System.Pages
                         MessageBox.Show("Yo");
                         OrderIdTextBlock.Text = orderId.ToString();
                     }
-                    else if (unpaidOrdersTable.Rows.Count == 0)
+                    else if (unpaidOrdersTable.Rows.Count == 0 || (StatusTextBlock.Text).Equals("Occupied"))
                     {
                         MessageBox.Show("noooo");
                         StatusTextBlock.Text = "Deleted all saved order before";
@@ -98,13 +100,17 @@ namespace POS_System.Pages
                             item_id = Convert.ToInt32(row["item_id"]),
                             item_name = row["item_name"].ToString(),
                             Quantity = Convert.ToInt32(row["quantity"]),
-                            ItemPrice = Convert.ToDouble(row["item_price"])
+                            ItemPrice = Convert.ToDouble(row["item_price"]),
+                            IsExistItem = true
                         };
                         orderedItems.Add(orderedItem);
                         TotalAmount += orderedItem.ItemPrice;
                     }
-                    TotalAmountTextBlock.Text = TotalAmount.ToString();
+                    TotalAmountTextBlock.Text = TotalAmount.ToString("C", new CultureInfo("en-CA"));
                     OrdersListBox.ItemsSource = orderedItems;
+                    
+                    
+
                 }
                 catch (Exception ex)
                 {
@@ -222,10 +228,15 @@ namespace POS_System.Pages
                         items.Add(item);
                         OrdersListBox.ItemsSource = items;
                         TotalAmount += item.ItemPrice;
-                        TotalAmountTextBlock.Text = TotalAmount.ToString();
+                        CultureInfo cultureInfo = new CultureInfo("en-CA");
+                        cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+                        TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
+
+
                     }
                     else
                     {
+                        //convert it into ordered list item
                         AddItemToOrder(item);
 
 
@@ -250,7 +261,9 @@ namespace POS_System.Pages
             orderedItems.Add(orderedItem);
             OrdersListBox.ItemsSource = orderedItems;
             TotalAmount += orderedItem.ItemPrice;
-            TotalAmountTextBlock.Text = TotalAmount.ToString();
+            CultureInfo cultureInfo = new CultureInfo("en-CA");
+            cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+            TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
         }
 
 
@@ -263,12 +276,7 @@ namespace POS_System.Pages
         }
 
 
-        private void PaymentButton(object sender, RoutedEventArgs e)
-        {
-            PaymentPage paymentPage = new PaymentPage();
-            paymentPage.Show();
-            this.Close();
-        }
+
 
         private void VoidButton_Click(object sender, RoutedEventArgs e)
         {
@@ -296,13 +304,27 @@ namespace POS_System.Pages
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-            DataTable unpaidOrdersTable = new DataTable();
+            /*DataTable unpaidOrdersTable = new DataTable();
 
-            if (unpaidOrdersTable.Rows.Count > 0)
+            if (unpaidOrdersTable.Rows.Count ==0)
             {
-                MessageBox.Show("There are no item on the list. /n Are you sure to quit the order input?");
-            }
+                MessageBoxResult result = MessageBox.Show("There are no items on the list.\nAre you sure you want to quit the order input?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
+                if (result == MessageBoxResult.Yes)
+                {
+                    TablePage tablePage = new TablePage();
+                    tablePage.Show();
+                    this.Close();
+                    return;
+                }
+                else if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+            } 
+            else
+            {*/
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
@@ -389,6 +411,7 @@ namespace POS_System.Pages
                     MessageBox.Show("Error sending order: " + ex.ToString());
                 }
             }
+            /*}*/
         }
 
 
@@ -528,6 +551,17 @@ namespace POS_System.Pages
             }
         }
 
+        //(button) go to payment page
+        private void PaymentButton_Click(object sender, RoutedEventArgs e)
+        {
+            string tableNumber = TableNumberTextBox.Text;
+            string orderType = TypeTextBox.Text;
+            string status = StatusTextBlock.Text;
+            long orderId = GetOrderId(tableNumber);
+            PaymentPage paymentPage = new PaymentPage(orderedItems,tableNumber,orderType,orderId, status,false);
+            paymentPage.Show();
+            this.Close();
+        }
 
         private TableRow CreateTableRow(string label, string value)
         {
@@ -593,9 +627,13 @@ namespace POS_System.Pages
 
 
 
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadCategoryData();
+            
         }
+
+
     }
 }
