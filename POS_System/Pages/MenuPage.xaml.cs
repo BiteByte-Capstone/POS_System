@@ -85,7 +85,7 @@ namespace POS_System.Pages
                         MessageBox.Show("Yo");
                         OrderIdTextBlock.Text = orderId.ToString();
                     }
-                    else if (unpaidOrdersTable.Rows.Count == 0 || (StatusTextBlock.Text).Equals("Occupied"))
+                    else if (unpaidOrdersTable.Rows.Count == 0)
                     {
                         MessageBox.Show("noooo");
                         StatusTextBlock.Text = "Deleted all saved order before";
