@@ -321,6 +321,7 @@ namespace POS_System.Pages
                 try
                 {
                     conn.Open();
+
                     long orderId = GetOrderId(TableNumberTextBox.Text);
                     if (StatusTextBlock.Text.Equals("New Table"))
                     {
