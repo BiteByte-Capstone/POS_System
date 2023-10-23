@@ -16,6 +16,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using POS_System.Database;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Collections;
 
 namespace POS_System.Pages
 {
@@ -31,9 +34,6 @@ namespace POS_System.Pages
         {
             InitializeComponent();
             getAllUser();
-
-
-
         }
 
         private void getAllUser()
@@ -243,6 +243,81 @@ namespace POS_System.Pages
                     }
                 }
             }
+        }
+
+        private void RoleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = sender as ComboBox;
+
+            if (comboBox.SelectedItem is ComboBoxItem item)
+            {
+                string selectedRole = (comboBox.SelectedItem as ComboBoxItem).Content.ToString();
+
+                int newID = GetNextIDForRole(selectedRole);
+                adduser_idBox.Text = newID.ToString();
+            }
+        }
+
+        private int GetNextIDForRole(string role)
+        {
+            int hightestID = 0;
+            int startingNumber = 0;
+
+            // Define starting numbers for each role
+            switch (role)
+            {
+                case "Admin":
+                    startingNumber = 100;
+                    break;
+                case "Manager":
+                    startingNumber = 200;
+                    break;
+                case "Waiter":
+                    startingNumber = 300;
+                    break;
+            }
+
+            using (DatabaseHelper db = new DatabaseHelper("localhost", "pos_db", "root", "password"))
+            {
+                if (db.OpenConnection())
+                {
+                    try
+                    {
+                        string query = $"SELECT MAX(user_id) FROM user WHERE user_id >= {startingNumber} AND user_id < {startingNumber + 100}";
+
+                        // Use reflection to access the private sqlConn field in DatabaseHelper
+                        FieldInfo fieldInfo = db.GetType().GetField("sqlConn", BindingFlags.NonPublic | BindingFlags.Instance);
+                        MySqlConnection sqlConn = null;
+                        if (fieldInfo != null)
+                        {
+                            sqlConn = (MySqlConnection)fieldInfo.GetValue(db);
+                        }
+
+                        MySqlCommand command = new MySqlCommand(query, sqlConn);
+                        object result = command.ExecuteScalar();
+
+
+                        if (result != null && int.TryParse(result.ToString(), out hightestID))
+                        {
+                            hightestID += 1;
+                        }
+                        else
+                        {
+                            // If there's no ID for the role yet, start with the startingNumber
+                            hightestID = startingNumber;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error:   " + ex.Message);
+                    }
+                    finally
+                    {
+                        db.CloseConnection();
+                    }
+                }
+            }
+            return hightestID;
         }
     }
 }

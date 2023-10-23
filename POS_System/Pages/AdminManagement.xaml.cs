@@ -40,8 +40,17 @@ namespace POS_System.Pages
         private void Button_Click2(object sender, RoutedEventArgs e)
         {
             // Open the Admin window when the button is clicked
-            MenuPage adminWindow = new MenuPage();
+            ManageMenu adminWindow = new ManageMenu();
             adminWindow.Show();
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Perform logout actions here
+            // For example, you can close the current window and navigate back to the login screen
+            LoginScreen loginScreen = new LoginScreen();
+            loginScreen.Show();
+            this.Close();
         }
     }
 }

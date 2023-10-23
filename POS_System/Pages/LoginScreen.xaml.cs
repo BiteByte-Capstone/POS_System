@@ -40,9 +40,20 @@ namespace POS_System.Pages
                 string authenticatedUsername = db.GetUsername(enteredUserId);
                 MessageBox.Show("Login successful! " + authenticatedUsername);
 
-                // Pass the userId to TablePage when creating an instance
-                TablePage window2 = new TablePage();
-                window2.Show();
+                int userId = int.Parse(enteredUserId);
+
+                // Only 100 to 110 admin can go to AdminManagement page
+                if (userId >= 100 & userId <= 110)
+                {
+                    AdminManagement windowAdmin = new AdminManagement();
+                    windowAdmin.Show();
+                }
+                
+                else
+                {
+                    TablePage window2 = new TablePage();
+                    window2.Show();
+                }
 
                 // Close the current login window if needed
                 this.Close();
