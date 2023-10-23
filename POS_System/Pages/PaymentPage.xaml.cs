@@ -27,7 +27,8 @@ namespace POS_System.Pages
         public PaymentPage()
         {
             InitializeComponent();
-
+            changeTextBox.Text = "0.0";
+            tipsTextbox.Text = "0.0";
         }
 
         public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders) : this()
@@ -62,26 +63,38 @@ namespace POS_System.Pages
 
         //Button Session
         //Save button (send data to payment database and reset table) 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void SavePaymentButton_Click(object sender, RoutedEventArgs e)
         {
+            string message = $"orderID: {_orderId}" +
+                 $"\npayment method: {paymentMethod}" +
+                 $"\ntotal order amount: {CalculateTotalOrderAmount()}" +
+                 $"\nGST: {CalculateTaxAmount()}" +
+                 $"\ntotal customer payment: {GetCustomerPayment()}" +
+                 $"\ntotal order balance: {CalculateOrderTotalBalance()}" +
+                 $"\ncustomer change amount: {CalculateChangeAmount()}" +
+                 $"\ntip: {CalculateTipAmount()}";
+
+            MessageBoxResult result = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+
+            if (result == MessageBoxResult.Yes)
+            {
+
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
                 {
                     conn.Open();
 
-                    
-
-
                     string paymentSql = "INSERT INTO `payment` " +
-                                        "(payment_id, order_id, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
-                                        "VALUES (@payment_id, @order_id, @payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
+                                        "(order_id, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
+                                        "VALUES (@order_id, @payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
+
                     MySqlCommand paymentCmd = new MySqlCommand(paymentSql, conn);
 
-                    long payment_id = paymentCmd.LastInsertedId;
                     paymentCmd.Parameters.AddWithValue("@order_id", _orderId);
                     paymentCmd.Parameters.AddWithValue("@payment_method", paymentMethod);
-                    paymentCmd.Parameters.AddWithValue("@base_amount",CalculateTotalOrderAmount());
+                    paymentCmd.Parameters.AddWithValue("@base_amount", CalculateTotalOrderAmount());
                     paymentCmd.Parameters.AddWithValue("@GST", CalculateTaxAmount());
                     paymentCmd.Parameters.AddWithValue("@total_amount", GetCustomerPayment());
                     paymentCmd.Parameters.AddWithValue("@gross_amount", CalculateOrderTotalBalance());
@@ -90,10 +103,8 @@ namespace POS_System.Pages
                     paymentCmd.Parameters.AddWithValue("@payment_timestamp", DateTime.Now);
 
                     paymentCmd.ExecuteNonQuery();
-                        
-                    
-                    MessageBox.Show("Order sent successfully!");
 
+                    MessageBox.Show("Payment sent successfully!");
 
                     TablePage tablePage = new TablePage();
                     tablePage.Show();
@@ -107,10 +118,15 @@ namespace POS_System.Pages
                 {
                     MessageBox.Show("Error sending order: " + ex.ToString());
                 }
+                }
             }
-
+            else
+            {
+                return;
+            }
         }
-    
+
+
 
         //Cancel button (back to menu page with existing order)
         private void CancelButton(object sender, RoutedEventArgs e)
@@ -234,6 +250,7 @@ namespace POS_System.Pages
             DisplayCustomerPayment();
             DisplayTips();
             
+
         }
         //***
 
@@ -242,13 +259,17 @@ namespace POS_System.Pages
         private void DisplayTips()
         {
             tipsTextbox.Text = CalculateTipAmount().ToString();
+            if (string.IsNullOrWhiteSpace(tipsTextbox.Text))
+            {
+                tipsTextbox.Text = "0";
+            }
 
-        } 
+        }
 
         //Display Balance
         private void DisplayBalance()
         {
-            balanceTextBox.Text = CalculateOrderTotalBalance().ToString(); 
+            balanceTextBox.Text = CalculateOrderTotalBalance().ToString();
         }
 
         //Display Customer Payment in text box
@@ -262,6 +283,17 @@ namespace POS_System.Pages
         {
             totalTaxTextBox.Text = CalculateTaxAmount().ToString();
         }
+
+        //Display change amount if cash
+        private void DisplayChange()
+        {
+            changeTextBox.Text = CalculateChangeAmount().ToString();
+            if (string.IsNullOrWhiteSpace(changeTextBox.Text))
+            {
+                changeTextBox.Text = "0";
+            }
+        }
+
 
 
         //***

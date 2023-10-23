@@ -82,12 +82,12 @@ namespace POS_System.Pages
                     
                     if (unpaidOrdersTable.Rows.Count > 0)
                     {
-                        MessageBox.Show("Yo");
+                        
                         OrderIdTextBlock.Text = orderId.ToString();
                     }
                     else if (unpaidOrdersTable.Rows.Count == 0)
                     {
-                        MessageBox.Show("noooo");
+                        
                         StatusTextBlock.Text = "Deleted all saved order before";
                         OrderIdTextBlock.Text = orderId.ToString();
                     }
