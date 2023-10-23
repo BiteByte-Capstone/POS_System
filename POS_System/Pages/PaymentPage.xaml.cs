@@ -19,6 +19,8 @@ namespace POS_System.Pages
         private string _status;
         private bool _hasUnpaidOrders = true;
 
+        String paymentMethod;
+
         public PaymentPage()
         {
             InitializeComponent();
