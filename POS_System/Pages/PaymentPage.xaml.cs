@@ -47,6 +47,13 @@ namespace POS_System.Pages
 
         }
 
+        private void CancelButton(object sender, RoutedEventArgs e)
+        {
+            MenuPage menuPage = new MenuPage(_tableNumber, _orderType, _status, true);
+            menuPage.Show();
+            this.Close();
+        }
+
         private double CalculateTotalOrderAmount()
         {
             double totalAmount = 0;
@@ -57,55 +64,69 @@ namespace POS_System.Pages
             return totalAmount;
         }
 
-
-        private void CancelButton(object sender, RoutedEventArgs e)
+        private double GetCustomerPayment()
         {
-            MenuPage menuPage = new MenuPage(_tableNumber, _orderType, _status, true);
-            menuPage.Show();
-            this.Close();
+            double customerPayment = 0.0;
+            customerPayment = double.Parse(customerPayTextBox.Text);
+            return customerPayment;
         }
+
+        private double CalculateTipAmount()
+        {
+            double tipAmount = 0.0;
+            return tipAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+
+        }
+
+        private double CalculateChangeAmount()
+        {
+            double changeAmount = 0.0;
+            return changeAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+        }
+
 
         
 
-        private void CalculateTaxAmount()
+        private double CalculateTaxAmount()
         {
             double totalTaxAmount = 0;
             double totalOrderAmount = CalculateTotalOrderAmount();
-            double taxRate = 0.13;
-            totalTaxAmount = totalOrderAmount * taxRate;
+            double taxRate = 0.05;
+            return totalTaxAmount = totalOrderAmount * taxRate;
 
-            CultureInfo cultureInfo = new CultureInfo("en-CA");
+/*            CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-            totalTaxTextBox.Text = totalTaxAmount.ToString("C", cultureInfo);
+            totalTaxTextBox.Text = totalTaxAmount.ToString("C", cultureInfo);*/
         }
 
         // Calculate Order Total Balance and show in the textbox
-        private void CalculateOrderTotalBalance()
+        private double CalculateOrderTotalBalance()
         {
             double totalBalance = 0;
             double totalOrderAmount = CalculateTotalOrderAmount();
             double totalTaxAmount = Convert.ToDouble(totalTaxTextBox.Text.Substring(1));
-            if (double.TryParse(tipsTextbox.Text, out double tipAmount))
-            {
-                totalBalance = totalOrderAmount + totalTaxAmount + tipAmount;
+            return totalBalance = totalOrderAmount + totalTaxAmount;
 
-                CultureInfo cultureInfo = new CultureInfo("en-CA");
+/*                CultureInfo cultureInfo = new CultureInfo("en-CA");
                 cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-                balanceTextBox.Text = totalBalance.ToString("C", cultureInfo);
-            }
+                balanceTextBox.Text = totalBalance.ToString("C", cultureInfo);*/
+            
         }
 
         private void InitializeEventHandlers()
         {
             // Attach the event handler for the TextChanged event of the tipsTextbox
             tipsTextbox.TextChanged += TipsTextbox_TextChanged;
+            /*changeTextBox.TextChanged += TipsTextbox_TextChanged;*/
         }
 
         // Handle the TextChanged event of the tipsTextbox to update the balance
         private void TipsTextbox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CalculateOrderTotalBalance();
+            CalculateTipAmount();
         }
+
+
 
         private void cashBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -145,6 +166,7 @@ namespace POS_System.Pages
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             amexBtn.Background = Brushes.White;
         }
+
 
     }
 }
