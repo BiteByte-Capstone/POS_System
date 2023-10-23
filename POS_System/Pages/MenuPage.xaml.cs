@@ -33,7 +33,7 @@ namespace POS_System.Pages
             this.Loaded += Window_Loaded; // Subscribe to the Loaded event
 
             // Bind the ObservableCollection to the OrdersListBox
-            OrdersListBox.ItemsSource = items;
+           // OrdersListBox.ItemsSource = items;
 
             
         }
