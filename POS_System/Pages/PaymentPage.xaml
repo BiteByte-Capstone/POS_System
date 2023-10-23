@@ -26,10 +26,10 @@
 
 
             <!-- Buttons -->
-            <Button x:Name="cancelBtn" Content="Cash" Grid.Column="0" Margin="80,61,0,55" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" Grid.RowSpan="2" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.Row="1" />
-            <Button Content="Visa" Grid.Row="2" Grid.Column="0" Margin="80,45,0,72" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.RowSpan="2"/>
-            <Button Content="M/C" Grid.Row="3" Grid.Column="0" Margin="80,28,0,84" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.RowSpan="2" />
-            <Button Content="AMEX" Grid.Row="4" Grid.Column="0" Margin="80,16,0,90" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.RowSpan="2"/>
+            <Button x:Name="cashBtn" Content="Cash" Grid.Column="0" Margin="80,61,0,55" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" Grid.RowSpan="2" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.Row="1" />
+            <Button Name="visaBtn" Content="Visa" Grid.Row="2" Grid.Column="0" Margin="80,45,0,72" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.RowSpan="2"/>
+            <Button Name="mcBtn" Content="M/C" Grid.Row="3" Grid.Column="0" Margin="80,28,0,84" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.RowSpan="2" />
+            <Button Name="amexBtn" Content="AMEX" Grid.Row="4" Grid.Column="0" Margin="80,16,0,90" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.RowSpan="2"/>
             <Button Content="Cancel" Margin="0,1,0,1" HorizontalAlignment="Left" Width="200" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="CancelButton"/>
             <Button Name="SaveButton" Content="Save" Grid.Row="5" Margin="80,10,0,0" Foreground="Black" Background="Green" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold"/>
             <Button Name="EnterButton" Content="✓" Grid.Row="5" Margin="758,8,-12,16" Foreground="Black" Background="Green" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.Column="1"/>
