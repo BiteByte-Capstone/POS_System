@@ -98,7 +98,7 @@ namespace POS_System.Pages
         private void InitializeEventHandlers()
         {
             // Attach the event handler for the TextChanged event of the tipsTextbox
-            tipsTextbox.TextChanged += TipsTextbox_TextChanged;
+          //  tipsTextbox.TextChanged += TipsTextbox_TextChanged;
         }
 
         // Handle the TextChanged event of the tipsTextbox to update the balance
@@ -146,5 +146,6 @@ namespace POS_System.Pages
             amexBtn.Background = Brushes.White;
         }
 
+        
     }
 }
