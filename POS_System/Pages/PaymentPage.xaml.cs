@@ -294,10 +294,13 @@ namespace POS_System.Pages
             }
         }
 
-
-
         //***
 
+        //reset table.
+        private void ResetTable()
+        {
+
+        }
 
 
 
