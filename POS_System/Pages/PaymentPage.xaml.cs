@@ -106,7 +106,22 @@ namespace POS_System.Pages
 
                     MessageBox.Show("Payment sent successfully!");
 
-                    TablePage tablePage = new TablePage();
+                        string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
+                        MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
+                        removeOrderCmd.Parameters.AddWithValue("@orderId", _orderId);
+                        removeOrderCmd.ExecuteNonQuery();
+
+                        string isPaidSql = "UPDATE `order` SET paid = @paid WHERE order_id = @orderId; ";
+                        MySqlCommand isPaidCmd = new MySqlCommand(isPaidSql, conn);
+                        isPaidCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
+                        isPaidCmd.Parameters.AddWithValue("@paid", "y");
+                        isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
+                        isPaidCmd.ExecuteNonQuery();
+
+
+
+
+                        TablePage tablePage = new TablePage();
                     tablePage.Show();
                     this.Close();
                 }
