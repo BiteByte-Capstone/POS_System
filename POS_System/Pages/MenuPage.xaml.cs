@@ -21,7 +21,7 @@ namespace POS_System.Pages
     public partial class MenuPage : Window
     {
         // Define connStr at the class level
-        private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+        public string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         //new order
         private ObservableCollection<Item> items = new ObservableCollection<Item>();
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
@@ -124,8 +124,8 @@ namespace POS_System.Pages
 
         private void LoadCategoryData()
         {
-            string connectString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-            MySqlConnection mySqlConnection = new MySqlConnection(connectString);
+            
+            MySqlConnection mySqlConnection = new MySqlConnection(connStr);
 
             try
             {
@@ -168,7 +168,7 @@ namespace POS_System.Pages
         private void LoadItemsByCategory(string categoryName)
         {
             ItemButtonPanel.Children.Clear();
-            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+            
             MySqlConnection conn = new MySqlConnection(connStr);
 
             try
@@ -251,7 +251,7 @@ namespace POS_System.Pages
             // Convert Item to OrderedItem
             OrderedItem orderedItem = new OrderedItem
             {
-                 // You'll need to set this appropriately
+               
                 item_id = item.Id,
                 item_name = item.item_name,
                 Quantity = 1, // Assuming quantity of 1 for new items
@@ -303,7 +303,7 @@ namespace POS_System.Pages
         //(Save button) 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+            
             /*DataTable unpaidOrdersTable = new DataTable();
 
             if (unpaidOrdersTable.Rows.Count ==0)
@@ -501,9 +501,9 @@ namespace POS_System.Pages
                 tableRowGroup.Rows.Add(CreateEmptyTableRow());
 
                 // Access the 'Items' collection and loop through it to add item rows.
-                foreach (var item in items)
+                foreach (var OrderedItem in orderedItems)
                 {
-                    tableRowGroup.Rows.Add(CreateTableRow(item.item_name, item.ItemPrice.ToString("C")));
+                    tableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
                 }
 
                 // Add space (empty TableRow) for the gap
