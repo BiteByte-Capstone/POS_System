@@ -97,99 +97,97 @@ namespace POS_System.Pages
 
             if(fromD.Length + untilD.Length + specificTable.Length + fromTable.Length + toTable.Length + fromAmount.Length + toAmount.Length < 1)
             {
-                return;
+                getDataOrderTable();
+            } else {
+
+                //This part checks for the filter that was entered by counting the length of the filter inputs.
+                //If length of filter input > 0, then that filter was used, which then triggers the formulation of a sql query for that filter
+                if (specificTable.Length>0)
+                {
+                    specificTableQuery = SpecificTableFilter(specificTable);
+                    lengthcount[0] = 1;
+                    lengthcount[1] = 0;
+
+                } else if (specificTable.Length < 1 && (fromTable.Length > 0 || toTable.Length > 0))
+                {
+                    fromToTableQuery = FromToTableFilter(fromTable, toTable);
+                    lengthcount[0] = 0;
+                    lengthcount[1] = 1;
+                }
+
+                if (fromAmount.Length > 0 || toAmount.Length > 0)
+                { 
+                    fromToAmountQuery = FromToAmountFilter(fromAmount, toAmount);
+                    lengthcount[2] = 1;
+                }
+
+                if (fromD.Length > 0 || untilD.Length > 0)
+                {
+                    fromToDateQuery = FromToDateFilter(fromD, untilD);
+                    lengthcount[3] = 1;
+                }
+
+                //This part of the code will build the sqlquery to be executed, by adding segments of sqlquery from the filter that was used
+                if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 1 && lengthcount[3] == 1)
+                {
+                    sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToAmountQuery + " and " + fromToDateQuery;
+                }
+                else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 1 && lengthcount[3] == 0)
+                {
+                    sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToAmountQuery;
+                }
+                else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 0 && lengthcount[3] == 1)
+                {
+                    sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToDateQuery;
+                } 
+                else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 0 && lengthcount[3] == 0)
+                {
+                    sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery;
+                } 
+                else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 1 && lengthcount[3] == 0)
+                {
+                    sqlquery = sqlquery + fromToAmountQuery;
+                }
+                else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 0 && lengthcount[3] == 1)
+                {
+                    sqlquery = sqlquery + fromToDateQuery;
+                }
+                else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 1 && lengthcount[3] == 1)
+                {
+                    sqlquery = sqlquery + fromToAmountQuery + " and " + fromToDateQuery;
+                }
+
+                sqlquery = sqlquery + " order by 3;";
+
+
+                //Show the sql query string to be executed
+                MessageBox.Show(sqlquery);
+
+                //String to make connection to database
+                string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+                //Create a connection object
+                MySqlConnection connection = new MySqlConnection(connectionString);
+
+                //SQL query
+                MySqlCommand cmd = new MySqlCommand(sqlquery, connection);
+
+                //Open up connection with the user table
+                connection.Open();
+
+                //create a datatable object to capture the database table
+                DataTable dt = new DataTable();
+
+                //Execute the command and the load the result of reader inside the datatable
+                dt.Load(cmd.ExecuteReader());
+
+                //Close connection to user table
+                connection.Close();
+
+                //Bind data table to the DataGrid on XAML
+                orderGrid.DataContext = dt;
+
             }
-
-            //This part checks for the filter that was entered by counting the length of the filter inputs.
-            //If length of filter input > 0, then that filter was used, which then triggers the formulation of a sql query for that filter
-            if (specificTable.Length>0)
-            {
-                specificTableQuery = SpecificTableFilter(specificTable);
-                lengthcount[0] = 1;
-                lengthcount[1] = 0;
-
-            } else if (specificTable.Length < 1 && (fromTable.Length > 0 || toTable.Length > 0))
-            {
-                fromToTableQuery = FromToTableFilter(fromTable, toTable);
-                lengthcount[0] = 0;
-                lengthcount[1] = 1;
-            }
-
-            if (fromAmount.Length > 0 || toAmount.Length > 0)
-            { 
-                fromToAmountQuery = FromToAmountFilter(fromAmount, toAmount);
-                lengthcount[2] = 1;
-            }
-
-            if (fromD.Length > 0 || untilD.Length > 0)
-            {
-                fromToDateQuery = FromToDateFilter(fromD, untilD);
-                lengthcount[3] = 1;
-            }
-
-            //This part of the code will build the sqlquery to be executed, by adding segments of sqlquery from the filter that was used
-            if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 1 && lengthcount[3] == 1)
-            {
-                sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToAmountQuery + " and " + fromToDateQuery;
-            }
-            else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 1 && lengthcount[3] == 0)
-            {
-                sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToAmountQuery;
-            }
-            else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 0 && lengthcount[3] == 1)
-            {
-                sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToDateQuery;
-            } 
-            else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 0 && lengthcount[3] == 0)
-            {
-                sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery;
-            } 
-            else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 1 && lengthcount[3] == 0)
-            {
-                sqlquery = sqlquery + fromToAmountQuery;
-            }
-            else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 0 && lengthcount[3] == 1)
-            {
-                sqlquery = sqlquery + fromToDateQuery;
-            }
-            else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 1 && lengthcount[3] == 1)
-            {
-                sqlquery = sqlquery + fromToAmountQuery + " and " + fromToDateQuery;
-            }
-
-            sqlquery = sqlquery + " order by 3;";
-
-
-            //Show the sql query string to be executed
-            MessageBox.Show(sqlquery);
-
-            //String to make connection to database
-            string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
-            //Create a connection object
-            MySqlConnection connection = new MySqlConnection(connectionString);
-
-            //SQL query
-            MySqlCommand cmd = new MySqlCommand(sqlquery, connection);
-
-            //Open up connection with the user table
-            connection.Open();
-
-            //create a datatable object to capture the database table
-            DataTable dt = new DataTable();
-
-            //Execute the command and the load the result of reader inside the datatable
-            dt.Load(cmd.ExecuteReader());
-
-            //Close connection to user table
-            connection.Close();
-
-            //Bind data table to the DataGrid on XAML
-            orderGrid.DataContext = dt;
-
-
-
-
         }
 
         private String FromToDateFilter(String fromD, String untilD)
