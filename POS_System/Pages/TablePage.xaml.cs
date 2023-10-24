@@ -159,11 +159,7 @@ namespace POS_System.Pages
                         string tableNumber = reader.GetString(0);
                         
 
-/*                        string tableName = Button.;
-                        int index = tableName.IndexOf('_');
-                        string tableNumber = tableName.Substring(index + 1); //D1 if dine-in T1 if Take-Out
-                        string orderType = tableName.Substring(0, index);*/
-                        // Find the corresponding table UI element in your XAML
+
                         string tableButtonName = "table_" + tableNumber;
                         string takeOutButtonName = "takeOut_" + tableNumber;
 

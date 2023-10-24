@@ -87,13 +87,14 @@ namespace POS_System.Pages
                     conn.Open();
 
                     string paymentSql = "INSERT INTO `payment` " +
-                                        "(order_id, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
-                                        "VALUES (@order_id, @payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
+                                        "(order_id, order_type, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
+                                        "VALUES (@order_id, @order_type,@payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
 
                     MySqlCommand paymentCmd = new MySqlCommand(paymentSql, conn);
 
                     paymentCmd.Parameters.AddWithValue("@order_id", _orderId);
-                    paymentCmd.Parameters.AddWithValue("@payment_method", paymentMethod);
+                        paymentCmd.Parameters.AddWithValue("@order_type", _orderType);
+                        paymentCmd.Parameters.AddWithValue("@payment_method", paymentMethod);
                     paymentCmd.Parameters.AddWithValue("@base_amount", CalculateTotalOrderAmount());
                     paymentCmd.Parameters.AddWithValue("@GST", CalculateTaxAmount());
                     paymentCmd.Parameters.AddWithValue("@total_amount", GetCustomerPayment());
