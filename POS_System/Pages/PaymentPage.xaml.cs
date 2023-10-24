@@ -180,7 +180,7 @@ namespace POS_System.Pages
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = Brushes.White;
             amexBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
-            MessageBox.Show("MC butt");
+            
 
         }
 
@@ -311,11 +311,7 @@ namespace POS_System.Pages
 
         //***
 
-        //reset table.
-        private void ResetTable()
-        {
 
-        }
 
 
 

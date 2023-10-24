@@ -14,7 +14,10 @@ namespace POS_System.Models
         public int TableNumber { get; set; }
         public DateTime OrderTimestamp { get; set; }
         public double TotalAmount { get; set; }
+        public double orderType {  get; set; }
         public List<OrderedItem> OrderedItems { get; set; }
+
+        
 
         public Order(int tableNumber)
         {

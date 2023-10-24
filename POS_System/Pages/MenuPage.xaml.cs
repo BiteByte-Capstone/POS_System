@@ -271,6 +271,17 @@ namespace POS_System.Pages
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
             TablePage tablePage = new TablePage();
+
+            if (TypeTextBox.Text.Equals("Take-Out"))
+                
+            {
+                tablePage.TablePageTab.SelectedIndex = 1;
+            } 
+            else
+            {
+                tablePage.TablePageTab.SelectedItem = 0;
+            }
+
             tablePage.Show();
             this.Close();
         }
@@ -333,13 +344,14 @@ namespace POS_System.Pages
 
                     long orderId = GetOrderId(TableNumberTextBox.Text);
 
-                    if (StatusTextBlock.Text.Equals("New Table"))
+                    if (StatusTextBlock.Text.Equals("New Order"))
                     {
-                        string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, 'n');";
+                        string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, order_type, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, @order_type,'n');";
                         MySqlCommand orderCmd = new MySqlCommand(orderSql, conn);
                         orderCmd.Parameters.AddWithValue("@tableNum", TableNumberTextBox.Text);
                         orderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
                         orderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
+                        orderCmd.Parameters.AddWithValue("@order_type", TypeTextBox.Text);
                         orderCmd.ExecuteNonQuery();
                         orderId = orderCmd.LastInsertedId;
                         foreach (Item newOrder in items)

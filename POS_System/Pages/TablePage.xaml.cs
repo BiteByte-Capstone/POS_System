@@ -55,7 +55,7 @@ namespace POS_System.Pages
 
 
         // Handle table number, order number, order type
-        private void Open_Table(object sender, RoutedEventArgs e)
+        private void OpenOrder_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             if (button != null)
@@ -86,7 +86,7 @@ namespace POS_System.Pages
                 else
                 {
                     // If no unpaid orders exist, create a new order
-                    MenuPage menuPage = new MenuPage(tableNumber, Type, "New Table", false);
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "New Order", false);
                     menuPage.Show();
                 }
 
