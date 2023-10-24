@@ -25,7 +25,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Image -->
-        <Image Grid.ColumnSpan="4" HorizontalAlignment="Center" VerticalAlignment="Center" Height="200" Width="142" Source="C:\Users\howar\source\repos\POS_System\POS_System\Images\logo.png"/>
+        <Image Grid.ColumnSpan="4" HorizontalAlignment="Center" VerticalAlignment="Center" Height="318" Width="444" Source="pack://application:,,,/POS_System;component/Images/logo.png"/>
 
         <!-- Title TextBox -->
         <TextBox Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center" Text="Point Of Sales System" TextWrapping="Wrap" FontFamily="Verdana" FontSize="40" FontWeight="Bold" Background="{x:Null}" Foreground="Orange" Margin="0,10,0,20" BorderThickness="0"/>
