@@ -197,5 +197,10 @@ namespace POS_System.Pages
         {
 
         }
+
+        private void TablePageTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
