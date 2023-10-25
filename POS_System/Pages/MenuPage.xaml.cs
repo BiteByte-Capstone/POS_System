@@ -310,16 +310,30 @@ namespace POS_System.Pages
         //back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
+            if (orderedItems.Count != existItemCount)
+            {
+                MessageBox.Show("yes void order!");
+                MessageBoxResult result = MessageBox.Show("Removed order on the list. \n Do you want to go back without save?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    BackToTablePage();
+                    
+                }
+                else
+                {
+                    return;
+                }
+            }
 
-            if (ExistedItem() == true || StatusTextBlock.Text=="New Order")
+            else if (ExistedItem() == true || StatusTextBlock.Text == "New Order")
             {
                 MessageBox.Show("no new order!");
                 BackToTablePage();
-            } else if (ExistedItem() == false )
+            }
+            else if (ExistedItem() == false)
             {
                 MessageBox.Show("yes new order!");
                 MessageBoxResult result = MessageBox.Show("There is new item on the list. \n Do you want to go back without save?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
                 if (result == MessageBoxResult.Yes)
                 {
                     BackToTablePage();
@@ -329,8 +343,14 @@ namespace POS_System.Pages
                     return;
                 }
             }
-            
+
+
+
+                
+
         }
+            
+        
 
         //Method: for go back table page.
         private void BackToTablePage()
@@ -382,7 +402,10 @@ namespace POS_System.Pages
             {
                 items.Remove(selectedItem);
                 TotalAmount -= selectedItem.ItemPrice;
-                TotalAmountTextBlock.Text = TotalAmount.ToString();
+                CultureInfo cultureInfo = new CultureInfo("en-CA");
+                cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+                TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
+                
             }
             else if(OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
             {
@@ -393,6 +416,9 @@ namespace POS_System.Pages
                     orderedItems.Remove(selectedOrderedItem);
                     TotalAmount -= selectedOrderedItem.ItemPrice;
                     TotalAmountTextBlock.Text = TotalAmount.ToString();
+                    CultureInfo cultureInfo = new CultureInfo("en-CA");
+                    cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+                    TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
                 }
             }
                 
@@ -412,7 +438,7 @@ namespace POS_System.Pages
             {
                 MessageBox.Show("No Item in this table.Please add items before save!");
                 return;
-            } else if (ExistedItem() == true)
+            } else if (ExistedItem() == true && orderedItems.Count > existItemCount)
             {
                 MessageBox.Show("No update on the list. Please check again");
                 return;
@@ -466,7 +492,7 @@ namespace POS_System.Pages
                         {
 
 
-                            {
+                            
 
                                 string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
                                 MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
@@ -479,7 +505,7 @@ namespace POS_System.Pages
                                 updateOrderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
                                 updateOrderCmd.Parameters.AddWithValue("@orderId", orderId);
                                 updateOrderCmd.ExecuteNonQuery();
-                            }
+                            
                             foreach (OrderedItem orderedItem in orderedItems)
                             {
 
