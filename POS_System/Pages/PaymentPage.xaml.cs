@@ -29,6 +29,7 @@ namespace POS_System.Pages
             InitializeComponent();
             changeTextBox.Text = "0.0";
             tipsTextbox.Text = "0.0";
+            customerPayTextBox.Focus();
         }
 
         public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders) : this()
@@ -50,13 +51,67 @@ namespace POS_System.Pages
 
         }
 
+        // Add a private field to store the shadow value:
+        private long shadowValue = 0;
+
+        private void CustomerPayTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            long newShadowValue = shadowValue * 10 + int.Parse(e.Text);
+            if (newShadowValue < 10000000) // This limits the maximum input to $999.99
+            {
+                shadowValue = newShadowValue;
+                customerPayTextBox.Text = "$" + (shadowValue / 100.0).ToString("0.00");
+                customerPayTextBox.CaretIndex = customerPayTextBox.Text.Length; // Set cursor to the end
+            }
+            e.Handled = true;
+        }
+
+        private void CustomerPayTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Back && shadowValue > 0)
+            {
+                shadowValue /= 10;
+                customerPayTextBox.Text = "$" + (shadowValue / 100.0).ToString("0.00");
+                customerPayTextBox.CaretIndex = customerPayTextBox.Text.Length; // Set cursor to the end
+                e.Handled = true;
+            }
+        }
+
+        private void CustomerPayTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(customerPayTextBox.Text))
+            {
+                double value;
+                if (double.TryParse(customerPayTextBox.Text, out value))
+                {
+                    customerPayTextBox.TextChanged -= CustomerPayTextBox_TextChanged;
+                    customerPayTextBox.Text = value.ToString("F2");
+                    customerPayTextBox.TextChanged += CustomerPayTextBox_TextChanged;
+                }
+            }
+            /*DisplayCustomerPayment();*/
+            DisplayTips();
+        }
+
+
+
         //Calculate Total Order amount 
         private double CalculateTotalOrderAmount()
         {
             double totalAmount = 0;
-            foreach (var item in _orderedItems)
+            foreach (var orderedItem in _orderedItems)
             {
-                totalAmount += item.ItemPrice;
+                if (orderedItem.IsExistItem == true)
+                {
+                    totalAmount += orderedItem.ItemPrice;
+                }
+                
             }
             return totalAmount;
         }
@@ -204,10 +259,10 @@ namespace POS_System.Pages
             {
                 customerPayTextBox.Text = "0.0";
             }
-            double customerPayment = 0.0;
-            customerPayment = double.Parse(customerPayTextBox.Text);
-            return customerPayment;
+
+            return double.Parse(customerPayTextBox.Text.Replace("$", "").Trim());
         }
+
         //***
 
         //**Calculation session
@@ -257,7 +312,7 @@ namespace POS_System.Pages
             customerPayTextBox.TextChanged += CustomerPayTextBox_TextChanged;
         }
 
-        private void CustomerPayTextBox_TextChanged(object sender, TextChangedEventArgs e)
+/*        private void CustomerPayTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(customerPayTextBox.Text))
             {
@@ -267,14 +322,17 @@ namespace POS_System.Pages
             DisplayTips();
             
 
-        }
+        }*/
         //***
 
         //**Display session (grabbing all the calculation and display on page)
         //Display tips on tips text box
         private void DisplayTips()
         {
-            tipsTextbox.Text = CalculateTipAmount().ToString();
+            CultureInfo cultureInfo = new CultureInfo("en-CA");
+            cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+            
+            tipsTextbox.Text = CalculateTipAmount().ToString("C", cultureInfo);
             if (string.IsNullOrWhiteSpace(tipsTextbox.Text))
             {
                 tipsTextbox.Text = "0";
@@ -285,19 +343,18 @@ namespace POS_System.Pages
         //Display Balance
         private void DisplayBalance()
         {
-            balanceTextBox.Text = CalculateOrderTotalBalance().ToString();
-        }
-
-        //Display Customer Payment in text box
-        private void DisplayCustomerPayment()
-        {
-            customerPayTextBox.Text = GetCustomerPayment().ToString();
+            
+            CultureInfo cultureInfo = new CultureInfo("en-CA");
+            cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+            balanceTextBox.Text = CalculateOrderTotalBalance().ToString("C", cultureInfo);
         }
 
         //Display Tax in textblock
         private void DisplayTax()
         {
-            totalTaxTextBox.Text = CalculateTaxAmount().ToString();
+            CultureInfo cultureInfo = new CultureInfo("en-CA");
+            cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+            totalTaxTextBox.Text = CalculateTaxAmount().ToString("C", cultureInfo);
         }
 
         //Display change amount if cash
