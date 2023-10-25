@@ -2,6 +2,7 @@
 using POS.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,8 +29,33 @@ namespace POS_System.Pages
         public Refund()
         {
             InitializeComponent();
+            getDataPaymentTable();
         }
 
+        private void getDataPaymentTable()
+        {
+            //Create a connection object
+            MySqlConnection connection = new MySqlConnection(connectionString);
+
+            //SQL query
+            MySqlCommand cmd = new MySqlCommand("select * from pos_db.payment", connection);
+
+            //Open up connection with the user table
+            connection.Open();
+
+            //create a datatable object to capture the database table
+            DataTable dt = new DataTable();
+
+            //Execute the command and the load the result of reader inside the datatable
+            dt.Load(cmd.ExecuteReader());
+
+            //Close connection to user table
+            connection.Close();
+
+            //Bind data table to the DataGrid on XAML
+            paymentGrid.DataContext = dt;
+        }        
+        
         private void FilterBtn_Click(object sender, RoutedEventArgs e)
         {
 
@@ -37,12 +63,12 @@ namespace POS_System.Pages
 
         private void RefundBtn_Click(object sender, RoutedEventArgs e)
         {
-            string orderId = {Binding order_id};
+            string orderId = "";
             string paymentId = refundPaymentIdBox.Text;
             string refundAmount = refundAmountBox.Text;
             string refundMethod = refundMethodComboBox.Text;
             string refundReason = refundReasonBox.Text;
-            string userId = ;
+            string userId = "";
 
             MessageBox.Show(paymentId + ' ' + refundAmount + ' ' + refundMethod + ' ' + refundReason);
             
