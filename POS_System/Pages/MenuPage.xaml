@@ -58,7 +58,7 @@
 
 
         <!-- Table Information -->
-        <StackPanel Grid.Row="4" Orientation="Vertical" Margin="298,-12,22,-82" Grid.ColumnSpan="2" >
+        <StackPanel Grid.Row="4" Orientation="Vertical" Margin="298,-12,22,-40" Grid.ColumnSpan="2" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
