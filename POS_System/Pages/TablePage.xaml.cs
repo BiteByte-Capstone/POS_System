@@ -193,5 +193,9 @@ namespace POS_System.Pages
             }
         }
 
+        private void print_button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

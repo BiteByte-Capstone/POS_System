@@ -41,6 +41,10 @@ namespace POS_System.Pages
             _status = status;
             _hasUnpaidOrders = hasUnpaidOrders;
 
+            tableNumTextbox.Text = _tableNumber;
+            orderIdTextbox.Text = _orderId.ToString();
+            typeTextBox.Text = _orderType.ToString();
+
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
             totalAmtTextBox.Text = CalculateTotalOrderAmount().ToString("C", cultureInfo);
@@ -115,6 +119,7 @@ namespace POS_System.Pages
             }
             return totalAmount;
         }
+
 
         //Button Session
         //Save button (send data to payment database and reset table) 
@@ -210,7 +215,7 @@ namespace POS_System.Pages
         //cash button (payment type = cash)
         private void cashBtn_Click(object sender, RoutedEventArgs e)
         {
-            paymentMethod = "cash";
+            paymentMethod = "Cash";
             cashBtn.Background = Brushes.White;
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
@@ -221,7 +226,7 @@ namespace POS_System.Pages
         //visa button (payment type = visa)
         private void visaBtn_Click(object sender, RoutedEventArgs e)
         {
-            paymentMethod = "visa";
+            paymentMethod = "Visa";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = Brushes.White;
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
@@ -231,7 +236,7 @@ namespace POS_System.Pages
         //Master card button (payment type = MC)
         private void mcBtn_Click(object sender, RoutedEventArgs e)
         {
-            paymentMethod = "mastercard";
+            paymentMethod = "Mastercard";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = Brushes.White;
@@ -243,7 +248,7 @@ namespace POS_System.Pages
         //Amex button (payment type = amex)
         private void amexBtn_Click(object sender, RoutedEventArgs e)
         {
-            paymentMethod = "amex";
+            paymentMethod = "Amex";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
@@ -366,6 +371,7 @@ namespace POS_System.Pages
                 changeTextBox.Text = "0";
             }
         }
+
 
         //***
 
