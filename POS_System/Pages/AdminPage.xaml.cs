@@ -16,6 +16,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using POS_System.Database;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Collections;
 
 namespace POS_System.Pages
 {
@@ -31,9 +34,6 @@ namespace POS_System.Pages
         {
             InitializeComponent();
             getAllUser();
-
-
-
         }
 
         private void getAllUser()
@@ -63,7 +63,6 @@ namespace POS_System.Pages
             //Close connection to user table
             connection.Close();
 
-            //Bind data table to the DataGrid on XAML
             userGrid.DataContext = dt;
         }
 
@@ -78,7 +77,7 @@ namespace POS_System.Pages
             //Tutorial used https://www.includehelp.com/dot-net/insert-records-into-mysql-database-in-csharp.aspx
 
             String username = adduser_usernameBox.Text;
-            String password = adduser_passwordBox.Text;
+            String password = adduser_passwordBox.Password;
             String id = adduser_idBox.Text;
 
             try
@@ -115,35 +114,15 @@ namespace POS_System.Pages
             }
         }
 
-        private void deleteUser_Click(object sender, RoutedEventArgs e)
+        private void adduser_idBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            String id = deleteuser_idBox.Text;
 
-            //String to make connection to database
-            string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
-            //Create a connection object
-            MySqlConnection connection = new MySqlConnection(connectionString);
-
-            //SQL query
-            MySqlCommand cmd = new MySqlCommand("delete from user where user_id = " + id, connection);
-
-            //Open up connection with the user table
-            connection.Open();
-
-            //Execute the command
-            cmd.ExecuteNonQuery();
-
-            //Close connection to user table
-            connection.Close();
-
-            getAllUser();
         }
 
         private void editUser_Click(object sender, RoutedEventArgs e)
         {
             String username = edituser_usernameBox.Text;
-            String password = edituser_passwordBox.Text;
+            String password = edituser_passwordBox.Password;
             String id = edituser_idBox.Text;
 
             //String to make connection to database
@@ -200,7 +179,7 @@ namespace POS_System.Pages
                 while (dr.Read())
                 {
                     edituser_usernameBox.Text = dr.GetValue(1).ToString();
-                    edituser_passwordBox.Text = dr.GetValue(2).ToString();
+                    edituser_passwordBox.Password = dr.GetValue(2).ToString();
                 }
 
                 //Close connection to user table
@@ -214,9 +193,131 @@ namespace POS_System.Pages
             }
         }
 
-        private void adduser_idBox_TextChanged(object sender, TextChangedEventArgs e)
+        // Inside dataGrid Edit button
+        private void AdminEditButton_Click(object sender, RoutedEventArgs e)
         {
+            DataRowView selectedRow = (DataRowView)userGrid.SelectedItem;
+            if (selectedRow != null)
+            {
+                edituser_idBox.Text = selectedRow["user_id"].ToString();
+                edituser_usernameBox.Text = selectedRow["user_name"].ToString();
+            }
+        }
 
+
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Ensure that the button clicked is actually in the DataGrid
+            if (sender is Button button && button.DataContext is DataRowView dataRow)
+            {
+                var id = dataRow["user_id"];
+                var username = dataRow["user_name"].ToString();
+
+                // Confirm user wants to delete with the user's name included
+                MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {username}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    // If yes, delete row
+                    // String to make connection to database
+                    string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+                    try
+                    {
+                        // Create a connection object
+                        using (MySqlConnection connection = new MySqlConnection(connectionString))
+                        {
+                            connection.Open();
+                            using (MySqlCommand cmd = new MySqlCommand("DELETE FROM user WHERE user_id = @Id", connection))
+                            {
+                                cmd.Parameters.AddWithValue("@Id", id);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        getAllUser();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log or display the error message
+                        Console.WriteLine(ex.Message);
+                        MessageBox.Show("An error occurred while deleting the user. Please try again.");
+                    }
+                }
+            }
+        }
+
+        private void RoleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = sender as ComboBox;
+
+            if (comboBox.SelectedItem is ComboBoxItem item)
+            {
+                string selectedRole = (comboBox.SelectedItem as ComboBoxItem).Content.ToString();
+
+                int newID = GetNextIDForRole(selectedRole);
+                adduser_idBox.Text = newID.ToString();
+            }
+        }
+
+        private int GetNextIDForRole(string role)
+        {
+            int hightestID = 0;
+            int startingNumber = 0;
+
+            // Define starting numbers for each role
+            switch (role)
+            {
+                case "Admin":
+                    startingNumber = 100;
+                    break;
+                case "Manager":
+                    startingNumber = 200;
+                    break;
+                case "Waiter":
+                    startingNumber = 300;
+                    break;
+            }
+
+            using (DatabaseHelper db = new DatabaseHelper("localhost", "pos_db", "root", "password"))
+            {
+                if (db.OpenConnection())
+                {
+                    try
+                    {
+                        string query = $"SELECT MAX(user_id) FROM user WHERE user_id >= {startingNumber} AND user_id < {startingNumber + 100}";
+
+                        // Use reflection to access the private sqlConn field in DatabaseHelper
+                        FieldInfo fieldInfo = db.GetType().GetField("sqlConn", BindingFlags.NonPublic | BindingFlags.Instance);
+                        MySqlConnection sqlConn = null;
+                        if (fieldInfo != null)
+                        {
+                            sqlConn = (MySqlConnection)fieldInfo.GetValue(db);
+                        }
+
+                        MySqlCommand command = new MySqlCommand(query, sqlConn);
+                        object result = command.ExecuteScalar();
+
+
+                        if (result != null && int.TryParse(result.ToString(), out hightestID))
+                        {
+                            hightestID += 1;
+                        }
+                        else
+                        {
+                            // If there's no ID for the role yet, start with the startingNumber
+                            hightestID = startingNumber;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error:   " + ex.Message);
+                    }
+                    finally
+                    {
+                        db.CloseConnection();
+                    }
+                }
+            }
+            return hightestID;
         }
     }
 }
