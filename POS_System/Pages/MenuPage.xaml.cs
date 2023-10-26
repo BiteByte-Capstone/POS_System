@@ -29,6 +29,10 @@ namespace POS_System.Pages
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
 
+        private string _tableNumber;
+        private string _orderType;
+        private string _status;
+        private bool _hasUnpaidOrders;
 
         private double TotalAmount = 0.0;
         private int existItemCount = 0;
@@ -45,13 +49,18 @@ namespace POS_System.Pages
 
         public MenuPage(string tableNumber, string orderType, string status, bool hasUnpaidOrders) : this()
         {
-            TableNumberTextBox.Text = tableNumber;
-            TypeTextBox.Text = orderType;
-            StatusTextBlock.Text = status;
+            _tableNumber = tableNumber;
+            _orderType = orderType;
+            _status = status;
+            _hasUnpaidOrders = hasUnpaidOrders;
 
-            if (hasUnpaidOrders)
+            TableNumberTextBox.Text = _tableNumber;
+            TypeTextBox.Text = _orderType;
+            StatusTextBlock.Text = _status;
+
+            if (_hasUnpaidOrders)
             {
-                LoadUnpaidOrders(tableNumber);
+                LoadUnpaidOrders(_tableNumber);
             }
         }
 
