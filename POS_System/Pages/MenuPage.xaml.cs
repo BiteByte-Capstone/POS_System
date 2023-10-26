@@ -71,7 +71,7 @@ namespace POS_System.Pages
                     unpaidOrdersCmd.Parameters.AddWithValue("@orderId", orderId);
                     MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
                     DataTable unpaidOrdersTable = new DataTable();
-                    dataAdapter.Fill(unpaidOrdersTable);
+                    MessageBox.Show(dataAdapter.Fill(unpaidOrdersTable).ToString());//!!!!!!! remove messageBox later
                     /*items.Clear();*/
 
                     if (unpaidOrdersTable.Rows.Count > 0)
@@ -213,6 +213,7 @@ namespace POS_System.Pages
         private void ItemClick(object sender, RoutedEventArgs e)
         {
             itemClick = true;
+            
             Button clickedButton = sender as Button;
             if (clickedButton != null && clickedButton.Tag is Item)
             {
@@ -220,14 +221,11 @@ namespace POS_System.Pages
 
                 if (item != null)
                 {
-                    if (orderedItems.Count == 0 && StatusTextBlock.Text.Equals("New Order"))
+                    if (StatusTextBlock.Text.Equals("New Order")) //orderedItems.Count == 0 && 
                     {
-                        items.Add(item);
-                        OrdersListBox.ItemsSource = items;
-                        TotalAmount += item.ItemPrice;
-                        CultureInfo cultureInfo = new CultureInfo("en-CA");
-                        cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-                        TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
+                        AddItemToOrder(item);
+                        /*OrdersListBox.ItemsSource = orderedItems;*/
+
 
 
                     }
