@@ -201,7 +201,7 @@ namespace POS_System.Pages
                     newItemButton.Content = rdr["item_name"].ToString();
                     newItemButton.Tag = item;
                     newItemButton.Width = 150;
-                    newItemButton.Height = 60;
+                    newItemButton.Height = 80;
                     SetButtonStyle(newItemButton);
                     newItemButton.Click += ItemClick;
                     ItemButtonPanel.Children.Add(newItemButton);
