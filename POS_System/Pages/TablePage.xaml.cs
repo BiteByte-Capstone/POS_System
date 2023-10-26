@@ -55,14 +55,14 @@ namespace POS_System.Pages
 
 
         // Handle table number, order number, order type
-        private void Open_Table(object sender, RoutedEventArgs e)
+        private void OpenOrder_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             if (button != null)
             {
                 string tableName = button.Name;
                 int index = tableName.IndexOf('_');
-                string tableNumber = tableName.Substring(index + 1);
+                string tableNumber = tableName.Substring(index + 1); //D1 if dine-in T1 if Take-Out
                 string orderType = tableName.Substring(0, index);
 
                 string Type = "";
@@ -86,7 +86,7 @@ namespace POS_System.Pages
                 else
                 {
                     // If no unpaid orders exist, create a new order
-                    MenuPage menuPage = new MenuPage(tableNumber, Type, "New Table", false);
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "New Order", false);
                     menuPage.Show();
                 }
 
@@ -156,24 +156,25 @@ namespace POS_System.Pages
                     while (reader.Read())
                     {
                         // Get the table number from the query result
-                        int tableNumber = reader.GetInt32(0);
+                        string tableNumber = reader.GetString(0);
+                        
 
 
-
-                        // Find the corresponding table UI element in your XAML
-                        string buttonName = "table_" + tableNumber;
-
+                        string tableButtonName = "table_" + tableNumber;
+                        string takeOutButtonName = "takeOut_" + tableNumber;
 
 
                         // Try to find the button by name
-                        Button tableButton = FindName(buttonName) as Button;
-
-
+                        Button tableButton = FindName(tableButtonName) as Button;
+                        Button takeOutButton = FindName(takeOutButtonName) as Button;
 
                         if (tableButton != null)
                         {
                             // Change the background color to green
                             tableButton.Background = Brushes.Green;
+                        } else if (takeOutButton != null)
+                        {
+                            takeOutButton.Background = Brushes.Green;
                         }
                     }
 
@@ -192,5 +193,14 @@ namespace POS_System.Pages
             }
         }
 
+        private void print_button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TablePageTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

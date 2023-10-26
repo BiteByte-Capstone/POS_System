@@ -9,9 +9,10 @@ namespace POS_System.Models
     public class OrderedItem
     {
         public OrderedItem() { }
-        public OrderedItem(int order_id, string item_name, int Quantity, double ItemPrice, bool isExistItem)
+        public OrderedItem(int order_id, int item_id, string item_name, int Quantity, double ItemPrice, bool isExistItem)
         {
             this.order_id = order_id;
+            this.item_id = item_id;
             this.item_name = item_name;
             this.Quantity = Quantity;
             this.ItemPrice = ItemPrice;

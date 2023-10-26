@@ -29,7 +29,7 @@
             <ColumnDefinition Width="591"/>
             <ColumnDefinition Width="886"/>
         </Grid.ColumnDefinitions>
-        <Button Content="Back" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="-2,50,0,0" VerticalAlignment="Top" Width="184" Grid.Row="4" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" >
+        <Button Content="Back" HorizontalAlignment="Left" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="-2,50,0,0" VerticalAlignment="Top" Width="184" Grid.Row="4" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" >
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -58,7 +58,7 @@
 
 
         <!-- Table Information -->
-        <StackPanel Grid.Row="4" Orientation="Vertical" Margin="298,-12,22,-82" Grid.ColumnSpan="2" >
+        <StackPanel Grid.Row="4" Orientation="Vertical" Margin="298,-12,22,-30" Grid.ColumnSpan="2" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
