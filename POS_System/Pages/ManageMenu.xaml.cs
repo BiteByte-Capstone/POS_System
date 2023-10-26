@@ -1,184 +1,224 @@
-﻿using POS.Models;
+﻿using MySql.Data.MySqlClient;
+using POS.Models;
+using POS_System.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace POS_System.Pages
 {
     public partial class ManageMenu : Window
     {
-        private List<MenuItem> menuItems; // This list represents your menu items. Replace it with your actual data structure.
+        //categories
+        private ObservableCollection<Category> categories = new ObservableCollection<Category>();
+        //new order
+        private ObservableCollection<Item> items = new ObservableCollection<Item>();
+
+        string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
         public ManageMenu()
         {
             InitializeComponent();
+            LoadCategoryData();
             InitializeMenuItems(); // Load menu items (you should implement this method)
         }
 
-        // Initialize the list of menu items (example method, replace with your actual data)
+
         private void InitializeMenuItems()
         {
-            menuItems = new List<MenuItem>
-            {
-                new MenuItem { Id = 1, Name = "Item 1", Price = 10.99 },
-                new MenuItem { Id = 2, Name = "Item 2", Price = 8.99 },
-                // Add more menu items as needed
-            };
 
-            // Bind the menu items to your ListBox named ItemList
-            ItemList.ItemsSource = menuItems; // Assuming you have a ListBox named ItemList
         }
 
-        // Event handler for the "Edit Item" button
-        private void EditItemButton_Click(object sender, RoutedEventArgs e)
+        private void ShowItem_Click(object sender, RoutedEventArgs e)
         {
-            // Check if an item is selected for editing
-            if (ItemList.SelectedItem != null)
-            {
-                // Open a dialog or a new window for editing the selected item
-                MenuItem selectedItem = (MenuItem)ItemList.SelectedItem;
-
-
-
-                // After editing, update the list or reload the menu items
-                InitializeMenuItems(); // Replace with your actual data update method
-            }
-            else
-            {
-                MessageBox.Show("Please select an item to edit.");
-            }
+            DataGrid.ItemsSource = GetAllItem().DefaultView;
         }
 
-        // Event handler for the "Delete Item" button
-        private void DeleteItemButton_Click(object sender, RoutedEventArgs e)
+        private void ShowCategory_Click(object sender, RoutedEventArgs e)
         {
-            // Check if an item is selected for deletion
-            if (ItemList.SelectedItem != null)
-            {
-                // Confirm deletion with a dialog
-                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this item?", "Confirmation", MessageBoxButton.YesNo);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    // Perform the deletion (you should implement this method)
-                    MenuItem selectedItem = (MenuItem)ItemList.SelectedItem;
-                    DeleteMenuItem(selectedItem.Id); // Replace with your actual deletion method
-
-                    // Update the list or reload the menu items
-                    InitializeMenuItems(); // Replace with your actual data update method
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select an item to delete.");
-            }
+            DataGrid.ItemsSource = GetAllCategory().DefaultView;
         }
 
-        // Event handler for the "Add Item" button
-        private void AddItemButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Create a new item with the values from the text boxes
-            string itemName = ItemNameTextBox.Text;
-            double itemPrice;
-
-            // Check if the price can be parsed
-            if (!string.IsNullOrWhiteSpace(itemName) && double.TryParse(ItemPriceTextBox.Text, out itemPrice))
-            {
-                // Create the new item
-                MenuItem newItem = new MenuItem
-                {
-                    Id = menuItems.Count + 1, // Assign a unique ID, you may need a better method
-                    Name = itemName,
-                    Price = itemPrice
-                };
-
-                // Add the new item to your list
-                menuItems.Add(newItem);
-
-                // Refresh the ListBox
-                ItemList.ItemsSource = null;
-                ItemList.ItemsSource = menuItems;
-
-                // Clear the input text boxes
-                ItemNameTextBox.Text = "Enter item name";
-                ItemPriceTextBox.Text = "Enter item price";
-            }
-            else
-            {
-                MessageBox.Show("Please enter a valid item name and price.");
-            }
-        }
-
-        // Implement your DeleteMenuItem method here
-        private void DeleteMenuItem(int itemId)
-        {
-            // Implement the logic to delete a menu item with the specified itemId
-        }
-
-        // Event handler for the "Cancel" button in the item addition form
-        private void CancelAddItemButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Hide the item addition form
-            ItemAdditionForm.Visibility = Visibility.Collapsed;
-        }
-
-        // Event handler for the "View Sales" button (you can implement this)
         private void ViewSalesButton_Click(object sender, RoutedEventArgs e)
         {
-            // Implement the logic to view sales
+
         }
 
-        // Event handler for the "Settings" button (you can implement this)
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            // Implement the logic to open settings
+
         }
 
-        private void ItemNameTextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            TextBox textBox = (TextBox)sender;
-            if (textBox.Text == "Enter item name")
-            {
-                textBox.Text = "";
-            }
+            AdminManagement adminManagement = new AdminManagement();
+            adminManagement.Show();
+            this.Close();
         }
 
-        private void ItemNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        //Method: To get all item from database
+        private DataTable GetAllItem()
         {
-            TextBox textBox = (TextBox)sender;
-            if (string.IsNullOrWhiteSpace(textBox.Text))
+            string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand cmd = new MySqlCommand("select * from item order by 1", connection);
+
+            DataTable dt = new DataTable();
+
+            try
             {
-                textBox.Text = "Enter item name";
+                connection.Open();
+                dt.Load(cmd.ExecuteReader());
             }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., logging)
+            }
+            finally
+            {
+                // Ensure that the connection is always closed, even if an error occurs
+                if (connection.State == ConnectionState.Open)
+                    connection.Close();
+            }
+
+            return dt;
         }
 
-        private void ItemPriceTextBox_GotFocus(object sender, RoutedEventArgs e)
+        private DataTable GetAllCategory()
         {
-            TextBox textBox = (TextBox)sender;
-            if (textBox.Text == "Enter item price")
+            
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand cmd = new MySqlCommand("select * from category order by 1", connection);
+
+            DataTable dt = new DataTable();
+
+            try
             {
-                textBox.Text = "";
+                connection.Open();
+                dt.Load(cmd.ExecuteReader());
             }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., logging)
+            }
+            finally
+            {
+                // Ensure that the connection is always closed, even if an error occurs
+                if (connection.State == ConnectionState.Open)
+                    connection.Close();
+            }
+
+            return dt;
         }
 
-        private void ItemPriceTextBox_LostFocus(object sender, RoutedEventArgs e)
+        private void LoadCategoryData()
         {
-            TextBox textBox = (TextBox)sender;
-            if (string.IsNullOrWhiteSpace(textBox.Text))
-            {
-                textBox.Text = "Enter item price";
-            }
-        }
-    }
 
-    // Example class representing a menu item
-    public class MenuItem
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public double Price { get; set; }
+            MySqlConnection conn = new MySqlConnection(connectionString);
+
+            try
+            {
+                conn.Open();
+                string sql = "SELECT * FROM category;";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    Category category = new Category
+                    {
+                        Id = Convert.ToInt32(rdr["category_id"]),
+                        Name = rdr["category_name"].ToString(),
+                    };
+
+                    categories.Add(category);
+
+                    Button newCategoryButton = new Button();
+                    newCategoryButton.Content = rdr["category_name"].ToString();
+                    newCategoryButton.Tag = category;
+                    newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
+                    newCategoryButton.Width = 150;
+                    newCategoryButton.Height = 60;
+                    newCategoryButton.Margin = new Thickness(5);
+                    SetButtonStyle(newCategoryButton);
+
+                    CategoryButtonPanel.Children.Add(newCategoryButton);
+                }
+
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            conn.Close();
+        }
+
+
+
+        private void LoadItemsByCategory(string categoryName)
+        {
+            ItemButtonPanel.Children.Clear();
+
+            MySqlConnection conn = new MySqlConnection(connectionString);
+
+            try
+            {
+                conn.Open();
+                string sql = "SELECT * FROM item WHERE item_category = @category;";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@category", categoryName);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    Item item = new Item
+                    {
+                        Id = Convert.ToInt32(rdr["item_id"]),
+                        item_name = rdr["item_name"].ToString(),
+                        ItemPrice = Convert.ToDouble(rdr["item_price"]),
+                        Description = rdr["item_description"].ToString(),
+                        Category = rdr["item_category"].ToString()
+                    };
+
+                    Button newItemButton = new Button();
+                    newItemButton.Content = rdr["item_name"].ToString();
+                    newItemButton.Tag = item;
+                    newItemButton.Width = 150;
+                    newItemButton.Height = 60;
+                    SetButtonStyle(newItemButton);
+                    
+                    ItemButtonPanel.Children.Add(newItemButton);
+                }
+
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            conn.Close();
+        }
+
+        // For Styling
+        private void SetButtonStyle(Button button)
+        {
+            button.FontFamily = new FontFamily("Verdana");
+            button.FontSize = 20;
+            button.Background = Brushes.Orange;
+            button.Foreground = Brushes.Black;
+            button.FontWeight = FontWeights.Bold;
+            button.BorderBrush = Brushes.Orange;
+            button.Padding = new Thickness(10);
+
+            button.Margin = new Thickness(5);
+        }
+
     }
 }

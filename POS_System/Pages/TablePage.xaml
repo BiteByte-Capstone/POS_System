@@ -9,9 +9,9 @@
     <Grid>
         <TextBox x:Name="UserNameTextBox" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center" Text="Welcome Back, Waiter" TextWrapping="Wrap" FontFamily="Verdana" FontSize="26" FontWeight="Bold" Background="{x:Null}" Foreground="Orange" Margin="0,10,0,20" BorderThickness="0"/>
 
-        <TabControl Name="TablePageTab">
+        <TabControl Name="TablePageTab" SelectionChanged="TablePageTab_SelectionChanged">
             <TabItem Header="DineIn" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold">
-                <Grid Background="#383838" Margin="93,0,-93,0" >
+                <Grid Background="#383838" Margin="1,0,-1,0" >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
@@ -70,23 +70,25 @@
             <TabItem Header="Takeout" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold">
                 <Grid Background="#383838" >
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="67*"/>
+                        <ColumnDefinition Width="88*"/>
+                        <ColumnDefinition Width="1616*"/>
                     </Grid.ColumnDefinitions>
 
 
 
 
 
-                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="774">
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Width="774" Grid.Column="2" Margin="343,0,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="17*"/>
                             <ColumnDefinition Width="241*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="takeOut_T1" Content="TakeOut-1" HorizontalAlignment="Left" Margin="23,0,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.ColumnSpan="2"/>
-                        <Button x:Name="takeOut_T2" Content="TakeOut-2" HorizontalAlignment="Left" Margin="236,2,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
-                        <Button x:Name="takeOut_T3" Content="TakeOut-3" HorizontalAlignment="Left" Margin="508,2,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
-                        <Button x:Name="takeOut_T4" Content="TakeOut-4" HorizontalAlignment="Left" Margin="100,235,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
-                        <Button x:Name="takeOut_T5" Content="TakeOut-5" HorizontalAlignment="Left" Margin="395,235,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
+                        <Button x:Name="takeOut_T1" Content="TakeOut 1" HorizontalAlignment="Left" Margin="23,0,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.ColumnSpan="2"/>
+                        <Button x:Name="takeOut_T2" Content="TakeOut 2" HorizontalAlignment="Left" Margin="236,2,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
+                        <Button x:Name="takeOut_T3" Content="TakeOut 3" HorizontalAlignment="Left" Margin="508,2,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
+                        <Button x:Name="takeOut_T4" Content="TakeOut 4" HorizontalAlignment="Left" Margin="100,235,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
+                        <Button x:Name="takeOut_T5" Content="TakeOut 5" HorizontalAlignment="Left" Margin="395,235,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
 
 
 
@@ -95,8 +97,8 @@
                     </Grid>
 
 
-                    <Button x:Name="logout_button2" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click"/>
-                    <Button x:Name="print_button2" Content="Print Bill" HorizontalAlignment="Left" Margin="150,365,0,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="200" Height="100"/>
+                    <Button x:Name="logout_button2" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" Foreground="Black" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,4,0" Grid.ColumnSpan="2"/>
+
 
                 </Grid>
 
