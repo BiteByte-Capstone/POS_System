@@ -242,5 +242,11 @@ namespace POS_System.Pages
             button.Margin = new Thickness(5);
         }
 
+        private void AddCategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        
     }
 }

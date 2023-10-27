@@ -117,7 +117,7 @@
         
         <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left">
             <!-- Add Category Button-->
-            <Button x:Name="AddCategoryButton" Content="Add Category" Width="150" Height="60" Click="AddCategoryButton_Click" />
+            <Button x:Name="AddCategoryButton" Content="Add Category" Width="150" Height="60" Click="AddCategoryButton_Click" Visibility="{Binding IsAddCategoryButtonVisible}"/>
         </StackPanel>
 
         <ContentControl Name="itemCategoryDataGrid" Content="ContentControl" Grid.Column="1" Grid.Row="1" Margin="90,0,25,10" Grid.ColumnSpan="2"/>
