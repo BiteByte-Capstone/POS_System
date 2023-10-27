@@ -91,13 +91,16 @@
 
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="436*"/>
+            <ColumnDefinition Width="83*"/>
 
 
         </Grid.ColumnDefinitions>
 
         <!-- Title or Logo -->
-        <TextBlock  Text="Menu Management" FontSize="45" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="518,0,0,0" Foreground="Orange" Grid.Row="0" Grid.Column="1" Height="60" Width="540"/>
-
+        <TextBlock  Text="Menu Management" TextAlignment="Center" FontSize="45" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="418,0,0,0" Foreground="Orange" Grid.Row="0" Grid.Column="1" Height="60" Width="540"/>
+        <!-- Back Button -->
+        <Button x:Name="BackButton" Content="Back" Width="200" Height="50" Click="BackButton_Click" ToolTip="Return to previous screen" VerticalAlignment="Top" Margin="0,5,0,0"/>
         <!-- Navigation Buttons in StackPanel for better layout management -->
         <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Center">
             <!-- Add New Item Button -->
@@ -108,11 +111,10 @@
             <Button x:Name="ViewSalesButton" Content="View Sales" Width="200" Height="50" Click="ViewSalesButton_Click" ToolTip="View sales information"/>
             <!-- Settings Button -->
             <Button x:Name="SettingsButton" Content="Settings" Width="200" Height="50" Click="SettingsButton_Click" ToolTip="Configure settings"/>
-            <!-- Back Button -->
-            <Button x:Name="BackButton" Content="Back" Width="200" Height="50" Click="BackButton_Click" ToolTip="Return to previous screen"/>
+
         </StackPanel>
 
-        <ContentControl Name="itemCategoryDataGrid" Content="ContentControl" Grid.Column="1" Grid.Row="1" Margin="90,0,-411,10"/>
+        <ContentControl Name="itemCategoryDataGrid" Content="ContentControl" Grid.Column="1" Grid.Row="1" Margin="90,0,25,10" Grid.ColumnSpan="2"/>
 
     </Grid>
 </Window>
