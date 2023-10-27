@@ -416,19 +416,10 @@ namespace POS_System.Pages
         {
 
 
-            if (OrdersListBox.SelectedItem is Item selectedItem)
+            if(OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
             {
-                items.Remove(selectedItem);
-                TotalAmount -= selectedItem.ItemPrice;
-                CultureInfo cultureInfo = new CultureInfo("en-CA");
-                cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-                TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
-                
-            }
-            else if(OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
-            {
-                if (ExistedItem() == true)
-                {
+/*                if (ExistedItem() == true)
+                {*/
 
                     
                     orderedItems.Remove(selectedOrderedItem);
@@ -437,7 +428,7 @@ namespace POS_System.Pages
                     CultureInfo cultureInfo = new CultureInfo("en-CA");
                     cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
                     TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
-                }
+/*                }*/
             }
                 
             else
@@ -462,7 +453,10 @@ namespace POS_System.Pages
             MessageBox.Show("Order sent to Kitchen successfully!");
 
             orderedItems.Clear();
-
+            TablePage tablePage = new TablePage();
+            tablePage.Show();
+            this.Close();
+            
 
 
 
@@ -576,11 +570,8 @@ namespace POS_System.Pages
                         /*items.Clear();*/
                         TotalAmount = 0.0;
                         TotalAmountTextBlock.Text = TotalAmount.ToString("C");
-
-                        TablePage tablePage = new TablePage();
-                        tablePage.Show();
-                        this.Close();
                         conn.Close();
+
                     }
                     catch (MySqlException ex)
                     {

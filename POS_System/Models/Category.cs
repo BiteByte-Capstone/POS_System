@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace POS_System.Models
 {
-    public class Category : INotifyPropertyChanged
+    public class Category 
     {
         public int Id { get; set; }
         public string Name { get; set; }    
@@ -20,6 +20,6 @@ namespace POS_System.Models
                 
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        
     }
 }

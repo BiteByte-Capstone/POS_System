@@ -25,24 +25,24 @@ namespace POS_System.Pages
         public ManageMenu()
         {
             InitializeComponent();
-            LoadCategoryData();
-            InitializeMenuItems(); // Load menu items (you should implement this method)
-        }
-
-
-        private void InitializeMenuItems()
-        {
+            
+            
 
         }
+  
 
         private void ShowItem_Click(object sender, RoutedEventArgs e)
         {
-            DataGrid.ItemsSource = GetAllItem().DefaultView;
+            itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["ItemTemplate"];
+            itemCategoryDataGrid.Content = GetAllItems();
+
+
         }
 
         private void ShowCategory_Click(object sender, RoutedEventArgs e)
         {
-            DataGrid.ItemsSource = GetAllCategory().DefaultView;
+            itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["CategoryTemplate"];
+            itemCategoryDataGrid.Content = GetAllCategories();
         }
 
         private void ViewSalesButton_Click(object sender, RoutedEventArgs e)
@@ -62,149 +62,171 @@ namespace POS_System.Pages
             this.Close();
         }
 
+        private void DeleteButton_Click(Object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void EditButton_Click(Object sender, RoutedEventArgs e)
+        {
+
+        }
+
         //Method: To get all item from database
-        private DataTable GetAllItem()
+        private ObservableCollection<Item> GetAllItems()
         {
-            string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-            MySqlConnection connection = new MySqlConnection(connectionString);
-            MySqlCommand cmd = new MySqlCommand("select * from item order by 1", connection);
+            items = new ObservableCollection<Item>();
 
-            DataTable dt = new DataTable();
-
-            try
+            using (var connection = new MySqlConnection(connectionString))
             {
-                connection.Open();
-                dt.Load(cmd.ExecuteReader());
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions (e.g., logging)
-            }
-            finally
-            {
-                // Ensure that the connection is always closed, even if an error occurs
-                if (connection.State == ConnectionState.Open)
-                    connection.Close();
-            }
-
-            return dt;
-        }
-
-        private DataTable GetAllCategory()
-        {
-            
-            MySqlConnection connection = new MySqlConnection(connectionString);
-            MySqlCommand cmd = new MySqlCommand("select * from category order by 1", connection);
-
-            DataTable dt = new DataTable();
-
-            try
-            {
-                connection.Open();
-                dt.Load(cmd.ExecuteReader());
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions (e.g., logging)
-            }
-            finally
-            {
-                // Ensure that the connection is always closed, even if an error occurs
-                if (connection.State == ConnectionState.Open)
-                    connection.Close();
-            }
-
-            return dt;
-        }
-
-        private void LoadCategoryData()
-        {
-
-            MySqlConnection conn = new MySqlConnection(connectionString);
-
-            try
-            {
-                conn.Open();
-                string sql = "SELECT * FROM category;";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-
-                while (rdr.Read())
+                var cmd = new MySqlCommand("SELECT * FROM item ORDER BY 1", connection);
+                try
                 {
-                    Category category = new Category
+                    connection.Open();
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        Id = Convert.ToInt32(rdr["category_id"]),
-                        Name = rdr["category_name"].ToString(),
-                    };
-
-                    categories.Add(category);
-
-                    Button newCategoryButton = new Button();
-                    newCategoryButton.Content = rdr["category_name"].ToString();
-                    newCategoryButton.Tag = category;
-                    newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
-                    newCategoryButton.Width = 150;
-                    newCategoryButton.Height = 60;
-                    newCategoryButton.Margin = new Thickness(5);
-                    SetButtonStyle(newCategoryButton);
-
-                    CategoryButtonPanel.Children.Add(newCategoryButton);
+                        while (reader.Read())
+                        {
+                            items.Add(new Item
+                            {
+                                Id = Convert.ToInt32(reader["item_id"]),
+                                item_name = reader["item_name"].ToString(),
+                                ItemPrice = Convert.ToDouble(reader["item_price"]),
+                                Description = reader["item_description"].ToString(),
+                                Category = reader["item_category"].ToString()
+                                
+                            });
+                        }
+                    }
                 }
-
-                rdr.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            conn.Close();
-        }
-
-
-
-        private void LoadItemsByCategory(string categoryName)
-        {
-            ItemButtonPanel.Children.Clear();
-
-            MySqlConnection conn = new MySqlConnection(connectionString);
-
-            try
-            {
-                conn.Open();
-                string sql = "SELECT * FROM item WHERE item_category = @category;";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@category", categoryName);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-
-                while (rdr.Read())
+                catch (Exception ex)
                 {
-                    Item item = new Item
-                    {
-                        Id = Convert.ToInt32(rdr["item_id"]),
-                        item_name = rdr["item_name"].ToString(),
-                        ItemPrice = Convert.ToDouble(rdr["item_price"]),
-                        Description = rdr["item_description"].ToString(),
-                        Category = rdr["item_category"].ToString()
-                    };
-
-                    Button newItemButton = new Button();
-                    newItemButton.Content = rdr["item_name"].ToString();
-                    newItemButton.Tag = item;
-                    newItemButton.Width = 150;
-                    newItemButton.Height = 60;
-                    SetButtonStyle(newItemButton);
-                    
-                    ItemButtonPanel.Children.Add(newItemButton);
+                    // Handle exceptions
                 }
-
-                rdr.Close();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            conn.Close();
+            return items;
         }
+
+
+        private ObservableCollection<Category> GetAllCategories()
+        {
+            categories = new ObservableCollection<Category>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                var cmd = new MySqlCommand("SELECT * FROM category ORDER BY 1", connection);
+                try
+                {
+                    connection.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            categories.Add(new Category
+                            {
+                                Id = Convert.ToInt32(reader["category_id"]),
+                                Name = reader["category_name"].ToString()
+                                
+
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions
+                }
+            }
+            return categories;
+        }
+
+        /*        private void LoadCategoryData()
+                {
+
+                    MySqlConnection conn = new MySqlConnection(connectionString);
+
+                    try
+                    {
+                        conn.Open();
+                        string sql = "SELECT * FROM category;";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+
+                        while (rdr.Read())
+                        {
+                            Category category = new Category
+                            {
+                                Id = Convert.ToInt32(rdr["category_id"]),
+                                Name = rdr["category_name"].ToString(),
+                            };
+
+                            categories.Add(category);
+
+                            Button newCategoryButton = new Button();
+                            newCategoryButton.Content = rdr["category_name"].ToString();
+                            newCategoryButton.Tag = category;
+                            newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
+                            newCategoryButton.Width = 150;
+                            newCategoryButton.Height = 60;
+                            newCategoryButton.Margin = new Thickness(5);
+                            SetButtonStyle(newCategoryButton);
+
+                            CategoryButtonPanel.Children.Add(newCategoryButton);
+                        }
+
+                        rdr.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                    conn.Close();
+                }*/
+
+
+
+        /*        private void LoadItemsByCategory(string categoryName)
+                {
+                    ItemButtonPanel.Children.Clear();
+
+                    MySqlConnection conn = new MySqlConnection(connectionString);
+
+                    try
+                    {
+                        conn.Open();
+                        string sql = "SELECT * FROM item WHERE item_category = @category;";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        cmd.Parameters.AddWithValue("@category", categoryName);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+
+                        while (rdr.Read())
+                        {
+                            Item item = new Item
+                            {
+                                Id = Convert.ToInt32(rdr["item_id"]),
+                                item_name = rdr["item_name"].ToString(),
+                                ItemPrice = Convert.ToDouble(rdr["item_price"]),
+                                Description = rdr["item_description"].ToString(),
+                                Category = rdr["item_category"].ToString()
+                            };
+
+                            Button newItemButton = new Button();
+                            newItemButton.Content = rdr["item_name"].ToString();
+                            newItemButton.Tag = item;
+                            newItemButton.Width = 150;
+                            newItemButton.Height = 60;
+                            SetButtonStyle(newItemButton);
+
+                            ItemButtonPanel.Children.Add(newItemButton);
+                        }
+
+                        rdr.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                    conn.Close();
+                }*/
 
         // For Styling
         private void SetButtonStyle(Button button)

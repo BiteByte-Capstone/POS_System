@@ -15,6 +15,8 @@ namespace POS_System.Pages
     public partial class PaymentPage : Window
     {
         private ObservableCollection<OrderedItem> _orderedItems;
+
+        //getter change later!!!!!
         private string _tableNumber;
         private string _orderType;
         private long _orderId;

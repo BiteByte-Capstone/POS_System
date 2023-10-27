@@ -72,7 +72,7 @@
                 Foreground="Orange" 
                 Background="#383838" 
                 BorderBrush="Orange" 
-                Click="Button_Click2"/>
+                Click="ManageMenuButton_Click"/>
 
 
 

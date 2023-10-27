@@ -37,11 +37,11 @@ namespace POS_System.Pages
             TablePage adminWindow = new TablePage();
             adminWindow.Show();
         }
-        private void Button_Click2(object sender, RoutedEventArgs e)
+        private void ManageMenuButton_Click(object sender, RoutedEventArgs e)
         {
-            // Open the Admin window when the button is clicked
-/*            ManageMenu adminWindow = new ManageMenu();
-            adminWindow.Show();*/
+            ManageMenu manageMenu = new ManageMenu();
+            manageMenu.Show();
+
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
