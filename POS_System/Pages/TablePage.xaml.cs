@@ -14,6 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 
+//Import User into class
+using POS.Models;
+
 
 
 namespace POS_System.Pages
@@ -24,6 +27,9 @@ namespace POS_System.Pages
         // Define properties to store table number and order type
         public string TableNumber { get; private set; }
         public string OrderType { get; private set; }
+
+        public string userName { get; private set; }
+        public string userId { get; private set; }
 
         public TablePage()
         {
@@ -39,9 +45,6 @@ namespace POS_System.Pages
             this.TableNumber = tableNumber;
             this.OrderType = orderType;
         }
-
-
-
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {

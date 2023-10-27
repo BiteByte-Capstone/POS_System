@@ -13,6 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+//import User model
+using POS.Models;
+
 namespace POS_System.Pages
 {
     /// <summary>
@@ -38,9 +41,16 @@ namespace POS_System.Pages
                 string authenticatedUsername = db.GetUsername(enteredUserId);
                 MessageBox.Show("Login successful! " + authenticatedUsername);
 
+                // Instantiate a User object --> all pages can now get the static id and name from the User class
+                // Would be used to track user activity in the system and activity-log report.
+
+                User user = new User(int.Parse(enteredUserId), authenticatedUsername, "");
+                
                 // Pass the userId to TablePage when creating an instance
+                
                 TablePage window2 = new TablePage();
                 window2.Show();
+
 
                 // Close the current login window if needed
                 this.Close();

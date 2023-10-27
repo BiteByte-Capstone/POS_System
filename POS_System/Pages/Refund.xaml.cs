@@ -63,7 +63,7 @@ namespace POS_System.Pages
 
         private void RefundBtn_Click(object sender, RoutedEventArgs e)
         {
-            string orderId = "";
+            string orderId = "0";
             string paymentId = refundPaymentIdBox.Text;
             string refundAmount = refundAmountBox.Text;
             string refundMethod = refundMethodComboBox.Text;
@@ -80,11 +80,21 @@ namespace POS_System.Pages
                 //Create a connection object
                 MySqlConnection connection = new MySqlConnection(connectionString);
 
+                String sqlquery = "insert into pos_db.refund values (0, " + orderId + ", " + paymentId + ", " + refundAmount + ", '" + refundMethod + "', '" + refundReason + "', " + userId + ");";
+
+                MessageBox.Show(sqlquery);
+
                 //SQL query
-                MySqlCommand cmd = new MySqlCommand("insert into pos_db.refund values " + orderId + ", " + paymentId + ", " + refundAmount + ", " + refundMethod + ", " + refundReason + ", " + userId + ";", connection);
+                MySqlCommand cmd = new MySqlCommand(sqlquery, connection);
 
                 //Open up connection with the user table
                 connection.Open();
+
+                cmd.ExecuteReader();
+
+                connection.Close();
+
+                MessageBox.Show("Refund Complete");
             }
         }
     }
