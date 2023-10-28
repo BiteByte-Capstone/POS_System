@@ -312,6 +312,12 @@ namespace POS_System.Pages
         }
 
 
+        private void PreviewMenu_Click(object sender, RoutedEventArgs e)
+        {
+            PreviewMenuDialog previewMenuDialog = new PreviewMenuDialog();
+            previewMenuDialog.ShowDialog();
+
+        }
         private ObservableCollection<Category> GetAllCategories()
         {
             var categorylist = new Category();
@@ -517,108 +523,7 @@ namespace POS_System.Pages
 
 
 
-        /*        private void LoadCategoryData()
-                {
-
-                    MySqlConnection conn = new MySqlConnection(connectionString);
-
-                    try
-                    {
-                        conn.Open();
-                        string sql = "SELECT * FROM category;";
-                        MySqlCommand cmd = new MySqlCommand(sql, conn);
-                        MySqlDataReader rdr = cmd.ExecuteReader();
-
-                        while (rdr.Read())
-                        {
-                            Category category = new Category
-                            {
-                                Id = Convert.ToInt32(rdr["category_id"]),
-                                Name = rdr["category_name"].ToString(),
-                            };
-
-                            categories.Add(category);
-
-                            Button newCategoryButton = new Button();
-                            newCategoryButton.Content = rdr["category_name"].ToString();
-                            newCategoryButton.Tag = category;
-                            newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
-                            newCategoryButton.Width = 150;
-                            newCategoryButton.Height = 60;
-                            newCategoryButton.Margin = new Thickness(5);
-                            SetButtonStyle(newCategoryButton);
-
-                            CategoryButtonPanel.Children.Add(newCategoryButton);
-                        }
-
-                        rdr.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.ToString());
-                    }
-                    conn.Close();
-                }*/
-
-
-
-        /*        private void LoadItemsByCategory(string categoryName)
-                {
-                    ItemButtonPanel.Children.Clear();
-
-                    MySqlConnection conn = new MySqlConnection(connectionString);
-
-                    try
-                    {
-                        conn.Open();
-                        string sql = "SELECT * FROM item WHERE item_category = @category;";
-                        MySqlCommand cmd = new MySqlCommand(sql, conn);
-                        cmd.Parameters.AddWithValue("@category", categoryName);
-                        MySqlDataReader rdr = cmd.ExecuteReader();
-
-                        while (rdr.Read())
-                        {
-                            Item item = new Item
-                            {
-                                Id = Convert.ToInt32(rdr["item_id"]),
-                                item_name = rdr["item_name"].ToString(),
-                                ItemPrice = Convert.ToDouble(rdr["item_price"]),
-                                Description = rdr["item_description"].ToString(),
-                                Category = rdr["item_category"].ToString()
-                            };
-
-                            Button newItemButton = new Button();
-                            newItemButton.Content = rdr["item_name"].ToString();
-                            newItemButton.Tag = item;
-                            newItemButton.Width = 150;
-                            newItemButton.Height = 60;
-                            SetButtonStyle(newItemButton);
-
-                            ItemButtonPanel.Children.Add(newItemButton);
-                        }
-
-                        rdr.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.ToString());
-                    }
-                    conn.Close();
-                }*/
-
-        // For Styling
-        private void SetButtonStyle(Button button)
-        {
-            button.FontFamily = new FontFamily("Verdana");
-            button.FontSize = 20;
-            button.Background = Brushes.Orange;
-            button.Foreground = Brushes.Black;
-            button.FontWeight = FontWeights.Bold;
-            button.BorderBrush = Brushes.Orange;
-            button.Padding = new Thickness(10);
-
-            button.Margin = new Thickness(5);
-        }
+       
 
 
     }

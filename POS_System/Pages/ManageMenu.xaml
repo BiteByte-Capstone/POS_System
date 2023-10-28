@@ -107,6 +107,7 @@
             <Button x:Name="ShowItemButton" Content="View Item" Width="200" Height="50" Click="ShowItem_Click" ToolTip="Show all items"/>
             <!-- Edit Item Button -->
             <Button x:Name="ShowCategoryButton" Content="View Category" Width="200" Height="50" Click="ShowCategory_Click" ToolTip="Show all categories"/>
+            <Button x:Name="PreviewMenuButton" Content="Preview Menu" Width="200" Height="50" Click="PreviewMenu_Click" ToolTip="Show all categories"/>
             <!-- View Sales Button -->
             <Button x:Name="ViewSalesButton" Content="View Sales" Width="200" Height="50" Click="ViewSalesButton_Click" ToolTip="View sales information"/>
             <!-- Settings Button -->
