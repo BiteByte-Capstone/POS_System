@@ -22,10 +22,10 @@ namespace POS_System
     {
         string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         public int id { get; set; } // Change 'private set' to 'set'
-        private string name { get; set; }
+        public string name { get; set; }
         public double price { get; set; }
-        private string descripion { get; set; }
-        private string category { get; set; }
+        public string descripion { get; set; }
+        public string category { get; set; }
 
         public AddItemDialog()
         {

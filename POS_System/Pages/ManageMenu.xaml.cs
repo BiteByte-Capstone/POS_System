@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace POS_System.Pages
 {
@@ -35,6 +36,10 @@ namespace POS_System.Pages
         {
             AddCategoryButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
+        public void AddItemButtonVisibility(bool isVisible)
+        {
+            AddItemButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
 
 
 
@@ -42,8 +47,8 @@ namespace POS_System.Pages
         {
             itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["ItemTemplate"];
             itemCategoryDataGrid.Content = GetAllItems();
-            
-
+            AddItemButtonVisibility(true);
+            AddCategoryButtonVisibility(false);
 
         }
 
@@ -52,6 +57,7 @@ namespace POS_System.Pages
             itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["CategoryTemplate"];
             itemCategoryDataGrid.Content = GetAllCategories();
             AddCategoryButtonVisibility(true);
+            AddItemButtonVisibility(false);
 
         }
 
@@ -166,7 +172,29 @@ namespace POS_System.Pages
 
         private void AddItemButton_Click(object sender, RoutedEventArgs e)
         {
+            AddItemDialog addItemDialog = new AddItemDialog();
+            if (addItemDialog.ShowDialog() == true)
+            {
+                // Retrieve the category name from the dialog
+                int itemId = addItemDialog.id;
+                string itemName = addItemDialog.name;
+                double itemPrice = addItemDialog.price;
+                string itemDesciption = addItemDialog.descripion;
+                string itemCategory = addItemDialog.category;
 
+                if (!string.IsNullOrWhiteSpace(itemName))
+                {
+                    // Insert the new category into your database
+                    if (InsertItemIntoDatabase(itemId, itemName, itemPrice, itemDesciption, itemCategory))
+                    {
+                        MessageBox.Show("Added to Item!");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Item name cannot be empty.");
+                }
+            }
         }
 
         //Method: To get all item from database
@@ -252,6 +280,37 @@ namespace POS_System.Pages
                     {
                         cmd.Parameters.AddWithValue("@categoryName", categoryName);
                         cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while adding the category: " + ex.Message);
+                return false;
+            }
+        }
+
+
+        //Method: add new item to database category
+        private bool InsertItemIntoDatabase(int itemId, string itemName, double itemPrice, string itemDescription, string itemCategory)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string insertQuery = "INSERT INTO item (item_id, item_name, item_price, item_description, item_category) VALUES (@itemId, @itemName, @itemPrice, @itemDescription, @itemCategory);";
+                    using (MySqlCommand cmd = new MySqlCommand(insertQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@itemId", itemId);
+                        cmd.Parameters.AddWithValue("@itemName", itemName); 
+                        cmd.Parameters.AddWithValue("@itemPrice", itemPrice);
+                        cmd.Parameters.AddWithValue("@itemDescription", itemDescription);
+                        cmd.Parameters.AddWithValue("@itemCategory", itemCategory); 
 
                         cmd.ExecuteNonQuery();
                         return true;
