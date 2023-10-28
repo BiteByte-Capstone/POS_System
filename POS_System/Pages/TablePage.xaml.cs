@@ -214,12 +214,12 @@ namespace POS_System.Pages
                     conn.Open();
 
 
-                    string deleteItemListQuery = "DELETE FROM ordered_itemlist WHERE order_id > 0;";
+                    string deleteItemListQuery = "DELETE FROM ordered_itemlist WHERE order_id > 0 ;";
                     MySqlCommand deleteItemListCmd = new MySqlCommand(deleteItemListQuery, conn);
                     deleteItemListCmd.ExecuteNonQuery();
 
 
-                    string deleteOrderQuery = "DELETE FROM `order` WHERE order_id > 0;";
+                    string deleteOrderQuery = "DELETE FROM `order` WHERE order_id > 0 and paid = 'n';";
 
                     MySqlCommand deleteOrderCmd = new MySqlCommand(deleteOrderQuery, conn);
                     deleteOrderCmd.ExecuteNonQuery();
