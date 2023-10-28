@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System"
         mc:Ignorable="d"
-        Title="EditCategoryDialog" Height="300" Width="500">
+        Title="Edit Category" Height="300" Width="500">
     <Grid>
         <Label Content="Category Name:" VerticalAlignment="Center" HorizontalAlignment="Left"/>
         <TextBox x:Name="CategoryNameTextBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="123,0,0,0" Width="320" />

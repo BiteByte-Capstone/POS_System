@@ -131,7 +131,50 @@ namespace POS_System.Pages
 
         private void EditItemButton_Click(Object sender, RoutedEventArgs e)
         {
+            if (sender is Button button && button.CommandParameter is Item item)
+            {
+                MessageBox.Show("second stage");
+                int id = item.Id;
+                string name = item.item_name;
+                double price = item.ItemPrice;
+                string description = item.Description;
+                string category = item.Category;
 
+
+
+
+
+                var editCategoryDialog = new EditCategoryDialog(id, name);
+                if (editCategoryDialog.ShowDialog() == true)
+                {
+                    // Retrieve the category name from the dialog
+                    string categoryName = editCategoryDialog.EditedCategoryName;
+                    int categoryId = editCategoryDialog.EditedCategoryId;
+
+                    if (!string.IsNullOrWhiteSpace(categoryName))
+                    {
+                        MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure want to edit from {name} to {categoryName}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                        if (messageBoxResult == MessageBoxResult.Yes)
+                        {
+                            if (EditCategoryFromDatabase(categoryName, categoryId))
+                            {
+                                MessageBox.Show($"Updated from {name} to {categoryName}");
+                            }
+                            else
+                            {
+                                MessageBox.Show("Category name cannot be empty.");
+                            }
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    }
+
+
+                }
+            }
         }
 
         private void EditButton_Click(Object sender, RoutedEventArgs e)

@@ -45,6 +45,12 @@ namespace POS_System
             }
         }
 
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+
 
     }
 }
