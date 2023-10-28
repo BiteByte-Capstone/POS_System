@@ -20,7 +20,9 @@ namespace POS_System
     /// </summary>
     public partial class AddCategoryDialog : Window
     {
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; } // Change 'private set' to 'set'
+        
 
         public AddCategoryDialog()
         {
@@ -29,6 +31,7 @@ namespace POS_System
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            CategoryId = int.Parse(CategoryIdTextBox.Text);
             // Get the category name from the TextBox
             CategoryName = CategoryNameTextBox.Text;
 
@@ -43,5 +46,7 @@ namespace POS_System
             DialogResult = false;
             Close();
         }
+
+
     }
 }

@@ -64,11 +64,74 @@ namespace POS_System.Pages
 
         private void DeleteButton_Click(Object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("click delete");
+            if (sender is Button button && button.CommandParameter is Category category)
+            {
+                MessageBox.Show("second stage");
+                int id = category.Id;
+                string name = category.Name;
+             
 
+                // Confirm user wants to delete with the user's name included
+                MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    DeleteCategoryFromDatabase(id);
+                    MessageBox.Show("Delete successfully");
+                }
+                else
+                {
+                    return;
+                }
+            }
         }
+    
         private void EditButton_Click(Object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("click edit");
+            if (sender is Button button && button.CommandParameter is Category category)
+            {
+                MessageBox.Show("second stage");
+                int id = category.Id;
+                string name = category.Name;
 
+
+                // Confirm user wants to delete with the user's name included
+                MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to edit {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    EditCategoryFromDatabase(name, id);
+                    MessageBox.Show("Edit successfully");
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
+        private void AddCategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            var addCategoryDialog = new AddCategoryDialog();
+            if (addCategoryDialog.ShowDialog() == true)
+            {
+                // Retrieve the category name from the dialog
+                string categoryName = addCategoryDialog.CategoryName;
+                int categoryId = addCategoryDialog.CategoryId;
+
+                if (!string.IsNullOrWhiteSpace(categoryName))
+                {
+                    // Insert the new category into your database
+                    if (InsertCategoryIntoDatabase(categoryName, categoryId))
+                    {
+                        MessageBox.Show("Added to Category!");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Category name cannot be empty.");
+                }
+            }
         }
 
         //Method: To get all item from database
@@ -138,6 +201,89 @@ namespace POS_System.Pages
             }
             return categories;
         }
+
+        //Method: add category id and name to database category
+        private bool InsertCategoryIntoDatabase(string categoryName, int categoryId)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string insertQuery = "INSERT INTO category (category_name, category_id) VALUES (@categoryName, @categoryId);";
+                    using (MySqlCommand cmd = new MySqlCommand(insertQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@categoryName", categoryName);
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while adding the category: " + ex.Message);
+                return false;
+            }
+        }
+
+        //Method: delete category
+        private bool DeleteCategoryFromDatabase(int categoryId)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string DeleteQuery = "DELETE FROM category WHERE category_id=@categoryId;";
+                    using (MySqlCommand cmd = new MySqlCommand(DeleteQuery, conn))
+                    {
+
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while delete the category: " + ex.Message);
+                return false;
+            }
+        }
+
+        //Method: edit category
+        private bool EditCategoryFromDatabase(string categoryName,int categoryId)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string EditCategoryQuery = "UPDATE category SET category_name = @categoryName WHERE category_id=@categoryId;";
+                    using (MySqlCommand cmd = new MySqlCommand(EditCategoryQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@categoryName", categoryName);
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while edit the category: " + ex.Message);
+                return false;
+            }
+        }
+
+
 
         /*        private void LoadCategoryData()
                 {
@@ -242,33 +388,8 @@ namespace POS_System.Pages
             button.Margin = new Thickness(5);
         }
 
-        private void AddCategoryButton_Click(object sender, RoutedEventArgs e)
-        {
-            var addCategoryDialog = new AddCategoryDialog();
-            if (addCategoryDialog.ShowDialog() == true)
-            {
-                // Retrieve the category name from the dialog
-                string categoryName = addCategoryDialog.CategoryName;
 
-                if (!string.IsNullOrWhiteSpace(categoryName))
-                {
-                    // Insert the new category into your database
-                    if (InsertCategoryIntoDatabase(categoryName))
-                    {
-                        /* // Reload the category data
-                         LoadCategoryData();*/
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Category name cannot be empty.");
-                }
-            }
-        }
 
-        private bool InsertCategoryIntoDatabase(string categoryName)
-        {
-            return true;
-        }
+
     }
 }
