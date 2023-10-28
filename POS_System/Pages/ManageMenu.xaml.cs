@@ -25,16 +25,24 @@ namespace POS_System.Pages
         public ManageMenu()
         {
             InitializeComponent();
-            
-            
+            AddCategoryButtonVisibility(false);
+
 
         }
-  
+
+        //Method: Add category button, if true, visible. otherwise, collapsed(ie. hide)
+        public void AddCategoryButtonVisibility(bool isVisible)
+        {
+            AddCategoryButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+
 
         private void ShowItem_Click(object sender, RoutedEventArgs e)
         {
             itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["ItemTemplate"];
             itemCategoryDataGrid.Content = GetAllItems();
+            
 
 
         }
@@ -43,6 +51,8 @@ namespace POS_System.Pages
         {
             itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["CategoryTemplate"];
             itemCategoryDataGrid.Content = GetAllCategories();
+            AddCategoryButtonVisibility(true);
+
         }
 
         private void ViewSalesButton_Click(object sender, RoutedEventArgs e)
@@ -85,45 +95,47 @@ namespace POS_System.Pages
                 }
             }
         }
-    
+
         private void EditButton_Click(Object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.CommandParameter is Category category)
             {
-                MessageBox.Show("second stage");
                 int id = category.Id;
                 string name = category.Name;
-                
-                MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to edit {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
-                if (messageBoxResult == MessageBoxResult.Yes)
+
+
+
+
+
+                var editCategoryDialog = new EditCategoryDialog(id, name);
+                if (editCategoryDialog.ShowDialog() == true)
                 {
-                MessageBox.Show("click edit");
+                    // Retrieve the category name from the dialog
+                    string categoryName = editCategoryDialog.EditedCategoryName;
+                    int categoryId = editCategoryDialog.EditedCategoryId;
 
-
-                    var editCategoryDialog = new EditCategoryDialog(id, name);
-                    if (editCategoryDialog.ShowDialog() == true)
+                    if (!string.IsNullOrWhiteSpace(categoryName))
                     {
-                        // Retrieve the category name from the dialog
-                        string categoryName = editCategoryDialog.EditedCategoryName;
-                        int categoryId = editCategoryDialog.EditedCategoryId;
-
-                        if (!string.IsNullOrWhiteSpace(categoryName))
+                        MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure want to edit from {name} to {categoryName}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                        if (messageBoxResult == MessageBoxResult.Yes)
                         {
-
                             if (EditCategoryFromDatabase(categoryName, categoryId))
                             {
-                                MessageBox.Show($"Edit from {name} to {categoryName}!");
+                                MessageBox.Show($"Updated from {name} to {categoryName}");
+                            }
+                            else
+                            {
+                                MessageBox.Show("Category name cannot be empty.");
                             }
                         }
                         else
                         {
-                            MessageBox.Show("Category name cannot be empty.");
+                            return;
                         }
+
                     }
-                }
-                else
-                {
-                    return;
+
+
                 }
             }
         }
@@ -150,6 +162,11 @@ namespace POS_System.Pages
                     MessageBox.Show("Category name cannot be empty.");
                 }
             }
+        }
+
+        private void AddItemButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         //Method: To get all item from database
@@ -190,6 +207,7 @@ namespace POS_System.Pages
 
         private ObservableCollection<Category> GetAllCategories()
         {
+            var categorylist = new Category();
             categories = new ObservableCollection<Category>();
 
             using (var connection = new MySqlConnection(connectionString))
@@ -202,13 +220,13 @@ namespace POS_System.Pages
                     {
                         while (reader.Read())
                         {
-                            categories.Add(new Category
+                            Category category = new Category
                             {
                                 Id = Convert.ToInt32(reader["category_id"]),
-                                Name = reader["category_name"].ToString()
-                                
-
-                            });
+                                Name = reader["category_name"].ToString(),
+                            };
+                            categories.Add(category);
+                           
                         }
                     }
                 }
@@ -405,8 +423,6 @@ namespace POS_System.Pages
 
             button.Margin = new Thickness(5);
         }
-
-
 
 
     }

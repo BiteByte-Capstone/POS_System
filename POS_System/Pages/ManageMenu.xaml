@@ -50,7 +50,7 @@
 
         <!-- DataTemplate for Categories -->
         <DataTemplate x:Key="CategoryTemplate">
-            <DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False">
+            <DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding Id}" />
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
@@ -60,7 +60,7 @@
 
 
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Padding="0" Click="EditButton_Click" Background="Transparent" BorderBrush="Transparent" Width="25" Height="25" Margin="0,0,5,0" CommandParameter="{Binding}"> 
+                                    <Button Padding="0" Click="EditButton_Click" Background="Transparent" BorderBrush="Transparent" Width="25" Height="25" Margin="0,0,5,0" CommandParameter="{Binding}">
                                         <Image Source="pack://application:,,,/Images/editIcon.png" Width="15" Height="15"/>
                                     </Button>
 
@@ -80,11 +80,11 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Grid>
+    <Grid Margin="0,0,0,-6">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="103"/>
-            <RowDefinition Height="Auto" MinHeight="487"/>
-            <RowDefinition Height="Auto" MinHeight="70"/>
+            <RowDefinition Height="Auto" MinHeight="557"/>
+            <RowDefinition Height="Auto"/>
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -115,12 +115,15 @@
 
         </StackPanel>
 
-        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="150">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="305" Margin="90,0,0,-65" Grid.Row="2" Grid.Column="1">
             <!-- Add Category Button-->
-            <Button x:Name="AddCategoryButton" Content="Add Category" Width="150" Height="60" Click="AddCategoryButton_Click" Visibility="{Binding IsAddCategoryButtonVisible}"/>
+            <Button x:Name="AddCategoryButton" Content="+ Add Category" Width="151" Height="60" Click="AddCategoryButton_Click" Visibility="{Binding IsAddCategoryButtonVisible}"/>
+            <!-- Add Category Button-->
+            <Button x:Name="AddItemButton" Content="+ Add Item" Width="151" Height="60" Click="AddItemButton_Click" Visibility="{Binding IsAddItemButtonVisible}"/>
+
         </StackPanel>
 
-        <ContentControl Name="itemCategoryDataGrid" Content="ContentControl" Grid.Column="1" Grid.Row="1" Margin="90,0,25,10"/>
+        <ContentControl Name="itemCategoryDataGrid" Grid.Column="1" Grid.Row="1" Margin="90,0,25,10"/>
 
 
     </Grid>
