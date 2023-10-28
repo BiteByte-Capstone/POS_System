@@ -118,7 +118,7 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="305" Margin="90,0,0,-65" Grid.Row="2" Grid.Column="1">
             <!-- Add Category Button-->
-            <Button x:Name="AddCategoryButton" Content="+ Add Category" Width="151" Height="60" Click="AddCategoryButton_Click" Visibility="{Binding IsAddCategoryButtonVisible}"/>
+            <Button x:Name="AddCategoryButton" Content="+ Add Category" Width="151" Height="60" Click="AddCategoryButton_Click"  Visibility="{Binding IsAddCategoryButtonVisible}"/>
             <!-- Add Category Button-->
             <Button x:Name="AddItemButton" Content="+ Add Item" Width="151" Height="60" Click="AddItemButton_Click" Visibility="{Binding IsAddItemButtonVisible}"/>
 
