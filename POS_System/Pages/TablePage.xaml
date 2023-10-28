@@ -59,7 +59,8 @@
 
                     <Button x:Name="logout_button" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,496,0"/>
 
-                    <Button x:Name="print_button" Content="Change Table" HorizontalAlignment="Left" Margin="84,170,0,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="239" Height="62" Click="print_button_Click"/>
+                    <Button x:Name="print_button" Content="Change Table" HorizontalAlignment="Left" Margin="84,170,0,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="239" Height="62" Click="ChangeTable_Click"/>
+                    <Button x:Name="reset_button" Content="Reset Table" HorizontalAlignment="Left" Margin="84,736,0,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="239" Height="62" Click="ResetTable_Click"/>
 
 
                 </Grid>

@@ -82,17 +82,17 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" MinHeight="75"/>
-            <RowDefinition Height="Auto" MinHeight="515"/>
-            <RowDefinition Height="Auto" MinHeight="60"/>
+            <RowDefinition Height="Auto" MinHeight="103"/>
+            <RowDefinition Height="Auto" MinHeight="487"/>
+            <RowDefinition Height="Auto" MinHeight="70"/>
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
 
             <ColumnDefinition Width="Auto"/>
-            
+
             <ColumnDefinition Width="436*"/>
-            <ColumnDefinition Width="83*"/>
+
 
 
         </Grid.ColumnDefinitions>
@@ -102,7 +102,7 @@
         <!-- Back Button -->
         <Button x:Name="BackButton" Content="Back" Width="200" Height="50" Click="BackButton_Click" ToolTip="Return to previous screen" VerticalAlignment="Top" Margin="0,5,0,0"/>
         <!-- Navigation Buttons in StackPanel for better layout management -->
-        <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Center">
+        <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Center" Width="200">
             <!-- Add New Item Button -->
             <Button x:Name="ShowItemButton" Content="View Item" Width="200" Height="50" Click="ShowItem_Click" ToolTip="Show all items"/>
             <!-- Edit Item Button -->
@@ -114,14 +114,14 @@
 
 
         </StackPanel>
-        
-        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left">
+
+        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="150">
             <!-- Add Category Button-->
             <Button x:Name="AddCategoryButton" Content="Add Category" Width="150" Height="60" Click="AddCategoryButton_Click" Visibility="{Binding IsAddCategoryButtonVisible}"/>
         </StackPanel>
 
-        <ContentControl Name="itemCategoryDataGrid" Content="ContentControl" Grid.Column="1" Grid.Row="1" Margin="90,0,25,10" Grid.ColumnSpan="2"/>
-        
+        <ContentControl Name="itemCategoryDataGrid" Content="ContentControl" Grid.Column="1" Grid.Row="1" Margin="90,0,25,10"/>
+
 
     </Grid>
 </Window>

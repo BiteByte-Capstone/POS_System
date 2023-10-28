@@ -244,9 +244,31 @@ namespace POS_System.Pages
 
         private void AddCategoryButton_Click(object sender, RoutedEventArgs e)
         {
+            var addCategoryDialog = new AddCategoryDialog();
+            if (addCategoryDialog.ShowDialog() == true)
+            {
+                // Retrieve the category name from the dialog
+                string categoryName = addCategoryDialog.CategoryName;
 
+                if (!string.IsNullOrWhiteSpace(categoryName))
+                {
+                    // Insert the new category into your database
+                    if (InsertCategoryIntoDatabase(categoryName))
+                    {
+                        /* // Reload the category data
+                         LoadCategoryData();*/
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Category name cannot be empty.");
+                }
+            }
         }
 
-        
+        private bool InsertCategoryIntoDatabase(string categoryName)
+        {
+            return true;
+        }
     }
 }

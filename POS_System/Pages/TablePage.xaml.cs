@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -97,8 +98,6 @@ namespace POS_System.Pages
         // Check if there are unpaid orders for the specified table
         private bool CheckForUnpaidOrders(string tableNumber)
         {
-            // Create a connection string
-            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -134,9 +133,6 @@ namespace POS_System.Pages
         // Method to update table colors based on the database
         private void UpdateTableColors()
         {
-            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
-
 
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -193,7 +189,57 @@ namespace POS_System.Pages
             }
         }
 
-        private void print_button_Click(object sender, RoutedEventArgs e)
+        private void ResetTable_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Remove every table order?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                RemoveOrderAllTable();
+                UpdateTableColors();
+            }
+            else
+            {
+                return;
+            }
+
+            
+        }
+
+        private void RemoveOrderAllTable()
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+                    string deleteItemListQuery = "DELETE FROM ordered_itemlist WHERE order_id > 0;";
+                    MySqlCommand deleteItemListCmd = new MySqlCommand(deleteItemListQuery, conn);
+                    deleteItemListCmd.ExecuteNonQuery();
+
+
+                    string deleteOrderQuery = "DELETE FROM `order` WHERE order_id > 0;";
+
+                    MySqlCommand deleteOrderCmd = new MySqlCommand(deleteOrderQuery, conn);
+                    deleteOrderCmd.ExecuteNonQuery();
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+            
+
+        }
+
+        private void ChangeTable_Click(object sender, RoutedEventArgs e)
         {
 
         }
@@ -202,5 +248,7 @@ namespace POS_System.Pages
         {
 
         }
+
+
     }
 }
