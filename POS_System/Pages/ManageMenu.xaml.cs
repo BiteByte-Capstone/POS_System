@@ -88,20 +88,38 @@ namespace POS_System.Pages
     
         private void EditButton_Click(Object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("click edit");
             if (sender is Button button && button.CommandParameter is Category category)
             {
                 MessageBox.Show("second stage");
                 int id = category.Id;
                 string name = category.Name;
-
-
-                // Confirm user wants to delete with the user's name included
+                
                 MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to edit {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
-                    EditCategoryFromDatabase(name, id);
-                    MessageBox.Show("Edit successfully");
+                MessageBox.Show("click edit");
+
+
+                    var editCategoryDialog = new EditCategoryDialog(id, name);
+                    if (editCategoryDialog.ShowDialog() == true)
+                    {
+                        // Retrieve the category name from the dialog
+                        string categoryName = editCategoryDialog.EditedCategoryName;
+                        int categoryId = editCategoryDialog.EditedCategoryId;
+
+                        if (!string.IsNullOrWhiteSpace(categoryName))
+                        {
+
+                            if (EditCategoryFromDatabase(categoryName, categoryId))
+                            {
+                                MessageBox.Show($"Edit from {name} to {categoryName}!");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Category name cannot be empty.");
+                        }
+                    }
                 }
                 else
                 {
@@ -265,7 +283,7 @@ namespace POS_System.Pages
                 {
                     conn.Open();
 
-                    string EditCategoryQuery = "UPDATE category SET category_name = @categoryName WHERE category_id=@categoryId;";
+                    string EditCategoryQuery = "UPDATE `category` SET category_name = @categoryName WHERE category_id = @categoryId;";
                     using (MySqlCommand cmd = new MySqlCommand(EditCategoryQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@categoryName", categoryName);

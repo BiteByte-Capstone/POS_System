@@ -19,11 +19,13 @@ namespace POS_System
     /// </summary>
     public partial class EditCategoryDialog : Window
     {
+        public int EditedCategoryId { get; set; }
         public string EditedCategoryName { get; private set; }
 
-        public EditCategoryDialog(string currentCategoryName)
+        public EditCategoryDialog(int currentCategoryId,string currentCategoryName)
         {
             InitializeComponent();
+            CategoryIdTextBox.Text = currentCategoryId.ToString();
             CategoryNameTextBox.Text = currentCategoryName;
         }
 
@@ -31,8 +33,9 @@ namespace POS_System
         {
             try
             {
-                Console.WriteLine("SaveButton_Click called");
+                
                 EditedCategoryName = CategoryNameTextBox.Text;
+                EditedCategoryId = int.Parse(CategoryIdTextBox.Text);
                 DialogResult = true;
                 Close();
             }
@@ -41,5 +44,7 @@ namespace POS_System
                 Console.WriteLine("Error: " + ex.Message);
             }
         }
+
+
     }
 }

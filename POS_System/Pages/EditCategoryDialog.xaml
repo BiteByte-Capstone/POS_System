@@ -5,10 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System"
         mc:Ignorable="d"
-        Title="EditCategoryDialog" Height="450" Width="800">
+        Title="EditCategoryDialog" Height="300" Width="500">
     <Grid>
         <Label Content="Category Name:" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        <TextBox x:Name="CategoryNameTextBox" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,10,0"/>
-        <Button Content="Save" Click="SaveButton_Click" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+        <TextBox x:Name="CategoryNameTextBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="123,0,0,0" Width="320" />
+        
+        <Label Content="Category ID:" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,98,0,0"/>
+        <TextBox x:Name="CategoryIdTextBox" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="123,102,0,0" Width="320"/>
+
+        <Button Content="Save" Click="SaveButton_Click" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="461,114,0,0"/>
     </Grid>
 </Window>
