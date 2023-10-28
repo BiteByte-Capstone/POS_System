@@ -144,21 +144,25 @@ namespace POS_System.Pages
 
 
 
-                var editCategoryDialog = new EditCategoryDialog(id, name);
-                if (editCategoryDialog.ShowDialog() == true)
+                EditItemDialog editItemDialog = new EditItemDialog(id, name, price, description,category);
+                if (editItemDialog.ShowDialog() == true)
                 {
+                    int editedId = editItemDialog.editedId;
                     // Retrieve the category name from the dialog
-                    string categoryName = editCategoryDialog.EditedCategoryName;
-                    int categoryId = editCategoryDialog.EditedCategoryId;
+                    string editedName = editItemDialog.editedName;
+                    double editedprice = editItemDialog.editedPrice;
+                    string editedDescription = editItemDialog.editedDescripion;
+                    string editedCategory = editItemDialog.editedCategory;
+                    
 
-                    if (!string.IsNullOrWhiteSpace(categoryName))
+                    if (!string.IsNullOrWhiteSpace(editedName))
                     {
-                        MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure want to edit from {name} to {categoryName}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                        MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure want to edit from {name} to {editedName}?", "Delete Confirmation", MessageBoxButton.YesNo);
                         if (messageBoxResult == MessageBoxResult.Yes)
                         {
-                            if (EditCategoryFromDatabase(categoryName, categoryId))
+                            if (EditItemFromDatabase(editedId, editedName,editedprice,editedDescription,editedCategory))
                             {
-                                MessageBox.Show($"Updated from {name} to {categoryName}");
+                                MessageBox.Show($"Updated from {name} to {editedName}");
                             }
                             else
                             {
@@ -468,6 +472,36 @@ namespace POS_System.Pages
                     {
                         cmd.Parameters.AddWithValue("@categoryName", categoryName);
                         cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while edit the category: " + ex.Message);
+                return false;
+            }
+        }
+
+        private bool EditItemFromDatabase(int itemId,string itemName, double itemPrice, string itemDescription, string itemCategory)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string EditItemQuery = "UPDATE `item` SET item_name = @itemName, item_price = @itemPrice, item_description = @itemDescription, item_category = @itemCategory WHERE item_id = @itemId;";
+                    using (MySqlCommand cmd = new MySqlCommand(EditItemQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@itemId", itemId);
+                        cmd.Parameters.AddWithValue("@itemName", itemName);
+                        cmd.Parameters.AddWithValue("@itemPrice", itemPrice);
+                        cmd.Parameters.AddWithValue("@itemDescription", itemDescription);
+                        cmd.Parameters.AddWithValue("@itemCategory", itemCategory);
+
 
                         cmd.ExecuteNonQuery();
                         return true;

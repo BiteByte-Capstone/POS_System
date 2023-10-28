@@ -1,5 +1,8 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using POS_System.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,11 +32,17 @@ namespace POS_System
         public EditItemDialog(int currentId,string currentName, double currentPrice, string currentDescription, string currentCategory)
         {
             InitializeComponent();
+            LoadCategories();
             CurrentIdTextBox.Text = currentId.ToString();
-            CurrentItemNameTextBlock.Text = currentName;
-            CurrentItemPriceTextBlock.Text = currentPrice.ToString();
-            CurrentDescriptionTextBlock.Text = currentDescription;
-            CurrentCategoryTextBlock.Text = currentCategory;
+            CurrentNameTextBox.Text = currentName;
+            CurrentPriceTextBox.Text = currentPrice.ToString();
+            CurrentDescriptionTextBox.Text = currentDescription;
+            CurrentCategoryComboBox.Text = currentCategory;
+
+            EditedIdTextBox.Text = currentId.ToString();
+            EditedNameTextBox.Text = currentName;
+            EditedItemDescriptionTextBox.Text = currentDescription;
+            EditedItemCategoryComboBox.Text = currentCategory;
 
 
         }
@@ -44,6 +53,9 @@ namespace POS_System
             {
                 editedId = int.Parse(EditedIdTextBox.Text);
                 editedName = EditedNameTextBox.Text;
+                editedPrice = double.Parse(EditedPriceTextBox.Text);
+                editedDescripion = EditedItemDescriptionTextBox.Text;
+                editedCategory = EditedItemCategoryComboBox.Text;
                 
                 DialogResult = true;
                 Close();
@@ -58,6 +70,39 @@ namespace POS_System
         {
             DialogResult = false;
             Close();
+        }
+
+        private void LoadCategories()
+        {
+            ObservableCollection<Category> categories = new ObservableCollection<Category>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                var cmd = new MySqlCommand("SELECT category_id, category_name FROM category ORDER BY category_name", connection);
+
+                try
+                {
+                    connection.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Category category = new Category()
+                            {
+                                Id = reader.GetInt32("category_id"),
+                                Name = reader.GetString("category_name")
+                            };
+                            categories.Add(category);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading categories: {ex.Message}");
+                }
+            }
+
+            EditedItemCategoryComboBox.ItemsSource = categories;
         }
 
 

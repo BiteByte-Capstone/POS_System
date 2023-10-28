@@ -13,29 +13,30 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
 
-            <ColumnDefinition Width="151*"/>
-            <ColumnDefinition Width="149*"/>
+            <ColumnDefinition Width="103*"/>
+            <ColumnDefinition Width="197*"/>
 
         </Grid.ColumnDefinitions>
 
-        <StackPanel Margin="10,18,10,46" Grid.Column="0">
-            <TextBlock TextWrapping="Wrap" Text="Old item"/>
+        <StackPanel Margin="10,18,10,46" Grid.Column="0" Background="Gray">
 
-            <TextBlock x:Name="CurrentItemIdTextBlock" Text="Item ID:"/>
-            <TextBox x:Name="CurrentIdTextBox" />
-            <TextBlock x:Name="CurrentItemNameTextBlock" Text="Item Name:"/>
-            <TextBox x:Name="CurrentNameTextBox" IsReadOnly="True"/>
-            <TextBlock x:Name="CurrentItemPriceTextBlock" Text="Item Price:"/>
-            <TextBox x:Name="CurrentPriceTextBox" IsReadOnly="True"/>
-            <TextBlock x:Name="CurrentDescriptionTextBlock" Text="Item Description:"/>
-            <TextBox x:Name="CurrentDescriptionTextBox" IsReadOnly="True"/>
-            <TextBlock x:Name="CurrentCategoryTextBlock" Text="Item Category:"/>
-            <ComboBox  x:Name="CurrentCategoryComboBox" DisplayMemberPath="Name" SelectedValuePath="Id" IsReadOnly="True"/>
+            <TextBlock TextWrapping="Wrap" Text="Old item" Width="166"/>
+
+            <TextBlock x:Name="CurrentItemIdTextBlock" Text="Item ID:" Width="160"/>
+            <TextBox x:Name="CurrentIdTextBox" IsReadOnly="True" Width="160" />
+            <TextBlock x:Name="CurrentItemNameTextBlock" Text="Item Name:" Width="160"/>
+            <TextBox x:Name="CurrentNameTextBox" IsReadOnly="True" Width="160" />
+            <TextBlock x:Name="CurrentItemPriceTextBlock" Text="Item Price:" Width="160" />
+            <TextBox x:Name="CurrentPriceTextBox" IsReadOnly="True" Width="160" />
+            <TextBlock x:Name="CurrentDescriptionTextBlock" Text="Item Description:" Width="160" />
+            <TextBox x:Name="CurrentDescriptionTextBox" IsReadOnly="True" Width="160" />
+            <TextBlock x:Name="CurrentCategoryTextBlock" Text="Item Category:" Width="160" />
+            <TextBox  x:Name="CurrentCategoryComboBox" IsReadOnly="True" Width="160" />
         </StackPanel>
 
         <StackPanel Margin="10,18,10,46" Grid.Column="1">
             <TextBlock TextWrapping="Wrap" Text="New item"/>
-            
+
             <TextBlock x:Name="ItemIdTextBlock" Text="Item ID:"/>
             <TextBox x:Name="EditedIdTextBox"/>
             <TextBlock x:Name="EditedItemNameTextBlock" Text="Item Name:"/>
@@ -52,6 +53,7 @@
                 <Button Content="Cancel" Click="CancelItemButton_Click"/>
             </StackPanel>
         </StackPanel>
+        <Label Content="Label" HorizontalAlignment="Left" Margin="-40,-2,0,0" VerticalAlignment="Top"/>
 
 
     </Grid>
