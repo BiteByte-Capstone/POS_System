@@ -27,7 +27,7 @@ namespace POS_System.Pages
         {
             InitializeComponent();
             AddCategoryButtonVisibility(false);
-
+            AddItemButtonVisibility(false);
 
         }
 
@@ -77,6 +77,33 @@ namespace POS_System.Pages
             adminManagement.Show();
             this.Close();
         }
+        private void DeleteItemButton_Click(Object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("click delete");
+            if (sender is Button button && button.CommandParameter is Item item)
+            {
+                MessageBox.Show("second stage");
+                int id = item.Id;
+                string name = item.item_name;
+                double price = item.ItemPrice;
+                string description = item.Description;
+                string category = item.Category;
+
+
+                // Confirm user wants to delete with the user's name included
+                MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    DeleteItemFromDatabase(id,name,price,description,category);
+                    MessageBox.Show("Delete successfully");
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
 
         private void DeleteButton_Click(Object sender, RoutedEventArgs e)
         {
@@ -100,6 +127,11 @@ namespace POS_System.Pages
                     return;
                 }
             }
+        }
+
+        private void EditItemButton_Click(Object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void EditButton_Click(Object sender, RoutedEventArgs e)
@@ -266,6 +298,36 @@ namespace POS_System.Pages
             return categories;
         }
 
+        //Method: add new item to database category
+        private bool InsertItemIntoDatabase(int itemId, string itemName, double itemPrice, string itemDescription, string itemCategory)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string insertQuery = "INSERT INTO item (item_id, item_name, item_price, item_description, item_category) VALUES (@itemId, @itemName, @itemPrice, @itemDescription, @itemCategory);";
+                    using (MySqlCommand cmd = new MySqlCommand(insertQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@itemId", itemId);
+                        cmd.Parameters.AddWithValue("@itemName", itemName);
+                        cmd.Parameters.AddWithValue("@itemPrice", itemPrice);
+                        cmd.Parameters.AddWithValue("@itemDescription", itemDescription);
+                        cmd.Parameters.AddWithValue("@itemCategory", itemCategory);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while adding the category: " + ex.Message);
+                return false;
+            }
+        }
+
         //Method: add category id and name to database category
         private bool InsertCategoryIntoDatabase(string categoryName, int categoryId)
         {
@@ -293,9 +355,8 @@ namespace POS_System.Pages
             }
         }
 
-
-        //Method: add new item to database category
-        private bool InsertItemIntoDatabase(int itemId, string itemName, double itemPrice, string itemDescription, string itemCategory)
+        //Method: delete item
+        private bool DeleteItemFromDatabase(int id, string name, double price, string description, string category)
         {
             try
             {
@@ -303,14 +364,11 @@ namespace POS_System.Pages
                 {
                     conn.Open();
 
-                    string insertQuery = "INSERT INTO item (item_id, item_name, item_price, item_description, item_category) VALUES (@itemId, @itemName, @itemPrice, @itemDescription, @itemCategory);";
-                    using (MySqlCommand cmd = new MySqlCommand(insertQuery, conn))
+                    string DeleteQuery = "DELETE FROM item WHERE item_id=@itemId;";
+                    using (MySqlCommand cmd = new MySqlCommand(DeleteQuery, conn))
                     {
-                        cmd.Parameters.AddWithValue("@itemId", itemId);
-                        cmd.Parameters.AddWithValue("@itemName", itemName); 
-                        cmd.Parameters.AddWithValue("@itemPrice", itemPrice);
-                        cmd.Parameters.AddWithValue("@itemDescription", itemDescription);
-                        cmd.Parameters.AddWithValue("@itemCategory", itemCategory); 
+
+                        cmd.Parameters.AddWithValue("@itemId", id);
 
                         cmd.ExecuteNonQuery();
                         return true;
@@ -319,10 +377,12 @@ namespace POS_System.Pages
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred while adding the category: " + ex.Message);
+                MessageBox.Show("An error occurred while delete the category: " + ex.Message);
                 return false;
             }
         }
+
+
 
         //Method: delete category
         private bool DeleteCategoryFromDatabase(int categoryId)
