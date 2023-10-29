@@ -476,9 +476,24 @@ namespace POS_System.Pages
             }
             else
             {
-                
-                // Print the receipt
-                PrintKitchenReceipt();
+                //No new item added
+                if (ExistedItem() == false)
+                {
+                    foreach (OrderedItem ordered in orderedItems)
+                    {
+                        string message = $"Order ID: {ordered.order_id}\n" +
+                                         $"Item ID: {ordered.item_id}\n" +
+                                         $"Item Name: {ordered.item_name}\n" +
+                                         $"Quantity: {ordered.Quantity}\n" +
+                                         $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
+                                         $"Is Existing Item: {ordered.IsExistItem}";
+
+                        MessageBox.Show(message);
+                    }
+                    // Print the receipt
+                    PrintKitchenReceipt();
+                }
+
                 using (MySqlConnection conn = new MySqlConnection(connStr))
                 {
                     try
