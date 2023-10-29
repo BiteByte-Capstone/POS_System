@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ViewModels\**" />
-    <EmbeddedResource Remove="ViewModels\**" />
-    <None Remove="ViewModels\**" />
-    <Page Remove="ViewModels\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Images\addUser.png" />
     <None Remove="Images\deleteIcon.png" />
     <None Remove="Images\editIcon.png" />
