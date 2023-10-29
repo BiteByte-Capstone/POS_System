@@ -447,15 +447,12 @@ namespace POS_System.Pages
             // Save the order
             AutoSave();
 
-            // Print the receipt
-            PrintKitchenReceipt();
 
-            MessageBox.Show("Order sent to Kitchen successfully!");
 
-            orderedItems.Clear();
-            TablePage tablePage = new TablePage();
-            tablePage.Show();
-            this.Close();
+
+
+
+
             
 
 
@@ -472,13 +469,16 @@ namespace POS_System.Pages
                 MessageBox.Show("No Item in this table.Please add items before save!");
                 return;
             }
-            else if (ExistedItem() == true && orderedItems.Count > existItemCount)
+            else if (ExistedItem() == true && orderedItems.Count == existItemCount)
             {
                 MessageBox.Show("No update on the list. Please check again");
                 return;
             }
             else
             {
+                
+                // Print the receipt
+                PrintKitchenReceipt();
                 using (MySqlConnection conn = new MySqlConnection(connStr))
                 {
                     try
@@ -567,10 +567,14 @@ namespace POS_System.Pages
                         }
                         MessageBox.Show("Order save successfully!");
 
+
                         /*items.Clear();*/
                         TotalAmount = 0.0;
                         TotalAmountTextBlock.Text = TotalAmount.ToString("C");
                         conn.Close();
+                        TablePage tablePage = new TablePage();
+                        tablePage.Show();
+                        this.Close();
 
                     }
                     catch (MySqlException ex)
@@ -624,17 +628,22 @@ namespace POS_System.Pages
             Dictionary<string, int> itemQuantities = new Dictionary<string, int>();
 
 
+
             // Add quantities for ordered items
             foreach (var orderedItem in orderedItems)
             {
-                if (itemQuantities.ContainsKey(orderedItem.item_name))
+                if (orderedItem.order_id==0)
                 {
-                    itemQuantities[orderedItem.item_name] += orderedItem.Quantity;
+                    if (itemQuantities.ContainsKey(orderedItem.item_name))
+                    {
+                        itemQuantities[orderedItem.item_name] += orderedItem.Quantity;
+                    }
+                    else
+                    {
+                        itemQuantities.Add(orderedItem.item_name, orderedItem.Quantity);
+                    }
                 }
-                else
-                {
-                    itemQuantities.Add(orderedItem.item_name, orderedItem.Quantity);
-                }
+
 
             }
 
@@ -665,7 +674,7 @@ namespace POS_System.Pages
                 // Print the kitchen receipt
                 printDialog.PrintDocument(documentPaginator, "Kitchen Receipt");
             }
-
+            MessageBox.Show("Order sent to Kitchen successfully!");
 
         }
 
