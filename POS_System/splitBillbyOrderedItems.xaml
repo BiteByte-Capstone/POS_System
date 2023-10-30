@@ -1,0 +1,19 @@
+﻿<Window x:Class="POS_System.splitBillbyOrderedItems"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:POS_System"
+        mc:Ignorable="d"
+        Title="splitBillbyOrderedItems" Height="450" Width="800">
+    <Grid>
+        <Label x:Name="splitByOrderName" Content="Split By Order Items" HorizontalAlignment="Center" Height="37" Margin="64,37,0,0" VerticalAlignment="Top" Width="336" FontFamily="Verdana" FontSize="16" BorderBrush="Orange" BorderThickness="3,3,3,3" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+        <ListBox x:Name="ordedListitems" HorizontalAlignment="Left" Height="213" Margin="85,131,0,0" VerticalAlignment="Top" Width="214" d:ItemsSource="{d:SampleData ItemCount=5}" BorderBrush="Orange" BorderThickness="3,3,3,3" FontFamily="Verdana"/>
+        <ListBox x:Name="splitOrderedItems" HorizontalAlignment="Left" Height="213" Margin="487,131,0,0" VerticalAlignment="Top" Width="209" d:ItemsSource="{d:SampleData ItemCount=5}" BorderBrush="Orange" BorderThickness="3,3,3,3" FontFamily="Verdana"/>
+        <Button x:Name="forwardButton" Content="&gt;" HorizontalAlignment="Left" Margin="327,157,0,0" VerticalAlignment="Top" FontSize="48" FontWeight="Bold" BorderBrush="Orange" BorderThickness="3,3,3,3" Width="123"/>
+        <Button x:Name="backwardButton" Content="&lt;" HorizontalAlignment="Left" Margin="329,238,0,0" VerticalAlignment="Top" FontSize="48" FontWeight="Bold" BorderBrush="Orange" BorderThickness="3,3,3,3" Width="123"/>
+        <Button x:Name="printBillBtn" Content="Print Bill" HorizontalAlignment="Left" Margin="595,361,0,0" VerticalAlignment="Top" BorderBrush="Orange" BorderThickness="3,3,3,3" FontSize="26"/>
+
+
+    </Grid>
+</Window>
