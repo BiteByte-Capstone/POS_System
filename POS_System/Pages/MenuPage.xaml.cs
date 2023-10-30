@@ -879,6 +879,14 @@ namespace POS_System.Pages
 
             return row;
         }
+        //Thevagi splitbill
+        private void SplitBillButton_Click(object sender, RoutedEventArgs e)
+        {
+            SplitBillDialog dialog = new SplitBillDialog(TotalAmount);
+            dialog.Owner = this; // Set the owner window to handle dialog behavior
+            dialog.ShowDialog();
+        }
+
 
 
 
