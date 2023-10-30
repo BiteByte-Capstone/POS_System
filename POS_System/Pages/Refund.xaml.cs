@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using POS_System.Models;
 
 namespace POS_System.Pages
 {
@@ -61,6 +62,15 @@ namespace POS_System.Pages
 
         }
 
+        private void DataGridRow_Click(object sender, RoutedEventArgs e)
+        {
+            DataRowView selectedRow = (DataRowView)paymentGrid.SelectedItem;
+            if (selectedRow != null)
+            {
+                refundPaymentIdBox.Text = selectedRow["payment_id"].ToString();
+            }
+        }
+
         private void RefundBtn_Click(object sender, RoutedEventArgs e)
         {
             string orderId = "0";
@@ -68,7 +78,7 @@ namespace POS_System.Pages
             string refundAmount = refundAmountBox.Text;
             string refundMethod = refundMethodComboBox.Text;
             string refundReason = refundReasonBox.Text;
-            string userId = "";
+            string userId = User.id.ToString();
 
             MessageBox.Show(paymentId + ' ' + refundAmount + ' ' + refundMethod + ' ' + refundReason);
             
