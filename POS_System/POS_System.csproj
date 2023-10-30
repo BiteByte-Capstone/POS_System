@@ -17,6 +17,9 @@
     <None Remove="Images\editIcon.png" />
     <None Remove="Images\editUser.png" />
     <None Remove="Images\logo.png" />
+    <None Remove="Images\ManageSales.png" />
+    <None Remove="Images\ManageTable.png" />
+    <None Remove="Images\ManageUser.png" />
     <None Remove="Images\userDelete.png" />
   </ItemGroup>
 
@@ -42,6 +45,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\logo.png" />
+    <Resource Include="Images\ManageSales.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ManageTable.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ManageUser.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\userDelete.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

@@ -252,7 +252,6 @@ namespace POS_System.Pages
             if (comboBox.SelectedItem is ComboBoxItem item)
             {
                 string selectedRole = (comboBox.SelectedItem as ComboBoxItem).Content.ToString();
-
                 int newID = GetNextIDForRole(selectedRole);
                 adduser_idBox.Text = newID.ToString();
             }
