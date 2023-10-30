@@ -47,7 +47,7 @@
                 </TextBlock>
             </Viewbox>
         </Button>
-        <Button Content="Split Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,309,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4"/>
+        <Button Content="Split Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,309,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4" Click="SplitBillButton_Click"/>
         <Button Content="Print Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,410,0,0" Click="PrintButton_Click"/>
         <Button Content="Payment" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,508,0,0" Click="PaymentButton_Click"/>
 
