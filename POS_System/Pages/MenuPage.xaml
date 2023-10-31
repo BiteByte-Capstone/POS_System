@@ -47,7 +47,7 @@
                 </TextBlock>
             </Viewbox>
         </Button>
-        <Button Content="Split Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,309,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4" Click="SplitBillButton_Click"/>
+        <Button Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,0,14,0" VerticalAlignment="Center" Grid.Row="4" Click="SplitBillButton_Click"/>
         <Button Content="Print Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,410,0,0" Click="PrintButton_Click"/>
         <Button Content="Payment" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,508,0,0" Click="PaymentButton_Click"/>
 
@@ -103,15 +103,30 @@
                         </Style.Triggers>
                     </Style>
                 </ListView.ItemContainerStyle>
-                <ListView.View>
-                    <GridView>
+                
+               
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="230"/>
+                                <!-- Takes up remaining space -->
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="100"/>
+                                <!-- Takes up only required space -->
+                                
+                            </Grid.ColumnDefinitions>
 
-                        <GridViewColumn Header="Item Name" Width="200" DisplayMemberBinding="{Binding item_name}" />
-                        <GridViewColumn Header="Item Price" Width="100" DisplayMemberBinding="{Binding ItemPrice, StringFormat=C}" />
+                            <TextBlock Text="{Binding item_name}" Grid.Column="0"/>
 
-                    </GridView>
 
-                </ListView.View>
+                                <TextBlock Text="$" Grid.Column="1" HorizontalAlignment="Left"/>
+                            <TextBlock Text="{Binding ItemPrice, StringFormat=F2}" Grid.Column="2" HorizontalAlignment="Right"/>
+
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                
             </ListView>
 
 

@@ -24,6 +24,8 @@ namespace POS_System
         public bool SplitByTotalAmount { get; private set; }
         public int NumberOfPeople { get; private set; }
 
+        public string SplitType { get; private set; }
+
         double _totalAmount;
         public SplitBillDialog()
         {
@@ -44,6 +46,7 @@ namespace POS_System
             NumberOfPeopleTextBlock.Visibility = Visibility.Visible;
             NumberOfPeopleTextBox.Visibility = Visibility.Visible;
             OKButton.Visibility = Visibility.Visible;
+            SplitType = "ByPerHead";
         }
 
         private void ButtonOrderItems_Click(object sender, RoutedEventArgs e)
@@ -52,6 +55,7 @@ namespace POS_System
             ButtonOrderItems.IsEnabled = false;
 
             SplitByTotalAmount = false;
+            SplitType = "ByItem";
             Close();
         }
 
@@ -70,9 +74,15 @@ namespace POS_System
 
                     if (totalAmount > 0)
                     {
+                        NumberOfPeople = int.Parse(NumberOfPeopleTextBox.Text);
                         double amountPerPerson = totalAmount / numberOfPeople;
 
                         MessageBox.Show($"Each person owes: {amountPerPerson:C}");
+
+
+                        DialogResult = true;
+                        Close();
+
                     }
                     else
                     {

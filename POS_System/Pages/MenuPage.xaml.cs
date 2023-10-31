@@ -29,6 +29,8 @@ namespace POS_System.Pages
         private ObservableCollection<Item> items = new ObservableCollection<Item>();
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
+        //split bill item
+        private ObservableCollection<SplitBill> splitBills = new ObservableCollection<SplitBill>();
 
         private string _tableNumber;
         private string _orderType;
@@ -328,9 +330,48 @@ namespace POS_System.Pages
         //Button: Splite bill button click
         private void SplitBillButton_Click(object sender, RoutedEventArgs e)
         {
-            SplitBillDialog dialog = new SplitBillDialog(TotalAmount);
-            /*dialog.Owner = this;*/ // Set the owner window to handle dialog behavior
-            dialog.ShowDialog();
+            if (orderedItems.Count == 0)
+            {
+                MessageBox.Show("No item on this table. Please save before payment");
+                return;
+            }
+            else if (ExistedItem() == false && orderedItems.Count != existItemCount)
+            {
+                MessageBox.Show("New Item(s) has not saved yet. Please save before payment");
+                return;
+            }
+            else if (orderedItems.Count < existItemCount)
+            {
+                MessageBox.Show("Remove Item has not saved yet. Please save before payment");
+                return;
+            }
+
+            else
+            {
+                SplitBillDialog spliteBilldialog = new SplitBillDialog(TotalAmount);
+                /*dialog.Owner = this;*/ // Set the owner window to handle dialog behavior
+
+                if (spliteBilldialog.ShowDialog() == true)
+                {
+                    string tableNumber = TableNumberTextBox.Text;
+                    string orderType = TypeTextBox.Text;
+                    string status = StatusTextBlock.Text;
+                    long orderId = GetOrderId(tableNumber);
+                    int splitNumber = spliteBilldialog.NumberOfPeople;
+                    string splitType = spliteBilldialog.SplitType;
+
+
+                    splitBills = ShowSplitItem(splitNumber,splitType);
+                    OrdersListBox.ItemsSource = splitBills;
+
+
+                }
+                else
+                {
+                    return;
+                }
+
+            }
         }
 
         //back button
@@ -395,6 +436,29 @@ namespace POS_System.Pages
 
             tablePage.Show();
             this.Close();
+        }
+
+        //Method: list divided items 
+        private ObservableCollection<SplitBill> ShowSplitItem(int splitNumber, string splitType)
+        {
+            ObservableCollection<SplitBill> splitBills = new ObservableCollection<SplitBill>();
+
+            /*            // Example: Add some SplitBill objects to the collection
+                        splitBills.Add(new SplitBill { Id = 1, Name = "Bill 1" });
+                        splitBills.Add(new SplitBill { Id = 2, Name = "Bill 2" });*/
+            foreach(OrderedItem orderedItem in orderedItems)
+            {
+                for(int i = 0; i < splitNumber; i++)
+                {
+                   /* splitBills.Add(new SplitBill(0, orderedItem.order_id, orderedItem.item_name, orderedItem.Quantity, orderedItem.ItemPrice/splitNumber));*/
+                }
+                
+            }
+            
+
+
+            // Return the populated collection
+            return splitBills;
         }
 
         //Method: check if any item is old item (ie. exist items)

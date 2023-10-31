@@ -17,6 +17,7 @@ namespace POS_System.Models
             this.Quantity = Quantity;
             this.ItemPrice = ItemPrice;
             this.IsExistItem = isExistItem;
+
         }
 
         public int order_id { get; set; }  
@@ -26,6 +27,7 @@ namespace POS_System.Models
         public int Quantity { get; set; }
         public double ItemPrice { get; set; }
         public bool IsExistItem { get; set;}
+
     }
 }
 
