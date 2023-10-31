@@ -10,7 +10,7 @@ namespace POS_System.Models
     {
         public int paymentId { get; set; }
         public string splitType { get; set; }
-        public new int customerId { get; set; }  // 'new' keyword to hide the inherited member
+        public new int customerId { get; set; } 
 
         public string displayText => $"Customer #{customerId}";
 
@@ -21,7 +21,7 @@ namespace POS_System.Models
         {
             this.paymentId = paymentId;
             this.splitType = splitType;
-            this.customerId = customerId; // Explicitly setting customerId for SplitBill
+            this.customerId = customerId; 
         }
     }
 }
