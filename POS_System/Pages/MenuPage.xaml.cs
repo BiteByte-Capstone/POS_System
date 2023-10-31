@@ -29,8 +29,6 @@ namespace POS_System.Pages
         private ObservableCollection<Item> items = new ObservableCollection<Item>();
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
-        //split bill item
-        private ObservableCollection<SplitBill> splitBills = new ObservableCollection<SplitBill>();
 
         private string _tableNumber;
         private string _orderType;
@@ -327,53 +325,6 @@ namespace POS_System.Pages
                 }
         }
 
-        //Button: Splite bill button click
-        private void SplitBillButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (orderedItems.Count == 0)
-            {
-                MessageBox.Show("No item on this table. Please save before payment");
-                return;
-            }
-            else if (ExistedItem() == false && orderedItems.Count != existItemCount)
-            {
-                MessageBox.Show("New Item(s) has not saved yet. Please save before payment");
-                return;
-            }
-            else if (orderedItems.Count < existItemCount)
-            {
-                MessageBox.Show("Remove Item has not saved yet. Please save before payment");
-                return;
-            }
-
-            else
-            {
-                SplitBillDialog spliteBilldialog = new SplitBillDialog(TotalAmount);
-                /*dialog.Owner = this;*/ // Set the owner window to handle dialog behavior
-
-                if (spliteBilldialog.ShowDialog() == true)
-                {
-                    string tableNumber = TableNumberTextBox.Text;
-                    string orderType = TypeTextBox.Text;
-                    string status = StatusTextBlock.Text;
-                    long orderId = GetOrderId(tableNumber);
-                    int splitNumber = spliteBilldialog.NumberOfPeople;
-                    string splitType = spliteBilldialog.SplitType;
-
-
-                    splitBills = ShowSplitItem(splitNumber,splitType);
-                    OrdersListBox.ItemsSource = splitBills;
-
-
-                }
-                else
-                {
-                    return;
-                }
-
-            }
-        }
-
         //back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
@@ -438,29 +389,6 @@ namespace POS_System.Pages
             this.Close();
         }
 
-        //Method: list divided items 
-        private ObservableCollection<SplitBill> ShowSplitItem(int splitNumber, string splitType)
-        {
-            ObservableCollection<SplitBill> splitBills = new ObservableCollection<SplitBill>();
-
-            /*            // Example: Add some SplitBill objects to the collection
-                        splitBills.Add(new SplitBill { Id = 1, Name = "Bill 1" });
-                        splitBills.Add(new SplitBill { Id = 2, Name = "Bill 2" });*/
-            foreach(OrderedItem orderedItem in orderedItems)
-            {
-                for(int i = 0; i < splitNumber; i++)
-                {
-                   /* splitBills.Add(new SplitBill(0, orderedItem.order_id, orderedItem.item_name, orderedItem.Quantity, orderedItem.ItemPrice/splitNumber));*/
-                }
-                
-            }
-            
-
-
-            // Return the populated collection
-            return splitBills;
-        }
-
         //Method: check if any item is old item (ie. exist items)
         private bool ExistedItem()
         {
@@ -519,12 +447,15 @@ namespace POS_System.Pages
             // Save the order
             AutoSave();
 
+            // Print the receipt
+            PrintKitchenReceipt();
 
+            MessageBox.Show("Order sent to Kitchen successfully!");
 
-
-
-
-
+            orderedItems.Clear();
+            TablePage tablePage = new TablePage();
+            tablePage.Show();
+            this.Close();
             
 
 
@@ -541,31 +472,13 @@ namespace POS_System.Pages
                 MessageBox.Show("No Item in this table.Please add items before save!");
                 return;
             }
-            else if (ExistedItem() == true && orderedItems.Count == existItemCount)
+            else if (ExistedItem() == true && orderedItems.Count > existItemCount)
             {
                 MessageBox.Show("No update on the list. Please check again");
                 return;
             }
             else
             {
-                //No new item added
-                if (ExistedItem() == false)
-                {
-                    foreach (OrderedItem ordered in orderedItems)
-                    {
-                        string message = $"Order ID: {ordered.order_id}\n" +
-                                         $"Item ID: {ordered.item_id}\n" +
-                                         $"Item Name: {ordered.item_name}\n" +
-                                         $"Quantity: {ordered.Quantity}\n" +
-                                         $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
-                                         $"Is Existing Item: {ordered.IsExistItem}";
-
-                        MessageBox.Show(message);
-                    }
-                    // Print the receipt
-                    PrintKitchenReceipt();
-                }
-
                 using (MySqlConnection conn = new MySqlConnection(connStr))
                 {
                     try
@@ -654,14 +567,10 @@ namespace POS_System.Pages
                         }
                         MessageBox.Show("Order save successfully!");
 
-
                         /*items.Clear();*/
                         TotalAmount = 0.0;
                         TotalAmountTextBlock.Text = TotalAmount.ToString("C");
                         conn.Close();
-                        TablePage tablePage = new TablePage();
-                        tablePage.Show();
-                        this.Close();
 
                     }
                     catch (MySqlException ex)
@@ -715,22 +624,17 @@ namespace POS_System.Pages
             Dictionary<string, int> itemQuantities = new Dictionary<string, int>();
 
 
-
             // Add quantities for ordered items
             foreach (var orderedItem in orderedItems)
             {
-                if (orderedItem.order_id==0)
+                if (itemQuantities.ContainsKey(orderedItem.item_name))
                 {
-                    if (itemQuantities.ContainsKey(orderedItem.item_name))
-                    {
-                        itemQuantities[orderedItem.item_name] += orderedItem.Quantity;
-                    }
-                    else
-                    {
-                        itemQuantities.Add(orderedItem.item_name, orderedItem.Quantity);
-                    }
+                    itemQuantities[orderedItem.item_name] += orderedItem.Quantity;
                 }
-
+                else
+                {
+                    itemQuantities.Add(orderedItem.item_name, orderedItem.Quantity);
+                }
 
             }
 
@@ -761,7 +665,7 @@ namespace POS_System.Pages
                 // Print the kitchen receipt
                 printDialog.PrintDocument(documentPaginator, "Kitchen Receipt");
             }
-            MessageBox.Show("Order sent to Kitchen successfully!");
+
 
         }
 

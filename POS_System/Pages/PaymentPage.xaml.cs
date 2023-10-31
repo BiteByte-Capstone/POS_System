@@ -22,8 +22,6 @@ namespace POS_System.Pages
         private long _orderId;
         private string _status;
         private bool _hasUnpaidOrders = true;
-        private string _splitType = "UpdateLater";
-        private int _splitNumber = 1;
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
         String paymentMethod;
@@ -36,7 +34,6 @@ namespace POS_System.Pages
             customerPayTextBox.Focus();
         }
 
-        //for normal payment
         public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders) : this()
         {
             _tableNumber = tableNumber;
@@ -52,59 +49,13 @@ namespace POS_System.Pages
 
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-            totalAmtTextBox.Text = CalculateTotalOrderAmount(_splitNumber, _splitType).ToString("C", cultureInfo);
+            totalAmtTextBox.Text = CalculateTotalOrderAmount().ToString("C", cultureInfo);
             DisplayBalance();
             DisplayTax();
             InitializeEventHandlers();
 
 
         }
-
-        //for split bill
-        public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, string splitType, int splitNumber) : this()
-        {
-
-                _tableNumber = tableNumber;
-                _orderedItems = orderedItems;
-                _orderType = orderType;
-                _orderId = orderId;
-                _status = status;
-                _hasUnpaidOrders = hasUnpaidOrders;
-                _splitType = splitType;
-                _splitNumber = splitNumber;
-
-                MessageBox.Show("Table Number: " + _tableNumber);
-            MessageBox.Show("Order Type: " + _orderType);
-            MessageBox.Show("Order ID: " + _orderId.ToString());
-            MessageBox.Show("Status: " + _status);
-            MessageBox.Show("Has Unpaid Orders: " + _hasUnpaidOrders.ToString());
-            MessageBox.Show("Split Type: " + _splitType);
-            MessageBox.Show("Split Number: " + _splitNumber.ToString());
-
-                tableNumTextbox.Text = _tableNumber;
-                orderIdTextbox.Text = _orderId.ToString();
-                typeTextBox.Text = _orderType.ToString();
-
-                CultureInfo cultureInfo = new CultureInfo("en-CA");
-                cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-                totalAmtTextBox.Text = CalculateTotalOrderAmount(_splitNumber, _splitType).ToString("C", cultureInfo);
-                DisplayBalance();
-                DisplayTax();
-                InitializeEventHandlers();
-              
-            
-
-
-
-        }
-
-/*        private PaymentPage loopSplitBill(int _splitNumber)
-        {
-            for (int i = 0; i < _splitNumber; i++)
-            {
-                return new PaymentPage(); 
-            }
-        }*/
 
         // Add a private field to store the shadow value:
         private long shadowValue = 0;
@@ -157,30 +108,7 @@ namespace POS_System.Pages
 
 
         //Calculate Total Order amount 
-        private double CalculateTotalOrderAmount(int splitNumber, string splitType)
-        {
-            double totalAmount = 0;
-
-            if (splitType.Equals("ByPerHead"))
-            {
-                foreach (var orderedItem in _orderedItems)
-                {
-                    if (orderedItem.IsExistItem == true)
-                    {
-                        totalAmount += orderedItem.ItemPrice;
-                    }
-
-                }
-                return totalAmount/splitNumber;
-            }
-            else
-            {
-                return totalAmount;
-            }
-            
-        }
-
-/*        private double CalculateTotalOrderAmountPerHead(int splitNumber)
+        private double CalculateTotalOrderAmount()
         {
             double totalAmount = 0;
             foreach (var orderedItem in _orderedItems)
@@ -189,10 +117,10 @@ namespace POS_System.Pages
                 {
                     totalAmount += orderedItem.ItemPrice;
                 }
-
+                
             }
-            return totalAmount/ splitNumber;
-        }*/
+            return totalAmount;
+        }
 
 
         //Button Session
@@ -201,7 +129,7 @@ namespace POS_System.Pages
         {
             string message = $"orderID: {_orderId}" +
                  $"\npayment method: {paymentMethod}" +
-                 $"\ntotal order amount: {CalculateTotalOrderAmount(_splitNumber, _splitType)}" +
+                 $"\ntotal order amount: {CalculateTotalOrderAmount()}" +
                  $"\nGST: {CalculateTaxAmount()}" +
                  $"\ntotal customer payment: {GetCustomerPayment()}" +
                  $"\ntotal order balance: {CalculateOrderTotalBalance()}" +
@@ -229,7 +157,7 @@ namespace POS_System.Pages
                     paymentCmd.Parameters.AddWithValue("@order_id", _orderId);
                         paymentCmd.Parameters.AddWithValue("@order_type", _orderType);
                         paymentCmd.Parameters.AddWithValue("@payment_method", paymentMethod);
-                    paymentCmd.Parameters.AddWithValue("@base_amount", CalculateTotalOrderAmount(_splitNumber, _splitType));
+                    paymentCmd.Parameters.AddWithValue("@base_amount", CalculateTotalOrderAmount());
                     paymentCmd.Parameters.AddWithValue("@GST", CalculateTaxAmount());
                     paymentCmd.Parameters.AddWithValue("@total_amount", GetCustomerPayment());
                     paymentCmd.Parameters.AddWithValue("@gross_amount", CalculateOrderTotalBalance());
@@ -258,8 +186,8 @@ namespace POS_System.Pages
 
                         TablePage tablePage = new TablePage();
                     tablePage.Show();
-                        this.Close();
-                    }
+                    this.Close();
+                }
                 catch (MySqlException ex)
                 {
                     MessageBox.Show("MySQL Error: " + ex.Message);
@@ -364,7 +292,7 @@ namespace POS_System.Pages
         private double CalculateTaxAmount()
         {
             double totalTaxAmount = 0;
-            double totalOrderAmount = CalculateTotalOrderAmount(_splitNumber, _splitType);
+            double totalOrderAmount = CalculateTotalOrderAmount();
             double taxRate = 0.05;
             return totalTaxAmount = totalOrderAmount * taxRate;
 
@@ -375,7 +303,7 @@ namespace POS_System.Pages
         private double CalculateOrderTotalBalance()
         {
             double totalBalance = 0;
-            double totalOrderAmount = CalculateTotalOrderAmount(_splitNumber, _splitType);
+            double totalOrderAmount = CalculateTotalOrderAmount();
             double totalTaxAmount = CalculateTaxAmount();
             return totalBalance = totalOrderAmount + totalTaxAmount;
         }
