@@ -293,6 +293,13 @@ namespace POS_System.Pages
             TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
         }
 
+        private void SplitBillButton_Click(object sender, RoutedEventArgs e)
+        {
+            SplitBillDialog dialog = new SplitBillDialog(TotalAmount);
+            dialog.Owner = this; // Set the owner window to handle dialog behavior
+            dialog.ShowDialog();
+        }
+
         //(button) go to payment page
         private void PaymentButton_Click(object sender, RoutedEventArgs e)
         {

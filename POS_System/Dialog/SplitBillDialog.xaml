@@ -5,14 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System"
         mc:Ignorable="d"
-        Title="SplitBillDialog" Height="350" Width="600">
+        Title="SplitBillDialog" Height="100" Width="500">
     <Grid>
-        <TextBlock Text="How would you like to split the bill?" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,20" FontSize="16" />
-        <Button Content="Total Amount" Name="ButtonTotalAmount" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Height="40" Margin="10,60" Click="ButtonTotalAmount_Click" />
-        <Button Content="Order Items" Name="ButtonOrderItems" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Height="40" Margin="160,60" Click="ButtonOrderItems_Click" />
-        <TextBlock Text="Enter the number of people:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,100" FontSize="16" Visibility="Collapsed" Name="NumberOfPeopleTextBlock" />
-        <TextBox x:Name="NumberOfPeopleTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="230,103,0,0" Visibility="Collapsed" />
-        <Button Content="OK" HorizontalAlignment="Left" VerticalAlignment="Top" Width="60" Height="40" Margin="312,100,0,0" Click="OKButton_Click" Visibility="Collapsed" Name="OKButton" />
+        <TextBlock Text="Enter the number of bill:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="102,30,0,0" FontSize="16" Name="NumberOfPeopleTextBlock" />
+        <TextBox x:Name="NumberOfPeopleTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="278,32,0,0"  />
+        <Button Content="OK" HorizontalAlignment="Left" VerticalAlignment="Center" Width="44" Height="21" Margin="341,0,0,0" Click="OKButton_Click"  Name="OKButton" />
 
 
     </Grid>
