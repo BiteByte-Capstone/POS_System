@@ -116,7 +116,7 @@
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
                             <DataTemplate>
-                                <Button Content="{Binding Name}"/>
+                                <Button Tag="{Binding Name}" Content="{Binding Name}" Click="CustomerNumberButton_Click"/>
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
                     </GroupStyle>

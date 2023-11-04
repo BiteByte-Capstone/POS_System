@@ -377,6 +377,13 @@ namespace POS_System.Pages
             }
         }
 
+        //(Button)
+        private void CustomerNumberButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button clickedButton = sender as Button;
+            MessageBox.Show(clickedButton.Content.ToString());
+        }
+
         //(Method) for split item
         private ObservableCollection<OrderedItem> GetNewSplitItemList(int numberOfBill,string splitType)
         {

@@ -31,7 +31,7 @@ namespace POS_System.Pages
         {
             InitializeComponent();
             id.Focus();
-            DataContext = new LoginScreenViewModel();
+            /*DataContext = new LoginScreenViewModel();*/
             db = new DatabaseHelper("localhost", "pos_db", "root", "password");
         }
 
