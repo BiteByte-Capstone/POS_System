@@ -4,26 +4,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace POS_System.Models
 {
-    public class SplitBill : OrderedItem
+    public class SplitBill
     {
-        public int paymentId { get; set; }
-        public string splitType { get; set; }
-        public new int customerId { get; set; } 
+        public int PaymentId { get; set; }
+        public int OrderId { get; set; }
+        public int ItemId { get; set; }
+        public string ItemName { get; set; }
+        public int Quantity { get; set; }
+        public double Price { get; set; }
+        public string SplitType { get; set; }
+        public int CustomerId { get; set; }
 
-        public string displayText => $"Customer #{customerId}";
+        public string DisplayText => $"Customer #{CustomerId}";
 
         public SplitBill() { }
 
         public SplitBill(int paymentId, int orderId, int itemId, string itemName, int quantity, double price, int customerId, string splitType)
-            : base(orderId, itemId, itemName, quantity, price, true)
         {
-            this.paymentId = paymentId;
-            this.splitType = splitType;
-            this.customerId = customerId; 
+            PaymentId = paymentId;
+            OrderId = orderId;
+            ItemId = itemId;
+            ItemName = itemName;
+            Quantity = quantity;
+            Price = price;
+            CustomerId = customerId;
+            SplitType = splitType;
         }
     }
 }
+
 
 

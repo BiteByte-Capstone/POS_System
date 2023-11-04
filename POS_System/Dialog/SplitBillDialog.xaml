@@ -5,11 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System"
         mc:Ignorable="d"
-        Title="SplitBillDialog" Height="100" Width="500">
+        Title="SplitBillDialog" Height="300" Width="400" WindowStartupLocation="CenterOwner" Background="#212121">
     <Grid>
-        <TextBlock Text="Enter the number of bill:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="102,30,0,0" FontSize="16" Name="NumberOfPeopleTextBlock" />
-        <TextBox x:Name="NumberOfPeopleTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Margin="278,32,0,0"  />
-        <Button Content="OK" HorizontalAlignment="Left" VerticalAlignment="Center" Width="44" Height="21" Margin="341,0,0,0" Click="OKButton_Click"  Name="OKButton" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="113*"/>
+            <RowDefinition Height="171*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Please enter how many bill:" Foreground="Orange" FontSize="25" FontFamily="Verdana" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,39,0,0" Name="NumberOfPeopleTextBlock" Height="26" Width="352" />
+        <TextBox x:Name="NumberOfPeopleTextBox" HorizontalAlignment="Center" FontSize="25" FontFamily="Verdana" TextAlignment="Center"  VerticalAlignment="Center" Width="170" Height="39" Margin="0,69,0,0"  />
+        <Button Content="Save" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Width="170" Height="42" Margin="0,113,0,0" Click="SaveButton_Click"  Name="PrintAll_Button" Grid.RowSpan="2" />
 
 
     </Grid>

@@ -16,6 +16,10 @@ using System.Printing;
 using System.Linq;
 using System.Globalization;
 using Org.BouncyCastle.Utilities.Collections;
+using System.Data.Common;
+using System.Windows.Shapes;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace POS_System.Pages
 {
@@ -29,11 +33,15 @@ namespace POS_System.Pages
         private ObservableCollection<Item> items = new ObservableCollection<Item>();
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
+        //Splited order 
+        private ObservableCollection<OrderedItem> splitOrderedItems = new ObservableCollection<OrderedItem>();
 
         private string _tableNumber;
         private string _orderType;
         private string _status;
         private bool _hasPaidOrders;
+        private int _numberOfBill;
+        private string _splitType;
 
         private double TotalAmount = 0.0;
         private int existItemCount = 0;
@@ -62,21 +70,49 @@ namespace POS_System.Pages
             if (hasUnpaidOrders)
             {
                 LoadUnpaidOrders(tableNumber);
+                
+                foreach (OrderedItem splited in orderedItems)
+                {
+                    string message = $"Order ID: {splited.order_id}\n" +
+                                     $"Item ID: {splited.item_id}\n" +
+                                     $"Item Name: {splited.item_name}\n" +
+                                     $"Quantity: {splited.Quantity}\n" +
+                                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
+                                     $"Is Existing Item: {splited.IsExistItem}\n" +
+                                     $"Customer ID: {splited.customerID}";
+
+                    MessageBox.Show(message);
+                    
+                }
+               
             }
+
+            
+        }
+
+        //Method: Group List by customer id
+        private void GroupItemList()
+        {
+
+
+            OrdersListBox.Items.GroupDescriptions.Clear();
+            var property = "FormattedCustomerID";
+            OrdersListBox.Items.GroupDescriptions.Add(new PropertyGroupDescription(property));
+
         }
 
 
 
         private void LoadUnpaidOrders(string tableNumber)
         {
-
+            bool isSplited = false;
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
                 {
                     conn.Open();
                     long orderId = GetOrderId(tableNumber);
-                    string unpaidOrdersSql = "SELECT o.order_id, o.item_id, o.quantity, o.item_price, i.item_name, i.item_description FROM ordered_itemlist o JOIN item i ON o.item_id = i.item_id WHERE o.order_id = @orderId;";
+                    string unpaidOrdersSql = "SELECT o.order_id, o.item_id, o.quantity, o.item_price, o.customer_id, i.item_name, i.item_description FROM ordered_itemlist o JOIN item i ON o.item_id = i.item_id WHERE o.order_id = @orderId;";
                     MySqlCommand unpaidOrdersCmd = new MySqlCommand(unpaidOrdersSql, conn);
                     unpaidOrdersCmd.Parameters.AddWithValue("@orderId", orderId);
                     MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
@@ -105,15 +141,24 @@ namespace POS_System.Pages
                             item_name = row["item_name"].ToString(),
                             Quantity = Convert.ToInt32(row["quantity"]),
                             ItemPrice = Convert.ToDouble(row["item_price"]),
-                            IsExistItem = true
+                            IsExistItem = true,
+                            customerID = Convert.ToInt32(row["customer_id"])
                         };
                         existItemCount++;
+                        if (orderedItem.customerID > 0)
+                        {
+                            isSplited = true;
+                        }
                         orderedItems.Add(orderedItem);
                         TotalAmount += orderedItem.ItemPrice;
                     }
                     TotalAmountTextBlock.Text = TotalAmount.ToString("C", new CultureInfo("en-CA"));
                     OrdersListBox.ItemsSource = orderedItems;
-
+                    if (isSplited == true)
+                    {
+                        GroupItemList();
+                    }
+                    
 
 
                 }
@@ -282,7 +327,8 @@ namespace POS_System.Pages
                 item_name = item.item_name,
                 Quantity = 1, // Assuming quantity of 1 for new items
                 ItemPrice = item.ItemPrice,
-                IsExistItem = false
+                IsExistItem = false,
+                customerID = 0
             };
 
             orderedItems.Add(orderedItem);
@@ -293,11 +339,146 @@ namespace POS_System.Pages
             TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
         }
 
+        //Button Split Bill Button
         private void SplitBillButton_Click(object sender, RoutedEventArgs e)
         {
-            SplitBillDialog dialog = new SplitBillDialog(TotalAmount);
-            dialog.Owner = this; // Set the owner window to handle dialog behavior
-            dialog.ShowDialog();
+            SplitBillDialog splitBillDialog = new SplitBillDialog(orderedItems, TotalAmount);
+
+            
+            if (splitBillDialog.ShowDialog() == true)
+            {
+                _numberOfBill = splitBillDialog.NumberOfPeople;
+                _splitType = "splitByBill";
+                
+
+            }
+            else
+            {
+                return;
+            }
+            if (_numberOfBill > 0)
+            {
+                
+                splitOrderedItems = GetNewSplitItemList(_numberOfBill, _splitType);
+                RemoveOrderByid(GetOrderId(_tableNumber));
+                addItemToDatabase(splitOrderedItems);
+                foreach (OrderedItem splited in splitOrderedItems)
+                {
+                    string message = $"Order ID: {splited.order_id}\n" +
+                                     $"Item ID: {splited.item_id}\n" +
+                                     $"Item Name: {splited.item_name}\n" +
+                                     $"Quantity: {splited.Quantity}\n" +
+                                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
+                                     $"Is Existing Item: {splited.IsExistItem}\n" +
+                                     $"Customer ID: {splited.customerID}";
+
+                    MessageBox.Show(message);
+                }
+            }
+        }
+
+        //(Method) for split item
+        private ObservableCollection<OrderedItem> GetNewSplitItemList(int numberOfBill,string splitType)
+        {
+
+            foreach (OrderedItem orderedItem in orderedItems)
+            {
+                for (int i = 1; i <= numberOfBill; i++) { 
+                OrderedItem newSplitBill = new OrderedItem
+                {
+
+                    order_id = orderedItem.order_id,
+                    item_id = orderedItem.item_id,
+                    item_name = orderedItem.item_name,
+                    Quantity = orderedItem.Quantity,
+                    ItemPrice = orderedItem.ItemPrice / numberOfBill,
+                    IsExistItem = orderedItem.IsExistItem,
+                    customerID = i  // Set a default or calculated value for splitType
+                };
+                    splitOrderedItems.Add(newSplitBill);
+                }
+            }
+            foreach (OrderedItem splited in splitOrderedItems)
+            {
+                string message = $"Order ID: {splited.order_id}\n" +
+                                 $"Item ID: {splited.item_id}\n" +
+                                 $"Item Name: {splited.item_name}\n" +
+                                 $"Quantity: {splited.Quantity}\n" +
+                                 $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
+                                 $"Is Existing Item: {splited.IsExistItem}\n" +
+                                 $"Customer ID: {splited.customerID}";
+
+                MessageBox.Show(message);
+            }
+            return splitOrderedItems;
+        }
+
+        private void addItemToDatabase(ObservableCollection<OrderedItem> items)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    foreach (var orderedItem in items)
+                    {
+
+
+
+                        string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price, customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice, @customerID);";
+                        MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
+                        itemCmd.Parameters.AddWithValue("@orderId", orderedItem.order_id);
+                        itemCmd.Parameters.AddWithValue("@itemId", orderedItem.item_id);
+                        itemCmd.Parameters.AddWithValue("@itemName", orderedItem.item_name);
+                        itemCmd.Parameters.AddWithValue("@quantity", 1);
+                        itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.ItemPrice);
+                        itemCmd.Parameters.AddWithValue("@customerID", orderedItem.customerID);
+                        itemCmd.ExecuteNonQuery();
+                    }
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+        }
+
+        //(Method) drop the item by order id
+        private void RemoveOrderByid(long orderId)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+
+                    string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
+                    MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
+                    removeOrderCmd.Parameters.AddWithValue("@orderId", orderId);
+                    removeOrderCmd.ExecuteNonQuery();
+
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+
+
         }
 
         //(button) go to payment page
@@ -374,8 +555,8 @@ namespace POS_System.Pages
                 
 
         }
-            
         
+
 
         //Method: for go back table page.
         private void BackToTablePage()
@@ -519,7 +700,7 @@ namespace POS_System.Pages
                             {
 
 
-                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice);";
+                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price, customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice, 0);";
                                 MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
                                 itemCmd.Parameters.AddWithValue("@orderId", orderId);
                                 itemCmd.Parameters.AddWithValue("@itemId", newOrder.item_id);
@@ -557,7 +738,7 @@ namespace POS_System.Pages
                             foreach (OrderedItem orderedItem in orderedItems)
                             {
 
-                                string itemSql = "INSERT INTO ordered_itemlist(order_id, item_id, item_name, quantity, item_price) VALUES(@orderId, @itemId, @itemName, @quantity, @itemPrice);";
+                                string itemSql = "INSERT INTO ordered_itemlist(order_id, item_id, item_name, quantity, item_price, customer_id) VALUES(@orderId, @itemId, @itemName, @quantity, @itemPrice, 0);";
                                 MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
                                 itemCmd.Parameters.AddWithValue("@orderId", orderId);
                                 itemCmd.Parameters.AddWithValue("@itemId", orderedItem.item_id);
