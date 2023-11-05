@@ -21,6 +21,37 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Windows.Data;
 
+
+//Code for debug
+/*foreach (OrderedItem splited in splitOrderedItems)
+{
+    string message = $"Order ID: {splited.order_id}\n" +
+                     $"Item ID: {splited.item_id}\n" +
+                     $"Item Name: {splited.item_name}\n" +
+                     $"Quantity: {splited.Quantity}\n" +
+                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
+                     $"Is Existing Item: {splited.IsExistItem}\n" +
+                     $"Customer ID: {splited.customerID}";
+
+    MessageBox.Show(message);
+}
+*/
+
+/*foreach (OrderedItem splited in orderedItems)
+{
+    string message = $"Order ID: {splited.order_id}\n" +
+                     $"Item ID: {splited.item_id}\n" +
+                     $"Item Name: {splited.item_name}\n" +
+                     $"Quantity: {splited.Quantity}\n" +
+                     $"Item Price: {splited.ItemPrice:C}\n" +
+                     $"Original price: {splited.OriginalItemPrice:C}\n" +
+                     $"Is Existing Item: {splited.IsExistItem}\n" +
+                     $"Customer ID: {splited.customerID}";
+
+    MessageBox.Show(message);
+
+}*/
+
 namespace POS_System.Pages
 {
     public partial class MenuPage : Window
@@ -46,6 +77,7 @@ namespace POS_System.Pages
         private double TotalAmount = 0.0;
         private int existItemCount = 0;
         bool itemClick = false;
+        bool isSplited = false;
         //Constructor 
         public MenuPage()
         {
@@ -70,21 +102,7 @@ namespace POS_System.Pages
             if (hasUnpaidOrders)
             {
                 LoadUnpaidOrders(tableNumber);
-                
-                foreach (OrderedItem splited in orderedItems)
-                {
-                    string message = $"Order ID: {splited.order_id}\n" +
-                                     $"Item ID: {splited.item_id}\n" +
-                                     $"Item Name: {splited.item_name}\n" +
-                                     $"Quantity: {splited.Quantity}\n" +
-                                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
-                                     $"Is Existing Item: {splited.IsExistItem}\n" +
-                                     $"Customer ID: {splited.customerID}";
 
-                    MessageBox.Show(message);
-                    
-                }
-               
             }
 
             
@@ -105,14 +123,14 @@ namespace POS_System.Pages
 
         private void LoadUnpaidOrders(string tableNumber)
         {
-            bool isSplited = false;
+            
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
                 {
                     conn.Open();
                     long orderId = GetOrderId(tableNumber);
-                    string unpaidOrdersSql = "SELECT o.order_id, o.item_id, o.quantity, o.item_price, o.customer_id, i.item_name, i.item_description FROM ordered_itemlist o JOIN item i ON o.item_id = i.item_id WHERE o.order_id = @orderId;";
+                    string unpaidOrdersSql = "SELECT o.order_id, o.item_id, o.quantity, o.item_price, o.original_item_price,o.customer_id, i.item_name, i.item_description FROM ordered_itemlist o JOIN item i ON o.item_id = i.item_id WHERE o.order_id = @orderId;";
                     MySqlCommand unpaidOrdersCmd = new MySqlCommand(unpaidOrdersSql, conn);
                     unpaidOrdersCmd.Parameters.AddWithValue("@orderId", orderId);
                     MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
@@ -141,6 +159,7 @@ namespace POS_System.Pages
                             item_name = row["item_name"].ToString(),
                             Quantity = Convert.ToInt32(row["quantity"]),
                             ItemPrice = Convert.ToDouble(row["item_price"]),
+                            origialItemPrice = Convert.ToDouble(row["original_item_price"]),
                             IsExistItem = true,
                             customerID = Convert.ToInt32(row["customer_id"])
                         };
@@ -248,7 +267,7 @@ namespace POS_System.Pages
                     newItemButton.Width = 150;
                     newItemButton.Height = 80;
                     SetButtonStyle(newItemButton);
-                    newItemButton.Click += ItemClick;
+                    newItemButton.Click += ItemButton_Click;
                     ItemButtonPanel.Children.Add(newItemButton);
                 }
 
@@ -265,7 +284,7 @@ namespace POS_System.Pages
 
 
         //add item on list box
-        private void ItemClick(object sender, RoutedEventArgs e)
+        private void ItemButton_Click(object sender, RoutedEventArgs e)
         {
             itemClick = true;
             
@@ -276,42 +295,7 @@ namespace POS_System.Pages
 
                 if (item != null)
                 {
-                    if (StatusTextBlock.Text.Equals("New Order")) //orderedItems.Count == 0 && 
-                    {
                         AddItemToOrder(item);
-                        /*OrdersListBox.ItemsSource = orderedItems;*/
-                        foreach (OrderedItem ordered in orderedItems)
-                        {
-                            string message = $"Order ID: {ordered.order_id}\n" +
-                                             $"Item ID: {ordered.item_id}\n" +
-                                             $"Item Name: {ordered.item_name}\n" +
-                                             $"Quantity: {ordered.Quantity}\n" +
-                                             $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
-                                             $"Is Existing Item: {ordered.IsExistItem}";
-
-                            MessageBox.Show(message);
-                        }
-
-
-                    }
-                    else
-                    {
-                        //convert it into ordered list item
-                        AddItemToOrder(item);
-                        foreach (OrderedItem ordered in orderedItems)
-                        {
-                            string message = $"Order ID: {ordered.order_id}\n" +
-                                             $"Item ID: {ordered.item_id}\n" +
-                                             $"Item Name: {ordered.item_name}\n" +
-                                             $"Quantity: {ordered.Quantity}\n" +
-                                             $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
-                                             $"Is Existing Item: {ordered.IsExistItem}";
-
-                            MessageBox.Show(message);
-                        }
-
-
-                    }
                 }
             }
         }
@@ -325,7 +309,8 @@ namespace POS_System.Pages
 
                 item_id = item.Id,
                 item_name = item.item_name,
-                Quantity = 1, // Assuming quantity of 1 for new items
+                Quantity = 1, 
+                origialItemPrice = item.ItemPrice,
                 ItemPrice = item.ItemPrice,
                 IsExistItem = false,
                 customerID = 0
@@ -339,7 +324,7 @@ namespace POS_System.Pages
             TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
         }
 
-        //Button Split Bill Button
+        //(Button for Split Bill)
         private void SplitBillButton_Click(object sender, RoutedEventArgs e)
         {
             SplitBillDialog splitBillDialog = new SplitBillDialog(orderedItems, TotalAmount);
@@ -360,24 +345,17 @@ namespace POS_System.Pages
             {
                 
                 splitOrderedItems = GetNewSplitItemList(_numberOfBill, _splitType);
-                RemoveOrderByid(GetOrderId(_tableNumber));
+                RemoveOrderByOrderID(GetOrderId(_tableNumber));
                 addItemToDatabase(splitOrderedItems);
-                foreach (OrderedItem splited in splitOrderedItems)
-                {
-                    string message = $"Order ID: {splited.order_id}\n" +
-                                     $"Item ID: {splited.item_id}\n" +
-                                     $"Item Name: {splited.item_name}\n" +
-                                     $"Quantity: {splited.Quantity}\n" +
-                                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
-                                     $"Is Existing Item: {splited.IsExistItem}\n" +
-                                     $"Customer ID: {splited.customerID}";
 
-                    MessageBox.Show(message);
-                }
+                MessageBox.Show($"Splited bill into {_numberOfBill}");
+            } else
+            {
+                MessageBox.Show($"Splited bill into {_numberOfBill}, Please try again");
             }
         }
 
-        //(Button)
+        //(Button) on List view
         private void CustomerNumberButton_Click(object sender, RoutedEventArgs e)
         {
             Button clickedButton = sender as Button;
@@ -398,25 +376,15 @@ namespace POS_System.Pages
                     item_id = orderedItem.item_id,
                     item_name = orderedItem.item_name,
                     Quantity = orderedItem.Quantity,
+                    origialItemPrice = orderedItem.origialItemPrice,
                     ItemPrice = orderedItem.ItemPrice / numberOfBill,
                     IsExistItem = orderedItem.IsExistItem,
-                    customerID = i  // Set a default or calculated value for splitType
+                    customerID = i  
                 };
                     splitOrderedItems.Add(newSplitBill);
                 }
             }
-            foreach (OrderedItem splited in splitOrderedItems)
-            {
-                string message = $"Order ID: {splited.order_id}\n" +
-                                 $"Item ID: {splited.item_id}\n" +
-                                 $"Item Name: {splited.item_name}\n" +
-                                 $"Quantity: {splited.Quantity}\n" +
-                                 $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
-                                 $"Is Existing Item: {splited.IsExistItem}\n" +
-                                 $"Customer ID: {splited.customerID}";
 
-                MessageBox.Show(message);
-            }
             return splitOrderedItems;
         }
 
@@ -432,12 +400,13 @@ namespace POS_System.Pages
 
 
 
-                        string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price, customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice, @customerID);";
+                        string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, original_item_price ,item_price, customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @originalItemPrice,@itemPrice, @customerID);";
                         MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
                         itemCmd.Parameters.AddWithValue("@orderId", orderedItem.order_id);
                         itemCmd.Parameters.AddWithValue("@itemId", orderedItem.item_id);
                         itemCmd.Parameters.AddWithValue("@itemName", orderedItem.item_name);
                         itemCmd.Parameters.AddWithValue("@quantity", 1);
+                        itemCmd.Parameters.AddWithValue("@originalItemPrice", orderedItem.origialItemPrice);
                         itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.ItemPrice);
                         itemCmd.Parameters.AddWithValue("@customerID", orderedItem.customerID);
                         itemCmd.ExecuteNonQuery();
@@ -457,7 +426,7 @@ namespace POS_System.Pages
         }
 
         //(Method) drop the item by order id
-        private void RemoveOrderByid(long orderId)
+        private void RemoveOrderByOrderID(long orderId)
         {
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -512,15 +481,92 @@ namespace POS_System.Pages
                 return;
             }
 
-                else
+                
+            else
+            {
+                MessageBox.Show(_numberOfBill.ToString());
+                   
+                while (_numberOfBill > 0)
                 {
                     PaymentPage paymentPage = new PaymentPage(orderedItems, tableNumber, orderType, orderId, status, false);
                     paymentPage.Show();
-                    this.Close();
+                    _numberOfBill--;
                 }
+                this.Close();
+            }
         }
 
-        //back button
+        //(button) reset button click
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+
+                    string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId and customer_id > 1;";
+                    MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
+                    removeOrderCmd.Parameters.AddWithValue("@orderId", GetOrderId(_tableNumber));
+                    removeOrderCmd.ExecuteNonQuery();
+
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+            ResetCustomerID(orderedItems);
+            MessageBox.Show("Reset from Split bill.");
+        }
+
+        //(Method for reset button) reset method
+        private void ResetCustomerID(ObservableCollection<OrderedItem> items)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+
+                    foreach (var orderedItem in items)
+                    {
+
+
+
+                        string ResetItemCustomerIDSql = "UPDATE `ordered_itemlist` SET item_price = @itemPrice, customer_id = @customerID;";
+                        MySqlCommand itemCmd = new MySqlCommand(ResetItemCustomerIDSql, conn);
+                        itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.origialItemPrice);
+                        itemCmd.Parameters.AddWithValue("@customerID", 0);
+                        itemCmd.ExecuteNonQuery();
+                    }
+
+
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+        }
+
+        //(button)back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
             if (orderedItems.Count != existItemCount)
@@ -606,7 +652,7 @@ namespace POS_System.Pages
             return ExistedItem;
         }
 
-
+        //(button for void item) remove item from list view
         private void VoidButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -635,7 +681,7 @@ namespace POS_System.Pages
 
 
 
-        //(Save button) 
+        //(button for print and save to database) 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
  
@@ -659,7 +705,7 @@ namespace POS_System.Pages
 
         }
 
-        // Method to save the order
+        // (Method for save button) save order to database
         private void AutoSave()
         {
             if (orderedItems.Count == 0 && itemClick == false)
@@ -684,17 +730,7 @@ namespace POS_System.Pages
 
                         if (StatusTextBlock.Text.Equals("New Order"))
                         {
-                            foreach (OrderedItem ordered in orderedItems)
-                            {
-                                string message = $"Order ID: {ordered.order_id}\n" +
-                                                 $"Item ID: {ordered.item_id}\n" +
-                                                 $"Item Name: {ordered.item_name}\n" +
-                                                 $"Quantity: {ordered.Quantity}\n" +
-                                                 $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
-                                                 $"Is Existing Item: {ordered.IsExistItem}";
 
-                                MessageBox.Show(message);
-                            }
                             string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, order_type, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, @order_type,'n');";
                             MySqlCommand orderCmd = new MySqlCommand(orderSql, conn);
                             orderCmd.Parameters.AddWithValue("@tableNum", _tableNumber);
@@ -707,12 +743,13 @@ namespace POS_System.Pages
                             {
 
 
-                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price, customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice, 0);";
+                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price, original_item_price ,customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice, @originalItemPrice,0);";
                                 MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
                                 itemCmd.Parameters.AddWithValue("@orderId", orderId);
                                 itemCmd.Parameters.AddWithValue("@itemId", newOrder.item_id);
                                 itemCmd.Parameters.AddWithValue("@itemName", newOrder.item_name);
                                 itemCmd.Parameters.AddWithValue("@quantity", 1);
+                                itemCmd.Parameters.AddWithValue("@originalItemPrice", newOrder.origialItemPrice);
                                 itemCmd.Parameters.AddWithValue("@itemPrice", newOrder.ItemPrice);
                                 itemCmd.ExecuteNonQuery();
 
@@ -745,12 +782,13 @@ namespace POS_System.Pages
                             foreach (OrderedItem orderedItem in orderedItems)
                             {
 
-                                string itemSql = "INSERT INTO ordered_itemlist(order_id, item_id, item_name, quantity, item_price, customer_id) VALUES(@orderId, @itemId, @itemName, @quantity, @itemPrice, 0);";
+                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price, original_item_price ,customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice, @originalItemPrice,0);";
                                 MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
                                 itemCmd.Parameters.AddWithValue("@orderId", orderId);
                                 itemCmd.Parameters.AddWithValue("@itemId", orderedItem.item_id);
                                 itemCmd.Parameters.AddWithValue("@itemName", orderedItem.item_name);
                                 itemCmd.Parameters.AddWithValue("@quantity", 1);
+                                itemCmd.Parameters.AddWithValue("@originalItemPrice", orderedItem.origialItemPrice);
                                 itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.ItemPrice);
                                 itemCmd.ExecuteNonQuery();
 
@@ -780,6 +818,7 @@ namespace POS_System.Pages
             }
         }
 
+        //(Method for print bill button) print kitchen receipt
         public void PrintKitchenReceipt()
         {
             // Create a FlowDocument for the kitchen receipt
