@@ -78,7 +78,8 @@ namespace POS_System.Pages
         private int existItemCount = 0;
         private bool itemClick = false;
         private bool isSplited = false;
-        private bool isPaymentWindowOpen = false;
+
+
         //Constructor 
         public MenuPage()
         {
@@ -107,6 +108,13 @@ namespace POS_System.Pages
             }
 
             
+        }
+
+        //Method for loading when Menu Page open
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadCategoryData();
+
         }
 
         //Method: Group List by customer id
@@ -480,10 +488,8 @@ namespace POS_System.Pages
         //(button) go to payment page
         private void PaymentButton_Click(object sender, RoutedEventArgs e)
         {
-            string tableNumber = TableNumberTextBox.Text;
-            string orderType = TypeTextBox.Text;
-            string status = StatusTextBlock.Text;
-            long orderId = GetOrderId(tableNumber);
+
+            long orderId = GetOrderId(_tableNumber);
 
             if (orderedItems.Count == 0)
             {
@@ -505,7 +511,7 @@ namespace POS_System.Pages
             else
             {
 
-                    PaymentPage paymentPage = new PaymentPage(orderedItems, tableNumber, orderType, orderId, status, false);
+                    PaymentPage paymentPage = new PaymentPage(orderedItems, _tableNumber, _orderType, orderId, _status, false);
                     paymentPage.Show();
 
                 this.Close();
@@ -1126,11 +1132,7 @@ namespace POS_System.Pages
 
 
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            LoadCategoryData();
 
-        }
 
 
     }
