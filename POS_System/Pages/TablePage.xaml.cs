@@ -129,14 +129,9 @@ namespace POS_System.Pages
         //Not working rest table colour
         private void ResetTableButtonColor()
         {
-
-            Button allButton = new Button();
-            
-            if (allButton.Background == Brushes.Green)
-            {
-                allButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#383838"));
-
-            }
+            TablePage tablePage = new TablePage();
+            tablePage.Show();
+            this.Close();
         }
 
 

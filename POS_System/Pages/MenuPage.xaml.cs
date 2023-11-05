@@ -76,8 +76,9 @@ namespace POS_System.Pages
 
         private double TotalAmount = 0.0;
         private int existItemCount = 0;
-        bool itemClick = false;
-        bool isSplited = false;
+        private bool itemClick = false;
+        private bool isSplited = false;
+        private bool isPaymentWindowOpen = false;
         //Constructor 
         public MenuPage()
         {
@@ -176,7 +177,9 @@ namespace POS_System.Pages
                             customerID = Convert.ToInt32(row["customer_id"])
                         };
                         existItemCount++;
-                        MessageBox.Show(orderedItem.customerID.ToString());
+                        _numberOfBill = orderedItem.customerID;
+
+
                         if (orderedItem.customerID > 0)
                         {
                             isSplited = true;
@@ -492,26 +495,23 @@ namespace POS_System.Pages
                 MessageBox.Show("New Item(s) has not saved yet. Please save before payment");
                 return;
             }
-            else if (orderedItems.Count < existItemCount)
+/*            else if (orderedItems.Count < existItemCount)
             {
                 MessageBox.Show("Remove Item has not saved yet. Please save before payment");
                 return;
-            }
+            }*/
 
                 
             else
             {
-                MessageBox.Show(_numberOfBill.ToString());
-                   
-                while (_numberOfBill > 0)
-                {
+
                     PaymentPage paymentPage = new PaymentPage(orderedItems, tableNumber, orderType, orderId, status, false);
                     paymentPage.Show();
-                    _numberOfBill--;
-                }
+
                 this.Close();
             }
         }
+
 
         //(button) reset button click
         private void ResetButton_Click(object sender, RoutedEventArgs e)
