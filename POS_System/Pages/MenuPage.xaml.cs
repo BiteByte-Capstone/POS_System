@@ -119,6 +119,18 @@ namespace POS_System.Pages
 
         }
 
+        //Method for refresh page: update UI after change button.
+        private void Refresh()
+        {
+            splitOrderedItems.Clear();
+            orderedItems.Clear();
+            OrdersListBox.ItemsSource=null;
+            TotalAmount = 0;
+            OrdersListBox.Items.GroupDescriptions.Clear();
+            LoadUnpaidOrders(_tableNumber);
+
+        }
+
 
 
         private void LoadUnpaidOrders(string tableNumber)
@@ -164,9 +176,13 @@ namespace POS_System.Pages
                             customerID = Convert.ToInt32(row["customer_id"])
                         };
                         existItemCount++;
+                        MessageBox.Show(orderedItem.customerID.ToString());
                         if (orderedItem.customerID > 0)
                         {
                             isSplited = true;
+                        } else if (orderedItem.customerID == 0)
+                        {
+                            isSplited = false;
                         }
                         orderedItems.Add(orderedItem);
                         TotalAmount += orderedItem.ItemPrice;
@@ -349,6 +365,7 @@ namespace POS_System.Pages
                 addItemToDatabase(splitOrderedItems);
 
                 MessageBox.Show($"Splited bill into {_numberOfBill}");
+                Refresh();
             } else
             {
                 MessageBox.Show($"Splited bill into {_numberOfBill}, Please try again");
@@ -526,6 +543,7 @@ namespace POS_System.Pages
             }
             ResetCustomerID(orderedItems);
             MessageBox.Show("Reset from Split bill.");
+            Refresh();
         }
 
         //(Method for reset button) reset method
@@ -652,7 +670,7 @@ namespace POS_System.Pages
             return ExistedItem;
         }
 
-        //(button for void item) remove item from list view
+        //button for void item: remove item from list view
         private void VoidButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -681,7 +699,7 @@ namespace POS_System.Pages
 
 
 
-        //(button for print and save to database) 
+        //button for print and save to database: click save, send to database
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
  
