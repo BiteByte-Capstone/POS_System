@@ -9,7 +9,7 @@ namespace POS_System.Models
     public class OrderedItem
     {
         public OrderedItem() { }
-        public OrderedItem(int order_id, int item_id, string item_name, int Quantity, double ItemPrice, bool isExistItem)
+        public OrderedItem(int order_id, int item_id, string item_name, int Quantity, double ItemPrice, bool isExistItem, int customerID, double origialItemPrice)
         {
             this.order_id = order_id;
             this.item_id = item_id;
@@ -17,6 +17,8 @@ namespace POS_System.Models
             this.Quantity = Quantity;
             this.ItemPrice = ItemPrice;
             this.IsExistItem = isExistItem;
+            this.customerID = customerID;
+            this.origialItemPrice = origialItemPrice;   
         }
 
         public int order_id { get; set; }  
@@ -25,7 +27,15 @@ namespace POS_System.Models
         public string item_name { get; set; }
         public int Quantity { get; set; }
         public double ItemPrice { get; set; }
+        public double origialItemPrice {  get; set; }
         public bool IsExistItem { get; set;}
+        public int customerID { get ; set; }
+        public string FormattedCustomerID
+        {
+            get { return $"Customer #{customerID}"; }
+        }
+
+
     }
 }
 

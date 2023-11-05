@@ -126,7 +126,13 @@ namespace POS_System.Pages
             }
         }
 
-
+        //Not working rest table colour
+        private void ResetTableButtonColor()
+        {
+            TablePage tablePage = new TablePage();
+            tablePage.Show();
+            this.Close();
+        }
 
 
 
@@ -148,11 +154,13 @@ namespace POS_System.Pages
                     MySqlDataReader reader = cmd.ExecuteReader();
 
 
-
+                    
                     while (reader.Read())
                     {
+                        
                         // Get the table number from the query result
                         string tableNumber = reader.GetString(0);
+                        
                         
 
 
@@ -166,12 +174,13 @@ namespace POS_System.Pages
 
                         if (tableButton != null)
                         {
-                            // Change the background color to green
                             tableButton.Background = Brushes.Green;
-                        } else if (takeOutButton != null)
+                        } 
+                        else if (takeOutButton != null)
                         {
                             takeOutButton.Background = Brushes.Green;
-                        }
+                        } 
+
                     }
 
 
@@ -189,13 +198,15 @@ namespace POS_System.Pages
             }
         }
 
+
+
         private void ResetTable_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show("Remove every table order?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
                 RemoveOrderAllTable();
-                UpdateTableColors();
+                ResetTableButtonColor();
             }
             else
             {

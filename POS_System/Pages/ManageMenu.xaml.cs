@@ -96,6 +96,7 @@ namespace POS_System.Pages
                 {
                     DeleteItemFromDatabase(id,name,price,description,category);
                     MessageBox.Show("Delete successfully");
+                    itemCategoryDataGrid.Content = GetAllItems();
                 }
                 else
                 {
@@ -121,6 +122,7 @@ namespace POS_System.Pages
                 {
                     DeleteCategoryFromDatabase(id);
                     MessageBox.Show("Delete successfully");
+                    itemCategoryDataGrid.Content = GetAllCategories();
                 }
                 else
                 {
@@ -163,6 +165,7 @@ namespace POS_System.Pages
                             if (EditItemFromDatabase(editedId, editedName,editedprice,editedDescription,editedCategory))
                             {
                                 MessageBox.Show($"Updated from {name} to {editedName}");
+                                itemCategoryDataGrid.Content = GetAllItems();
                             }
                             else
                             {
@@ -207,6 +210,7 @@ namespace POS_System.Pages
                             if (EditCategoryFromDatabase(categoryName, categoryId))
                             {
                                 MessageBox.Show($"Updated from {name} to {categoryName}");
+                                itemCategoryDataGrid.Content = GetAllCategories();
                             }
                             else
                             {
@@ -240,6 +244,7 @@ namespace POS_System.Pages
                     if (InsertCategoryIntoDatabase(categoryName, categoryId))
                     {
                         MessageBox.Show("Added to Category!");
+                        itemCategoryDataGrid.Content = GetAllCategories();
                     }
                 }
                 else
@@ -267,6 +272,7 @@ namespace POS_System.Pages
                     if (InsertItemIntoDatabase(itemId, itemName, itemPrice, itemDesciption, itemCategory))
                     {
                         MessageBox.Show("Added to Item!");
+                        itemCategoryDataGrid.Content = GetAllItems();
                     }
                 }
                 else
