@@ -54,7 +54,7 @@ using System.Windows.Data;
 
 namespace POS_System.Pages
 {
-    public partial class MenuPage : Window
+    public partial class MenuPage : Window, INotifyPropertyChanged
     {
         // Define connStr at the class level
         public string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
@@ -64,6 +64,28 @@ namespace POS_System.Pages
         private ObservableCollection<Item> items = new ObservableCollection<Item>();
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
+
+        // Event declaration
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // OnPropertyChanged method to raise the event
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public ObservableCollection<OrderedItem> OrderedItems
+        {
+            get { return orderedItems; }
+            set
+            {
+                if (orderedItems != value)
+                {
+                    orderedItems = value;
+                    OnPropertyChanged(nameof(OrderedItems));
+                }
+            }
+        }
+
         //Splited order 
         private ObservableCollection<OrderedItem> splitOrderedItems = new ObservableCollection<OrderedItem>();
 
@@ -131,12 +153,13 @@ namespace POS_System.Pages
         //Method for refresh page: update UI after change button.
         private void Refresh()
         {
-            splitOrderedItems.Clear();
-            orderedItems.Clear();
-            OrdersListBox.ItemsSource=null;
+/*            splitOrderedItems.Clear();
+            orderedItems.Clear();*/
+
             TotalAmount = 0;
-            OrdersListBox.Items.GroupDescriptions.Clear();
-            LoadUnpaidOrders(_tableNumber);
+            GroupItemList();
+/*            OrdersListBox.Items.GroupDescriptions.Clear();*/
+            /*            LoadUnpaidOrders(_tableNumber);*/
 
         }
 
@@ -144,7 +167,9 @@ namespace POS_System.Pages
 
         private void LoadUnpaidOrders(string tableNumber)
         {
-            
+            OrdersListBox.Items.GroupDescriptions.Clear();
+            orderedItems.Clear();
+            TotalAmount = 0;
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
@@ -199,7 +224,7 @@ namespace POS_System.Pages
                         TotalAmount += orderedItem.ItemPrice;
                     }
                     TotalAmountTextBlock.Text = TotalAmount.ToString("C", new CultureInfo("en-CA"));
-                    OrdersListBox.ItemsSource = orderedItems;
+                    
                     if (isSplited == true)
                     {
                         GroupItemList();
@@ -344,7 +369,7 @@ namespace POS_System.Pages
             };
 
             orderedItems.Add(orderedItem);
-            OrdersListBox.ItemsSource = orderedItems;
+            
             TotalAmount += orderedItem.ItemPrice;
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
@@ -370,10 +395,10 @@ namespace POS_System.Pages
             }
             if (_numberOfBill > 0)
             {
-                
-                splitOrderedItems = GetNewSplitItemList(_numberOfBill, _splitType);
+
+                orderedItems = GetNewSplitItemList(_numberOfBill, _splitType);
                 RemoveOrderByOrderID(GetOrderId(_tableNumber));
-                addItemToDatabase(splitOrderedItems);
+                addItemToDatabase(orderedItems);
 
                 MessageBox.Show($"Splited bill into {_numberOfBill}");
                 Refresh();
@@ -412,8 +437,13 @@ namespace POS_System.Pages
                     splitOrderedItems.Add(newSplitBill);
                 }
             }
+            orderedItems.Clear();
+            foreach (var splitItem in splitOrderedItems)
+            {
+                orderedItems.Add(splitItem);
+            }
 
-            return splitOrderedItems;
+            return orderedItems;
         }
 
         private void addItemToDatabase(ObservableCollection<OrderedItem> items)
@@ -463,7 +493,7 @@ namespace POS_System.Pages
                     conn.Open();
 
 
-
+                    MessageBox.Show($"remove order id {orderId}");
                     string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
                     MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
                     removeOrderCmd.Parameters.AddWithValue("@orderId", orderId);
@@ -549,7 +579,8 @@ namespace POS_System.Pages
             }
             ResetCustomerID(orderedItems);
             MessageBox.Show("Reset from Split bill.");
-            Refresh();
+            
+            LoadUnpaidOrders(_tableNumber);
         }
 
         //(Method for reset button) reset method
