@@ -1,14 +1,10 @@
-﻿<Window x:Class="POS_System.Pages.PaymentPage"
-
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-
-        Title="MainWindow" WindowState="Maximized" Height="926" Width="1777" Background="#212121">
+﻿<Page x:Class="POS_System.Pages.PaymentPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Payment Page"
+      Background="#212121">
 
     <DockPanel Margin="10,0,10,-6">
-
-        <!-- Center the grid horizontally and vertically -->
 
 
         <Grid Width="1756" Background="#212121" Height="925" RenderTransformOrigin="0.571,0.493">
@@ -126,5 +122,4 @@
 
     </DockPanel>
 
-</Window>
- 
+    </Page>

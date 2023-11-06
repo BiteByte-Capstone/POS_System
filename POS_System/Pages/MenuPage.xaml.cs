@@ -397,11 +397,12 @@ namespace POS_System.Pages
             {
 
                 orderedItems = GetNewSplitItemList(_numberOfBill, _splitType);
-                RemoveOrderByOrderID(GetOrderId(_tableNumber));
-                addItemToDatabase(orderedItems);
-
-                MessageBox.Show($"Splited bill into {_numberOfBill}");
+                //!! remove later Since it is for connect database
+                /*                RemoveOrderByOrderID(GetOrderId(_tableNumber));
+                                addItemToDatabase(orderedItems);*/
                 Refresh();
+                MessageBox.Show($"Splited bill into {_numberOfBill}");
+                
             } else
             {
                 MessageBox.Show($"Splited bill into {_numberOfBill}, Please try again");
@@ -518,7 +519,7 @@ namespace POS_System.Pages
         //(button) go to payment page
         private void PaymentButton_Click(object sender, RoutedEventArgs e)
         {
-
+            PaymentPage paymentPage = new PaymentPage();
             long orderId = GetOrderId(_tableNumber);
 
             if (orderedItems.Count == 0)
@@ -540,9 +541,16 @@ namespace POS_System.Pages
                 
             else
             {
+                while (_numberOfBill > 0)
+                {
+                    while (paymentPage.Close())
+                    {
 
+                    }
                     PaymentPage paymentPage = new PaymentPage(orderedItems, _tableNumber, _orderType, orderId, _status, false);
                     paymentPage.Show();
+                }
+
 
                 this.Close();
             }
@@ -577,6 +585,7 @@ namespace POS_System.Pages
                     MessageBox.Show("Error: " + ex.ToString());
                 }
             }
+
             ResetCustomerID(orderedItems);
             MessageBox.Show("Reset from Split bill.");
             

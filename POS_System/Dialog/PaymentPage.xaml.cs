@@ -12,7 +12,7 @@ using POS_System.Models;
 
 namespace POS_System.Pages
 {
-    public partial class PaymentPage : Window
+    public partial class PaymentPage : Page
     {
         private ObservableCollection<OrderedItem> _orderedItems;
 
@@ -198,7 +198,7 @@ namespace POS_System.Pages
 
                         TablePage tablePage = new TablePage();
                     tablePage.Show();
-                    this.Close();
+                    
                 }
                 catch (MySqlException ex)
                 {
@@ -223,7 +223,7 @@ namespace POS_System.Pages
         {
             MenuPage menuPage = new MenuPage(_tableNumber, _orderType, _status, true);
             menuPage.Show();
-            this.Close();
+            
         }
 
         //cash button (payment type = cash)

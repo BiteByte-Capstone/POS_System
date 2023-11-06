@@ -7,13 +7,11 @@ namespace POS_System.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        // Helper method to raise the PropertyChanged event
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // Backing fields
         private int _order_id;
         private int _item_id;
         private string _item_name;
