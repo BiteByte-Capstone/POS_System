@@ -132,5 +132,10 @@ namespace POS_System.Pages
             }
             return PaymentBaseOnCustomerID;
         }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

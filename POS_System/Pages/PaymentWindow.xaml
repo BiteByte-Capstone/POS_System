@@ -5,18 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-        Title="PaymentWindow" WindowState="Maximized" Height="746" Width="1777">
+        Title="PaymentWindow" WindowState="Maximized" Height="746" Width="1777" Background="#212121">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="33*"/>
-            <RowDefinition Height="31"/>
-            <RowDefinition Height="370*"/>
+            <RowDefinition Height="19*"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="206*"/>
 
         </Grid.RowDefinitions>
 
-        <StackPanel x:Name="DisplayCustomerButton_Panel" Grid.Row="0" HorizontalAlignment="Center"  Orientation="Horizontal" Width="780"/>
+        <StackPanel x:Name="DisplayCustomerButton_Panel" Grid.Row="0" HorizontalAlignment="Center"  Orientation="Horizontal" Width="1328" Margin="0,0,0,10"/>
         <Frame Name="PaymentPageFrame" NavigationUIVisibility="Hidden" Margin="0,3,0,0" Grid.Row="2" />
-        <TextBlock x:Name="CustomerNumberDisplay_TextBlock" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,5,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="232" Text="{Binding}"/>
+        <TextBlock x:Name="CustomerNumberDisplay_TextBlock" HorizontalAlignment="Center" TextAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="822" Text="{Binding}" Height="44" FontFamily="Verdana" FontSize="40" FontWeight="Bold" Foreground="Orange" Margin="0,3,0,0"/>
+        <Button Content="Close" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Height="57" Width="131" Click="CloseButton_Click"/>
 
     </Grid>
 </Window>

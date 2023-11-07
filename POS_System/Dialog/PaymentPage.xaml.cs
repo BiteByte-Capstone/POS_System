@@ -54,18 +54,7 @@ namespace POS_System.Pages
             totalAmtTextBox.Text = CalculateTotalOrderAmount().ToString("C", cultureInfo);
             DisplayBalance();
             DisplayTax();
-            foreach (OrderedItem ordered in orderedItems)
-            {
-                string message = $"Order ID: {ordered.order_id}\n" +
-                                 $"Item ID: {ordered.item_id}\n" +
-                                 $"Item Name: {ordered.item_name}\n" +
-                                 $"Quantity: {ordered.Quantity}\n" +
-                                 $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
-                                 $"Is Existing Item: {ordered.IsExistItem}" +
-                                 $"Customer ID: {ordered.customerID}";
 
-                MessageBox.Show(message);
-            }
             InitializeEventHandlers();
 
 
