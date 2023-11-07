@@ -541,18 +541,12 @@ namespace POS_System.Pages
                 
             else
             {
-                while (_numberOfBill > 0)
-                {
-                    while (paymentPage.Close())
-                    {
-
-                    }
-                    PaymentPage paymentPage = new PaymentPage(orderedItems, _tableNumber, _orderType, orderId, _status, false);
-                    paymentPage.Show();
-                }
+                PaymentWindow paymentWindow = new PaymentWindow(orderedItems, _tableNumber, _orderType, orderId, _status, false, _numberOfBill);
+                /*PaymentPage paymentPage1 = new PaymentPage(orderedItems, _tableNumber, _orderType, orderId, _status, false);*/
+                paymentWindow.ShowDialog();
+                
 
 
-                this.Close();
             }
         }
 
