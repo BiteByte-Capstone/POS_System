@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -15,7 +17,7 @@ namespace POS_System.Pages
     public partial class PaymentPage : Page
     {
         private ObservableCollection<OrderedItem> _orderedItems;
-        private ObservableCollection<Order> _orderItems;
+        public static ConcurrentDictionary<int, Payment> _Payments { get; } = new ConcurrentDictionary<int, Payment>();
 
         //getter change later!!!!!
         private string _tableNumber;
@@ -23,8 +25,10 @@ namespace POS_System.Pages
         private long _orderId;
         private string _status;
         private int _customerID;
+        private int _numberOfBill;
         private bool _hasUnpaidOrders = true;
-        private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+        private int settledPayment;
+        public event EventHandler PaymentCompleted;
 
         String paymentMethod;
 
@@ -36,7 +40,7 @@ namespace POS_System.Pages
             customerPayTextBox.Focus();
         }
 
-        public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int customerID) : this()
+        public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int customerID, int numberOfBill) : this()
         {
             _tableNumber = tableNumber;
             _orderedItems = orderedItems;
@@ -45,6 +49,7 @@ namespace POS_System.Pages
             _status = status;
             _hasUnpaidOrders = hasUnpaidOrders;
             _customerID = customerID;
+            _numberOfBill = numberOfBill;
 
             tableNumTextbox.Text = _tableNumber;
             orderIdTextbox.Text = _orderId.ToString();
@@ -146,74 +151,63 @@ namespace POS_System.Pages
             if (result == MessageBoxResult.Yes)
             {
 
+                AddPaymentList();
+               
+
+
+
+                
+
+
             }
-
-
             else
             {
                 return;
             }
         }
 
-        //(method for send payment to database)
-        private void SendPaymentToDatabase()
+        //(method for add the payment to list)
+        private void AddPaymentList()
         {
-                using (MySqlConnection conn = new MySqlConnection(connStr))
-                {
-                    try
-                    {
-                        conn.Open();
-
-                        string paymentSql = "INSERT INTO `payment` " +
-                                            "(order_id, order_type, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
-                                            "VALUES (@order_id, @order_type,@payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
-
-                        MySqlCommand paymentCmd = new MySqlCommand(paymentSql, conn);
-
-                        paymentCmd.Parameters.AddWithValue("@order_id", _orderId);
-                        paymentCmd.Parameters.AddWithValue("@order_type", _orderType);
-                        paymentCmd.Parameters.AddWithValue("@payment_method", paymentMethod);
-                        paymentCmd.Parameters.AddWithValue("@base_amount", CalculateTotalOrderAmount());
-                        paymentCmd.Parameters.AddWithValue("@GST", CalculateTaxAmount());
-                        paymentCmd.Parameters.AddWithValue("@total_amount", GetCustomerPayment());
-                        paymentCmd.Parameters.AddWithValue("@gross_amount", CalculateOrderTotalBalance());
-                        paymentCmd.Parameters.AddWithValue("@customer_change_amount", CalculateChangeAmount());
-                        paymentCmd.Parameters.AddWithValue("@tip", CalculateTipAmount());
-                        paymentCmd.Parameters.AddWithValue("@payment_timestamp", DateTime.Now);
-
-                        paymentCmd.ExecuteNonQuery();
-
-                        MessageBox.Show("Payment sent successfully!");
-
-                        string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
-                        MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
-                        removeOrderCmd.Parameters.AddWithValue("@orderId", _orderId);
-                        removeOrderCmd.ExecuteNonQuery();
-
-                        string isPaidSql = "UPDATE `order` SET paid = @paid WHERE order_id = @orderId; ";
-                        MySqlCommand isPaidCmd = new MySqlCommand(isPaidSql, conn);
-                        isPaidCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                        isPaidCmd.Parameters.AddWithValue("@paid", "y");
-                        isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
-                        isPaidCmd.ExecuteNonQuery();
-
-
-
-
-                        TablePage tablePage = new TablePage();
-                        tablePage.Show();
-
-                    }
-                    catch (MySqlException ex)
-                    {
-                        MessageBox.Show("MySQL Error: " + ex.Message);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error sending order: " + ex.ToString());
-                    }
-                }
             
+            Payment newPayment = new Payment
+                {
+                    // Assuming you have some way to generate a unique payment ID
+                    paymentID = _customerID,
+                    orderID = _orderId,
+                    // You need to adjust this if orderType is supposed to come from somewhere
+                    orderType = _orderType,
+                    paymentMethod = paymentMethod,
+                    baseAmount = CalculateTotalOrderAmount(),
+                    GST = CalculateTaxAmount(),
+                    totalAmount = GetCustomerPayment(),
+                    // Assuming grossAmount is calculated somewhere or you mean totalAmount
+                    grossAmount = CalculateOrderTotalBalance(),
+                    customerChangeAmount = CalculateChangeAmount(),
+                    tip = CalculateTipAmount()
+                };
+
+            // Add the new Payment to the list
+            _Payments.TryAdd(_customerID, newPayment);
+
+
+
+        }
+
+
+
+        // Call this method when the payment is completed
+        protected virtual void OnPaymentCompleted()
+        {
+            PaymentCompleted?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void CompletePayment()
+        {
+            // Payment completion logic here...
+
+            // When payment is completed, raise the event.
+            OnPaymentCompleted();
         }
 
 
