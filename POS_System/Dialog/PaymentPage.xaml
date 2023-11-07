@@ -95,17 +95,17 @@
 
             </TextBlock>
 
-            <TextBlock x:Name="TableNumberLabel" Grid.Column="1" HorizontalAlignment="Left" Margin="414,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Right" Height="40" Width="166" Text="Table Number :" FontFamily="Verdana" FontSize="20" Foreground="White"/>
+            <TextBlock x:Name="TableNumberLabel" Grid.Column="1" HorizontalAlignment="Left" Margin="331,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Right" Height="40" Width="166" Text="Table Number :" FontFamily="Verdana" FontSize="20" Foreground="White"/>
 
-            <TextBox x:Name="tableNumTextbox" Grid.Column="1" HorizontalAlignment="Left" Margin="580,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173" Height="38" FontFamily="Verdana" FontSize="20" BorderBrush="Orange" Foreground="Orange" Background="#FF4C4B56" />
+            <TextBox x:Name="tableNumTextbox" Grid.Column="1" HorizontalAlignment="Left" Margin="541,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173" Height="38" FontFamily="Verdana" FontSize="20" BorderBrush="Orange" Foreground="Orange" Background="#FF4C4B56" />
 
-            <TextBlock x:Name="OrderIdLabel" Grid.Column="1" HorizontalAlignment="Left" Margin="411,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="36" Width="169" TextAlignment="Right" Text="OrderId :" FontFamily="Verdana" FontSize="20" Foreground="White"/>
+            <TextBlock x:Name="OrderIdLabel" Grid.Column="1" HorizontalAlignment="Left" Margin="328,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="36" Width="169" TextAlignment="Right" Text="OrderId :" FontFamily="Verdana" FontSize="20" Foreground="White"/>
 
-            <TextBox x:Name="orderIdTextbox" Grid.Column="1" Margin="580,82,724,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="38" FontFamily="Verdana" FontSize="20" Foreground="Orange" BorderBrush="Orange" Background="#FF4C4B56" />
+            <TextBox x:Name="orderIdTextbox" Grid.Column="1" Margin="541,77,763,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="38" FontFamily="Verdana" FontSize="20" Foreground="Orange" BorderBrush="Orange" Background="#FF4C4B56" />
 
-            <TextBlock x:Name="typeLabel" Grid.Column="1" HorizontalAlignment="Left" Margin="411,130,0,130" TextWrapping="Wrap" Width="169" Text="Type :" FontFamily="Verdana" FontSize="20" Foreground="White" TextAlignment="Right"/>
+            <TextBlock x:Name="typeLabel" Grid.Column="1" HorizontalAlignment="Left" Margin="328,130,0,130" TextWrapping="Wrap" Width="169" Text="Type :" FontFamily="Verdana" FontSize="20" Foreground="White" TextAlignment="Right"/>
 
-            <TextBox x:Name="typeTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="580,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173" Height="40" FontFamily="Verdana" FontSize="20" BorderBrush="Orange" Background="#FF4C4B56" Foreground="Orange"/>
+            <TextBox x:Name="typeTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="541,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="173" Height="40" FontFamily="Verdana" FontSize="20" BorderBrush="Orange" Background="#FF4C4B56" Foreground="Orange"/>
 
         </Grid>
 

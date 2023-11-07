@@ -15,6 +15,7 @@ namespace POS_System.Pages
     public partial class PaymentPage : Page
     {
         private ObservableCollection<OrderedItem> _orderedItems;
+        private ObservableCollection<Order> _orderItems;
 
         //getter change later!!!!!
         private string _tableNumber;
@@ -145,32 +146,44 @@ namespace POS_System.Pages
             if (result == MessageBoxResult.Yes)
             {
 
-            using (MySqlConnection conn = new MySqlConnection(connStr))
+            }
+
+
+            else
             {
-                try
+                return;
+            }
+        }
+
+        //(method for send payment to database)
+        private void SendPaymentToDatabase()
+        {
+                using (MySqlConnection conn = new MySqlConnection(connStr))
                 {
-                    conn.Open();
+                    try
+                    {
+                        conn.Open();
 
-                    string paymentSql = "INSERT INTO `payment` " +
-                                        "(order_id, order_type, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
-                                        "VALUES (@order_id, @order_type,@payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
+                        string paymentSql = "INSERT INTO `payment` " +
+                                            "(order_id, order_type, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
+                                            "VALUES (@order_id, @order_type,@payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
 
-                    MySqlCommand paymentCmd = new MySqlCommand(paymentSql, conn);
+                        MySqlCommand paymentCmd = new MySqlCommand(paymentSql, conn);
 
-                    paymentCmd.Parameters.AddWithValue("@order_id", _orderId);
+                        paymentCmd.Parameters.AddWithValue("@order_id", _orderId);
                         paymentCmd.Parameters.AddWithValue("@order_type", _orderType);
                         paymentCmd.Parameters.AddWithValue("@payment_method", paymentMethod);
-                    paymentCmd.Parameters.AddWithValue("@base_amount", CalculateTotalOrderAmount());
-                    paymentCmd.Parameters.AddWithValue("@GST", CalculateTaxAmount());
-                    paymentCmd.Parameters.AddWithValue("@total_amount", GetCustomerPayment());
-                    paymentCmd.Parameters.AddWithValue("@gross_amount", CalculateOrderTotalBalance());
-                    paymentCmd.Parameters.AddWithValue("@customer_change_amount", CalculateChangeAmount());
-                    paymentCmd.Parameters.AddWithValue("@tip", CalculateTipAmount());
-                    paymentCmd.Parameters.AddWithValue("@payment_timestamp", DateTime.Now);
+                        paymentCmd.Parameters.AddWithValue("@base_amount", CalculateTotalOrderAmount());
+                        paymentCmd.Parameters.AddWithValue("@GST", CalculateTaxAmount());
+                        paymentCmd.Parameters.AddWithValue("@total_amount", GetCustomerPayment());
+                        paymentCmd.Parameters.AddWithValue("@gross_amount", CalculateOrderTotalBalance());
+                        paymentCmd.Parameters.AddWithValue("@customer_change_amount", CalculateChangeAmount());
+                        paymentCmd.Parameters.AddWithValue("@tip", CalculateTipAmount());
+                        paymentCmd.Parameters.AddWithValue("@payment_timestamp", DateTime.Now);
 
-                    paymentCmd.ExecuteNonQuery();
+                        paymentCmd.ExecuteNonQuery();
 
-                    MessageBox.Show("Payment sent successfully!");
+                        MessageBox.Show("Payment sent successfully!");
 
                         string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
                         MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
@@ -188,23 +201,19 @@ namespace POS_System.Pages
 
 
                         TablePage tablePage = new TablePage();
-                    tablePage.Show();
-                    
+                        tablePage.Show();
+
+                    }
+                    catch (MySqlException ex)
+                    {
+                        MessageBox.Show("MySQL Error: " + ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error sending order: " + ex.ToString());
+                    }
                 }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error sending order: " + ex.ToString());
-                }
-                }
-            }
-            else
-            {
-                return;
-            }
+            
         }
 
 
