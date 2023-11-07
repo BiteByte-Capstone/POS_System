@@ -1,4 +1,6 @@
-﻿using POS_System.Models;
+﻿using Org.BouncyCastle.Asn1.X509;
+using POS.Models;
+using POS_System.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,11 +29,12 @@ namespace POS_System.Pages
         private string _status;
         private bool _hasUnpaidOrders = true;
         private int _numberOfBill;
-        private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
         private string paymentMethod;
-        private ObservableCollection<OrderedItem> _orderedItems = new ObservableCollection<OrderedItem>();
+        private double totalItemPriceForCustomer;
 
+
+        private ObservableCollection<OrderedItem> _orderedItems = new ObservableCollection<OrderedItem>();
+        private ObservableCollection<OrderedItem> _customerOrderedItems = new ObservableCollection<OrderedItem>();
         public PaymentWindow()
         {
             InitializeComponent();
@@ -66,7 +69,7 @@ namespace POS_System.Pages
             {
                 Button paymentPageButton = new Button();
                 paymentPageButton.Content = "Customer#" + customerNumber;
-                paymentPageButton.Tag = "Customer#" + customerNumber;
+                paymentPageButton.Tag = customerNumber;
                 paymentPageButton.Click += paymentPageButton_Click;
                 DisplayCustomerButton_Panel.Children.Add(paymentPageButton);
 
@@ -78,22 +81,56 @@ namespace POS_System.Pages
 
         private void paymentPageButton_Click(object sender, RoutedEventArgs e)
         {
-            PaymentPageFrame.Navigate(new PaymentPage());
+            
             if (sender is Button button)
             {
-                CustomerNumberDisplay_TextBlock.Text = button.Tag.ToString();
+                _customerOrderedItems.Clear();
+                CustomerNumberDisplay_TextBlock.Text = button.Content.ToString();
+                string customerID = button.Tag.ToString();
+                PaymentPageFrame.Navigate(LoadCustomerPaymentPage(customerID));
+
             }
         }
 
-        private void LoadPaymentPage()
+
+        //testing return payment page
+        private PaymentPage LoadCustomerPaymentPage(string customerID)
         {
+            PaymentPage PaymentBaseOnCustomerID = new PaymentPage();
+            int customerNumber = int.Parse(customerID);
+
             foreach (var order in _orderedItems)
             {
-               while (_numberOfBill > 0)
+                if (order.customerID == customerNumber)
                 {
-                    var paymentPage = new PaymentPage(_orderedItems, _tableNumber, _orderType, _orderId, _status, false);
+
+                    OrderedItem ForEachCustomer = new OrderedItem()
+                    {
+                        order_id = order.customerID,
+                        item_id = order.item_id,
+                        item_name = order.item_name,
+                        Quantity = order.Quantity,
+                        ItemPrice = order.ItemPrice,
+                        origialItemPrice = order.origialItemPrice,
+                        IsExistItem = true,
+                        customerID = order.customerID
+
+
+                    };
+                    _customerOrderedItems.Add(ForEachCustomer);
+                         
+                    
+                    PaymentBaseOnCustomerID= new PaymentPage(_customerOrderedItems, _tableNumber, _orderType, _orderId, _status, false, customerNumber);
                 }
+                else if (order.customerID == 0)
+                {
+                    PaymentBaseOnCustomerID = new PaymentPage(_orderedItems, _tableNumber, _orderType, _orderId, _status, false, customerNumber);
+
+                }
+
+
             }
+            return PaymentBaseOnCustomerID;
         }
     }
 }

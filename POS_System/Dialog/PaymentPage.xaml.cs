@@ -21,6 +21,7 @@ namespace POS_System.Pages
         private string _orderType;
         private long _orderId;
         private string _status;
+        private int _customerID;
         private bool _hasUnpaidOrders = true;
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
@@ -34,7 +35,7 @@ namespace POS_System.Pages
             customerPayTextBox.Focus();
         }
 
-        public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders) : this()
+        public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int customerID) : this()
         {
             _tableNumber = tableNumber;
             _orderedItems = orderedItems;
@@ -42,6 +43,7 @@ namespace POS_System.Pages
             _orderId = orderId;
             _status = status;
             _hasUnpaidOrders = hasUnpaidOrders;
+            _customerID = customerID;
 
             tableNumTextbox.Text = _tableNumber;
             orderIdTextbox.Text = _orderId.ToString();

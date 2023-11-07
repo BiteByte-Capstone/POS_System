@@ -396,13 +396,25 @@ namespace POS_System.Pages
             if (_numberOfBill > 0)
             {
 
-                orderedItems = GetNewSplitItemList(_numberOfBill, _splitType);
+                GetNewSplitItemList(_numberOfBill, _splitType);
                 //!! remove later Since it is for connect database
                 /*                RemoveOrderByOrderID(GetOrderId(_tableNumber));
                                 addItemToDatabase(orderedItems);*/
                 Refresh();
                 MessageBox.Show($"Splited bill into {_numberOfBill}");
-                
+
+                foreach (OrderedItem splited in orderedItems)
+                {
+                    string message = $"Order ID: {splited.order_id}\n" +
+                                     $"Item ID: {splited.item_id}\n" +
+                                     $"Item Name: {splited.item_name}\n" +
+                                     $"Quantity: {splited.Quantity}\n" +
+                                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
+                                     $"Is Existing Item: {splited.IsExistItem}\n" +
+                                     $"Customer ID: {splited.customerID}";
+
+                    MessageBox.Show(message);
+                }
             } else
             {
                 MessageBox.Show($"Splited bill into {_numberOfBill}, Please try again");
