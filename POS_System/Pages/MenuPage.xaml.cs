@@ -1015,66 +1015,128 @@ namespace POS_System.Pages
                 // Create a FlowDocument
                 FlowDocument flowDocument = new FlowDocument();
 
-                // Create a Paragraph for the header
-                Paragraph headerParagraph = new Paragraph();
-                headerParagraph.FontSize = 30;
-                headerParagraph.TextAlignment = TextAlignment.Center;
+                // Add the "-------------------------------------------------" separator at the top
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+                // Create a paragraph for restaurant information
+                Paragraph restaurantInfoParagraph = new Paragraph();
+                restaurantInfoParagraph.TextAlignment = TextAlignment.Center;
 
-                // Create a Run for the header text
-                Run headerRun = new Run("Order Receipt");
+                // Restaurant Name
+                Run restaurantNameRun = new Run("Thai Bistro\n");
+                restaurantNameRun.FontSize = 20;
+                restaurantInfoParagraph.Inlines.Add(restaurantNameRun);
 
-                // Create an Underline element
-                Underline underline = new Underline(headerRun);
+                // Address
+                Run addressRun = new Run("233 Centre St S #102,\n Calgary, AB T2G 2B7\n");
+                addressRun.FontSize = 12;
+                restaurantInfoParagraph.Inlines.Add(addressRun);
 
-                // Add the Underline to the Paragraph
-                headerParagraph.Inlines.Add(underline);
+                // Phone
+                Run phoneRun = new Run("Phone: (403) 313-9922\n");
+                phoneRun.FontSize = 12;
+                restaurantInfoParagraph.Inlines.Add(phoneRun);
 
-                // Add the Paragraph to the FlowDocument
-                flowDocument.Blocks.Add(headerParagraph);
+                // Add the restaurant info paragraph
+                flowDocument.Blocks.Add(restaurantInfoParagraph);
+
+                // Add the "-------------------------------------------------" separator at the top
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                ///^^^^^^good^^^^^^^^^^^
+
+
+                ////////order detail session!!!!
+
 
                 // Create a Section for the order details
                 Section orderDetailsSection = new Section();
 
                 // Table to display order details
                 Table detailsTable = new Table();
-                TableRowGroup tableRowGroup = new TableRowGroup();
-
+                TableRowGroup detailTableRowGroup = new TableRowGroup();
                 // Add rows for order details
-                tableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Date:", "10/30/2023     Time: 7:30 PM"));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
                 if (OrderIdTextBlock != null) // Check if the TextBlock exists
                 {
                     // Access the text of the OrderIdTextBlock
-                    tableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
+                    detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
                 }
+                detailTableRowGroup.Rows.Add(CreateTableRow("Server:", "John"));
+
+                // Add a line with dashes after "Server: John"
+                TableRow dashedLineRow = new TableRow();
+                TableCell dashedLineCell = new TableCell();
+
+                Paragraph dashedLineParagraph = new Paragraph(new Run("-------------------------------------------------"));
+                //dashedLineParagraph.TextAlignment = TextAlignment.Center;
+                dashedLineCell.ColumnSpan = 2;
+                dashedLineCell.Blocks.Add(dashedLineParagraph);
+                dashedLineRow.Cells.Add(dashedLineCell);
+                detailTableRowGroup.Rows.Add(dashedLineRow);
+
+
+
+
+
+                ///item session
+
+                // Create a TableRow for displaying items and their prices
+
+                TableRowGroup itemTableRowGroup = new TableRowGroup();
+                Section itemSection = new Section();
                 // Add space (empty TableRow) for the gap
-                tableRowGroup.Rows.Add(CreateEmptyTableRow());
+                itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
+
+
+                // Create a nested Table within the items cell
+                Table itemsTable = new Table();
+
+
+
 
                 // Access the 'Items' collection and loop through it to add item rows.
                 foreach (var OrderedItem in orderedItems)
                 {
-                    tableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
+                    itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
+
                 }
+                
+
+                /*tableRowGroup.Rows.Add(itemsRow);*/
+                // Initialize the TableRowGroup
+                
+                itemSection.Blocks.Add(itemsTable);
+
+                // Create a new TableRow for the itemsCell and add it to the tableRowGroup
+
+
 
                 // Add space (empty TableRow) for the gap
-                tableRowGroup.Rows.Add(CreateEmptyTableRow());
+                itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
+                /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-                // Create a Paragraph for "Sub Total" with underline
+
+
+                ///////sub total session
+                Table paymentTable = new Table();
+                Section paymentSection = new Section();
+                TableRowGroup paymentTableRowGroup = new TableRowGroup();
                 // Create a Paragraph for "Sub Total" with underline
                 Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
                 subTotalParagraph.FontSize = 20; // Increase the font size
                 subTotalParagraph.TextAlignment = TextAlignment.Right;
 
                 Paragraph subTotalValueParagraph = new Paragraph(new Run(TotalAmount.ToString("C")));
-                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+
                 // Create a Paragraph for "GST"
                 Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
                 gstLabelParagraph.FontSize = 20; // Increase the font size
                 gstLabelParagraph.TextAlignment = TextAlignment.Right;
 
                 Paragraph gstValueParagraph = new Paragraph(new Run(gstAmount.ToString("C")));
-
-                // Add the "GST" label and value to the TableRowGroup
-                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
 
                 // Create a Paragraph for "Total Amount"
                 Paragraph totalAmountLabelParagraph = new Paragraph(new Run("Total Amount:"));
@@ -1082,14 +1144,28 @@ namespace POS_System.Pages
                 totalAmountLabelParagraph.TextAlignment = TextAlignment.Right;
 
                 Paragraph totalAmountValueParagraph = new Paragraph(new Run(totalAmountWithGST.ToString("C")));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
+                //////////////////////////////////////////////////
 
-                // Add the "Total Amount" label and value to the TableRowGroup
-                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
 
-                detailsTable.RowGroups.Add(tableRowGroup);
+
+
+                detailsTable.RowGroups.Add(detailTableRowGroup);
+                itemsTable.RowGroups.Add(itemTableRowGroup);
+                paymentTable.RowGroups.Add(paymentTableRowGroup);
+
                 orderDetailsSection.Blocks.Add(detailsTable);
+                itemSection.Blocks.Add(itemsTable);
+                paymentSection.Blocks.Add(paymentTable);
 
                 flowDocument.Blocks.Add(orderDetailsSection);
+                flowDocument.Blocks.Add(itemSection);
+                flowDocument.Blocks.Add(paymentSection);
+                
+
+
+
+
 
                 // Create a DocumentPaginator for the FlowDocument
                 IDocumentPaginatorSource paginatorSource = flowDocument;
@@ -1099,7 +1175,6 @@ namespace POS_System.Pages
                 printDialog.PrintDocument(documentPaginator, "Order Receipt");
             }
         }
-
 
         private TableRow CreateTableRow(string label, string value)
         {
@@ -1116,6 +1191,19 @@ namespace POS_System.Pages
             TableCell valueCell = new TableCell(new Paragraph(new Run(value)));
             valueCell.BorderThickness = new Thickness(0); // No column lines, only space
             row.Cells.Add(valueCell);
+
+            return row;
+        }
+
+
+        private TableRow CreateEmptyTableRow()
+        {
+            TableRow row = new TableRow();
+
+            TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
+            emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+
+            row.Cells.Add(emptyCell);
 
             return row;
         }
@@ -1151,7 +1239,7 @@ namespace POS_System.Pages
             return row;
         }
 
-        private TableRow CreateEmptyTableRow()
+/*        private TableRow CreateEmptyTableRow()
         {
             TableRow row = new TableRow();
 
@@ -1161,7 +1249,7 @@ namespace POS_System.Pages
             row.Cells.Add(emptyCell);
 
             return row;
-        }
+        }*/
 
 
 
