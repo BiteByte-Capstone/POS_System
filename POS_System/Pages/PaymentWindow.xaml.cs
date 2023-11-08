@@ -34,20 +34,23 @@ namespace POS_System.Pages
         private int _numberOfBill;
         private string paymentMethod;
         private double totalItemPriceForCustomer;
+        private bool isSettled;
         PaymentPage paymentPage = new PaymentPage();
         
 
 
         private ObservableCollection<OrderedItem> _orderedItems = new ObservableCollection<OrderedItem>();
         private ObservableCollection<OrderedItem> _customerOrderedItems = new ObservableCollection<OrderedItem>();
-        private List<Payment> _paymentListPaymentWindow { get; set; }
+
+        //from payment page( store every payment)
         private ConcurrentDictionary<int, Payment> _paymentList = PaymentPage._Payments;
-        private int _settledPayment;
+        private List<Payment> _paymentListPaymentWindow;
+
 
         public PaymentWindow()
         {
             InitializeComponent();
-            _paymentListPaymentWindow = new List<Payment>();
+            
         }
 
 
@@ -68,24 +71,10 @@ namespace POS_System.Pages
             
         }
 
-        public PaymentWindow(List<Payment> paymentList, int settledPayment)
-        {
-            InitializeComponent();
-            _paymentListPaymentWindow = paymentList;
-            _settledPayment += settledPayment;
-            if (settledPayment == _numberOfBill)
-            {
-                
-                MessageBox.Show("from window and settledPAyment = " + settledPayment + " _numberOFBill = "+_numberOfBill);
-            } else
-            {
-                _paymentListPaymentWindow.AddRange(paymentList);
-            }
 
-        }
 
         //Method for show how many button on top based on number of bills.
-        private void ShowPaymentPageButton(int numberOfBill)
+        private void ShowPaymentPageButton(int _numberOfBill)
         {
             DisplayCustomerButton_Panel.Children.Clear();
             int customerNumber = 1;
@@ -105,13 +94,6 @@ namespace POS_System.Pages
         }
 
         
-        
-        private void PaymentPage_PaymentCompleted()
-        {
-            // Code to change the button goes here
-            // For example, disable the button:
-            // yourButton.IsEnabled = false;
-        }
 
 
         private void CompleteButton_Click(object sender, RoutedEventArgs e)
@@ -133,11 +115,44 @@ namespace POS_System.Pages
                 string customerID = button.Tag.ToString();
                 PaymentPageFrame.Navigate(LoadCustomerPaymentPage(customerID));
 
+
+                
+
             }
         }
 
+        //Method for convert dictionary to list
+        private void ConvertDictionaryToList(ConcurrentDictionary<int, Payment> paymentsDict)
+        {
+            
 
-        //testing return payment page
+            foreach (var paymentEntry in paymentsDict)
+            {
+                paymentEntry.Value.customerID = paymentEntry.Key; // Set the CustomerID in Payment object
+                _paymentListPaymentWindow.Add(paymentEntry.Value);
+            }
+
+
+        }
+
+
+        //Method for checking if the customer payment save
+        private bool IsCustomerPaymentSettled(int customerID)
+        {
+            // Try to get the payment for the specified customerID
+            if (_paymentList.TryGetValue(customerID, out Payment payment))
+            {
+
+                return true;
+            }
+
+
+            return false;
+        }
+
+
+
+        //Method for return payment page
         private PaymentPage LoadCustomerPaymentPage(string customerID)
         {
             PaymentPage PaymentBaseOnCustomerID = new PaymentPage();
@@ -157,7 +172,8 @@ namespace POS_System.Pages
                         ItemPrice = order.ItemPrice,
                         origialItemPrice = order.origialItemPrice,
                         IsExistItem = true,
-                        customerID = order.customerID
+                        customerID = order.customerID,
+                        IsSettled = false
 
 
                     };
@@ -210,7 +226,7 @@ namespace POS_System.Pages
                             paymentCmd.Parameters.AddWithValue("@payment_method", payment.paymentMethod);
                             paymentCmd.Parameters.AddWithValue("@base_amount", payment.baseAmount);
                             paymentCmd.Parameters.AddWithValue("@GST", payment.GST);
-                            paymentCmd.Parameters.AddWithValue("@total_amount", payment.totalAmount);
+                            paymentCmd.Parameters.AddWithValue("@total_amount", payment.customerPaymentTotalAmount);
                             paymentCmd.Parameters.AddWithValue("@gross_amount", payment.grossAmount);
                             paymentCmd.Parameters.AddWithValue("@customer_change_amount", payment.customerChangeAmount);
                             paymentCmd.Parameters.AddWithValue("@tip", payment.tip);

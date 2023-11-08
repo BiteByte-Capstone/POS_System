@@ -18,7 +18,7 @@ namespace POS_System.Pages
     {
         private ObservableCollection<OrderedItem> _orderedItems;
         public static ConcurrentDictionary<int, Payment> _Payments { get; } = new ConcurrentDictionary<int, Payment>();
-
+        private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         //getter change later!!!!!
         private string _tableNumber;
         private string _orderType;
@@ -28,9 +28,9 @@ namespace POS_System.Pages
         private int _numberOfBill;
         private bool _hasUnpaidOrders = true;
         private int settledPayment;
-        public event EventHandler PaymentCompleted;
+ 
 
-        String paymentMethod;
+        private string _paymentMethod;
 
         public PaymentPage()
         {
@@ -137,7 +137,7 @@ namespace POS_System.Pages
         private void SavePaymentButton_Click(object sender, RoutedEventArgs e)
         {
             string message = $"orderID: {_orderId}" +
-                 $"\npayment method: {paymentMethod}" +
+                 $"\npayment method: {_paymentMethod}" +
                  $"\ntotal order amount: {CalculateTotalOrderAmount()}" +
                  $"\nGST: {CalculateTaxAmount()}" +
                  $"\ntotal customer payment: {GetCustomerPayment()}" +
@@ -153,6 +153,13 @@ namespace POS_System.Pages
 
                 AddPaymentList();
                
+                if (_numberOfBill == 0)
+                {
+                    AddPaymentList();
+                    SavePaymentToDatabase(_Payments);
+                    PaymentWindow paymentWindow = new PaymentWindow();
+                    paymentWindow.Close();
+                }
 
 
 
@@ -172,16 +179,14 @@ namespace POS_System.Pages
             
             Payment newPayment = new Payment
                 {
-                    // Assuming you have some way to generate a unique payment ID
+                    customerID =+ _customerID,
                     paymentID = _customerID,
                     orderID = _orderId,
-                    // You need to adjust this if orderType is supposed to come from somewhere
                     orderType = _orderType,
-                    paymentMethod = paymentMethod,
+                    paymentMethod = _paymentMethod,
                     baseAmount = CalculateTotalOrderAmount(),
                     GST = CalculateTaxAmount(),
-                    totalAmount = GetCustomerPayment(),
-                    // Assuming grossAmount is calculated somewhere or you mean totalAmount
+                    customerPaymentTotalAmount = GetCustomerPayment(),
                     grossAmount = CalculateOrderTotalBalance(),
                     customerChangeAmount = CalculateChangeAmount(),
                     tip = CalculateTipAmount()
@@ -194,36 +199,92 @@ namespace POS_System.Pages
 
         }
 
-
-
-        // Call this method when the payment is completed
-        protected virtual void OnPaymentCompleted()
+        private void SavePaymentToDatabase(ConcurrentDictionary<int, Payment> paymentDictionary)
         {
-            PaymentCompleted?.Invoke(this, EventArgs.Empty);
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Begin a transaction to ensure all inserts are treated as a single unit of work
+                    using (MySqlTransaction transaction = conn.BeginTransaction())
+                    {
+                        foreach (KeyValuePair<int, Payment> kvp in paymentDictionary)
+                        {
+                            Payment payment = kvp.Value;
+                            string paymentSql = "INSERT INTO `payment` " +
+                            "(order_id, order_type, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
+                            "VALUES (@order_id, @order_type, @payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
+
+                            MySqlCommand paymentCmd = new MySqlCommand(paymentSql, conn)
+                            {
+                                Transaction = transaction // Assign the transaction
+                            };
+
+                            paymentCmd.Parameters.AddWithValue("@order_id", payment.orderID);
+                            paymentCmd.Parameters.AddWithValue("@order_type", payment.orderType);
+                            paymentCmd.Parameters.AddWithValue("@payment_method", payment.paymentMethod);
+                            paymentCmd.Parameters.AddWithValue("@base_amount", payment.baseAmount);
+                            paymentCmd.Parameters.AddWithValue("@GST", payment.GST);
+                            paymentCmd.Parameters.AddWithValue("@total_amount", payment.customerPaymentTotalAmount);
+                            paymentCmd.Parameters.AddWithValue("@gross_amount", payment.grossAmount);
+                            paymentCmd.Parameters.AddWithValue("@customer_change_amount", payment.customerChangeAmount);
+                            paymentCmd.Parameters.AddWithValue("@tip", payment.tip);
+                            paymentCmd.Parameters.AddWithValue("@payment_timestamp", DateTime.Now);
+
+                            paymentCmd.ExecuteNonQuery();
+                        }
+
+                        // Commit the transaction
+                        transaction.Commit();
+                    }
+
+                    MessageBox.Show("Payments sent successfully!");
+                    string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
+                    MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
+                    removeOrderCmd.Parameters.AddWithValue("@orderId", _orderId);
+                    removeOrderCmd.ExecuteNonQuery();
+
+                    string isPaidSql = "UPDATE `order` SET paid = @paid WHERE order_id = @orderId; ";
+                    MySqlCommand isPaidCmd = new MySqlCommand(isPaidSql, conn);
+                    isPaidCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
+                    isPaidCmd.Parameters.AddWithValue("@paid", "y");
+                    isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
+                    isPaidCmd.ExecuteNonQuery();
+                    // You may want to clear the dictionary after successful save
+                    paymentDictionary.Clear();
+
+                    // Additional logic to remove ordered items and update order status...
+                    // Be sure to wrap these in the same transaction if they need to be atomic with the payment inserts
+
+                    // ... rest of the code ...
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                    // Rollback the transaction on error
+                    // transaction.Rollback(); (Add this inside a try-catch if within the try block)
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error sending order: " + ex.ToString());
+                    // Rollback the transaction on error
+                    // transaction.Rollback(); (Add this inside a try-catch if within the try block)
+                }
+            }
         }
 
-        public void CompletePayment()
-        {
-            // Payment completion logic here...
-
-            // When payment is completed, raise the event.
-            OnPaymentCompleted();
-        }
 
 
 
-        //Cancel button (back to menu page with existing order)
-        private void CancelButton(object sender, RoutedEventArgs e)
-        {
-            MenuPage menuPage = new MenuPage(_tableNumber, _orderType, _status, true);
-            menuPage.Show();
-            
-        }
 
         //cash button (payment type = cash)
         private void cashBtn_Click(object sender, RoutedEventArgs e)
         {
-            paymentMethod = "Cash";
+            _paymentMethod = "Cash";
             cashBtn.Background = Brushes.White;
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
@@ -234,7 +295,7 @@ namespace POS_System.Pages
         //visa button (payment type = visa)
         private void visaBtn_Click(object sender, RoutedEventArgs e)
         {
-            paymentMethod = "Visa";
+            _paymentMethod = "Visa";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = Brushes.White;
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
@@ -244,7 +305,7 @@ namespace POS_System.Pages
         //Master card button (payment type = MC)
         private void mcBtn_Click(object sender, RoutedEventArgs e)
         {
-            paymentMethod = "Mastercard";
+            _paymentMethod = "Mastercard";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = Brushes.White;
@@ -256,7 +317,7 @@ namespace POS_System.Pages
         //Amex button (payment type = amex)
         private void amexBtn_Click(object sender, RoutedEventArgs e)
         {
-            paymentMethod = "Amex";
+            _paymentMethod = "Amex";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));

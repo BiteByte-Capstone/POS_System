@@ -403,18 +403,6 @@ namespace POS_System.Pages
                 Refresh();
                 MessageBox.Show($"Splited bill into {_numberOfBill}");
 
-                foreach (OrderedItem splited in orderedItems)
-                {
-                    string message = $"Order ID: {splited.order_id}\n" +
-                                     $"Item ID: {splited.item_id}\n" +
-                                     $"Item Name: {splited.item_name}\n" +
-                                     $"Quantity: {splited.Quantity}\n" +
-                                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
-                                     $"Is Existing Item: {splited.IsExistItem}\n" +
-                                     $"Customer ID: {splited.customerID}";
-
-                    MessageBox.Show(message);
-                }
             } else
             {
                 MessageBox.Show($"Splited bill into {_numberOfBill}, Please try again");

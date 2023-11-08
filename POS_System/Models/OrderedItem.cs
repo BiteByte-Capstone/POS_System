@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Org.BouncyCastle.Security;
+using System;
 using System.ComponentModel;
 
 namespace POS_System.Models
@@ -19,6 +20,7 @@ namespace POS_System.Models
         private double _itemPrice;
         private double _originalItemPrice;
         private bool _isExistItem;
+        private bool _isSettled;
         private int _customerID;
 
         // Properties
@@ -113,6 +115,22 @@ namespace POS_System.Models
             }
         }
 
+        public bool IsSettled
+        {
+            get
+            {
+                return _isSettled;
+            }
+            set
+            {
+                if (IsExistItem != value)
+                {
+                    _isExistItem= value;
+                    OnPropertyChanged(nameof(IsSettled));
+                }
+            }
+        }
+
         public int customerID
         {
             get { return _customerID; }
@@ -133,7 +151,7 @@ namespace POS_System.Models
         // Constructors
         public OrderedItem() { }
 
-        public OrderedItem(int order_id, int item_id, string item_name, int quantity, double itemPrice, bool isExistItem, int customerID, double originalItemPrice)
+        public OrderedItem(int order_id, int item_id, string item_name, int quantity, double itemPrice, bool isExistItem, int customerID, double originalItemPrice, bool isSettled)
         {
             this._order_id = order_id;
             this._item_id = item_id;
@@ -143,6 +161,7 @@ namespace POS_System.Models
             this._isExistItem = isExistItem;
             this._customerID = customerID;
             this._originalItemPrice = originalItemPrice;
+            _isSettled = isSettled;
         }
     }
 }
