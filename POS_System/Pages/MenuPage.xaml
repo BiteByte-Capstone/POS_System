@@ -107,8 +107,13 @@
                     <GridView>
 
                         <GridViewColumn Header="Item Name" Width="200" DisplayMemberBinding="{Binding item_name}" />
-                        <GridViewColumn Header="Item Price" Width="100" DisplayMemberBinding="{Binding ItemPrice, StringFormat=C}" />
-
+                        <GridViewColumn Header="Item Price" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ItemPrice, StringFormat=C}" TextAlignment="Right"  HorizontalAlignment="Stretch"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView>
 
                 </ListView.View>
@@ -129,7 +134,7 @@
         <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="49,114,663,80" Grid.Column="2" Grid.Row="4" RenderTransformOrigin="0.471,0.536"/>
         <!-- item button list -->
         <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="243,108,169,85" Grid.Column="2" Grid.Row="4"/>
-        <TextBlock Name="TotalAmountTextBlock" TextAlignment="Right" Grid.Column="1" HorizontalAlignment="Left" Margin="330,633,0,0" Grid.Row="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="63" Width="153" FontSize="24" Foreground="#FFFBF8F8"/>
+        <TextBlock Name="TotalAmountTextBlock" TextAlignment="Right" Grid.Column="1" HorizontalAlignment="Right" Margin="0,633,105,0" Grid.Row="4" TextWrapping="Wrap" Text="{Binding TotalAmount, StringFormat=C}" VerticalAlignment="Top" Height="63" Width="153" FontSize="24" Foreground="#FFFBF8F8"/>
         <Button Content="Save" HorizontalAlignment="Left" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,595,0,0" Click="SaveButton_Click"/>
 
 
