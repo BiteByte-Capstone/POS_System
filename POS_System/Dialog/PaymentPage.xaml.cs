@@ -16,8 +16,9 @@ namespace POS_System.Pages
 {
     public partial class PaymentPage : Page
     {
-        private ObservableCollection<OrderedItem> _orderedItems;
-        public static ConcurrentDictionary<int, Payment> _Payments { get; } = new ConcurrentDictionary<int, Payment>();
+        private ObservableCollection<OrderedItem> _orderedItems = new ObservableCollection<OrderedItem>();
+        public static ConcurrentDictionary<int, Payment> _eachPaymentDictionary { get; } = new ConcurrentDictionary<int, Payment>();
+
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         //getter change later!!!!!
         private string _tableNumber;
@@ -28,9 +29,14 @@ namespace POS_System.Pages
         private int _numberOfBill;
         private bool _hasUnpaidOrders = true;
         private int settledPayment;
- 
-
+        private PaymentWindow _parentWindow;
+        private MenuPage _menuPage;
         private string _paymentMethod;
+
+
+
+        // Define the event based on the delegate
+        public event EventHandler PaymentCompleted;
 
         public PaymentPage()
         {
@@ -40,7 +46,9 @@ namespace POS_System.Pages
             customerPayTextBox.Focus();
         }
 
-        public PaymentPage(ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int customerID, int numberOfBill) : this()
+
+
+        public PaymentPage(MenuPage menuPage,PaymentWindow parentWindow, ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int customerID, int numberOfBill) : this()
         {
             _tableNumber = tableNumber;
             _orderedItems = orderedItems;
@@ -50,6 +58,8 @@ namespace POS_System.Pages
             _hasUnpaidOrders = hasUnpaidOrders;
             _customerID = customerID;
             _numberOfBill = numberOfBill;
+            _parentWindow = parentWindow;
+            _menuPage = menuPage;
 
             tableNumTextbox.Text = _tableNumber;
             orderIdTextbox.Text = _orderId.ToString();
@@ -58,16 +68,41 @@ namespace POS_System.Pages
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
             totalAmtTextBox.Text = CalculateTotalOrderAmount().ToString("C", cultureInfo);
+
+            foreach (OrderedItem per_customer_payment in _orderedItems)
+            {
+                string message = $"Order ID: {per_customer_payment.order_id}\n" +
+                                 $"Item ID: {per_customer_payment.item_id}\n" +
+                                 $"Item Name: {per_customer_payment.item_name}\n" +
+                                 $"Quantity: {per_customer_payment.Quantity}\n" +
+                                 $"Item Price: {per_customer_payment.ItemPrice:C}\n" +  // Display as currency
+                                 $"Is Existing Item: {per_customer_payment.IsExistItem}\n" +
+                                 $"Customer ID: {per_customer_payment.customerID}";
+
+                MessageBox.Show(message);
+            }
+
+
             DisplayBalance();
             DisplayTax();
 
-            InitializeEventHandlers();
+            
 
 
         }
 
-        // Add a private field to store the shadow value:
-        private long shadowValue = 0;
+
+        // Method to raise the event
+        protected virtual void OnPaymentCompleted()
+        {
+            PaymentCompleted?.Invoke(this, EventArgs.Empty);
+        }
+
+    
+
+
+    // Add a private field to store the shadow value:
+    private long shadowValue = 0;
 
         private void CustomerPayTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -110,7 +145,7 @@ namespace POS_System.Pages
                     customerPayTextBox.TextChanged += CustomerPayTextBox_TextChanged;
                 }
             }
-            /*DisplayCustomerPayment();*/
+            
             DisplayTips();
         }
 
@@ -122,10 +157,10 @@ namespace POS_System.Pages
             double totalAmount = 0;
             foreach (var orderedItem in _orderedItems)
             {
-                if (orderedItem.IsExistItem == true)
-                {
+/*                if (orderedItem.IsExistItem == true)   //// not sure why i add it in origial
+                {*/
                     totalAmount += orderedItem.ItemPrice;
-                }
+/*                }*/
                 
             }
             return totalAmount;
@@ -151,19 +186,30 @@ namespace POS_System.Pages
             if (result == MessageBoxResult.Yes)
             {
 
-                AddPaymentList();
+                
                
                 if (_numberOfBill == 0)
                 {
                     AddPaymentList();
-                    SavePaymentToDatabase(_Payments);
-                    PaymentWindow paymentWindow = new PaymentWindow();
-                    paymentWindow.Close();
+                    SavePaymentToDatabase(_eachPaymentDictionary);
+                    _parentWindow.Close();
+                    _menuPage.Close();
+
+                    //show the table page but not working 
+                    TablePage tablePage = new TablePage();
+                    tablePage.ShowDialog();
+                }
+                else if (_numberOfBill>0)
+                {
+                    MessageBox.Show($"ok more thean one bill and this is for customer number {_customerID}");
+                    AddPaymentList();
+                    OnPaymentCompleted();
+
                 }
 
 
 
-                
+
 
 
             }
@@ -193,7 +239,7 @@ namespace POS_System.Pages
                 };
 
             // Add the new Payment to the list
-            _Payments.TryAdd(_customerID, newPayment);
+            _eachPaymentDictionary.TryAdd(_customerID, newPayment);
 
 
 
@@ -369,35 +415,13 @@ namespace POS_System.Pages
         // Calculate Order Total Balance and show in the textbox
         private double CalculateOrderTotalBalance()
         {
-            double totalBalance = 0;
+            
             double totalOrderAmount = CalculateTotalOrderAmount();
             double totalTaxAmount = CalculateTaxAmount();
-            return totalBalance = totalOrderAmount + totalTaxAmount;
+            return totalOrderAmount + totalTaxAmount;
         }
 
 
-        //***
-
-        //**tip and change will auto change based on customer pay textbox change.
-        private void InitializeEventHandlers()
-        {
-            // Attach the event handler for the TextChanged event of the tipsTextbox
-            /*tipsTextbox.TextChanged += TipsTextbox_TextChanged;*/
-            customerPayTextBox.TextChanged += CustomerPayTextBox_TextChanged;
-        }
-
-/*        private void CustomerPayTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(customerPayTextBox.Text))
-            {
-                customerPayTextBox.Text = "0";
-            }
-            DisplayCustomerPayment();
-            DisplayTips();
-            
-
-        }*/
-        //***
 
         //**Display session (grabbing all the calculation and display on page)
         //Display tips on tips text box

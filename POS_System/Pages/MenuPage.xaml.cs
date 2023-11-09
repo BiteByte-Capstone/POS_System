@@ -60,8 +60,6 @@ namespace POS_System.Pages
         public string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         //categories
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
-        //new order
-        private ObservableCollection<Item> items = new ObservableCollection<Item>();
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
 
@@ -432,7 +430,7 @@ namespace POS_System.Pages
                     Quantity = orderedItem.Quantity,
                     origialItemPrice = orderedItem.origialItemPrice,
                     ItemPrice = orderedItem.ItemPrice / numberOfBill,
-                    IsExistItem = orderedItem.IsExistItem,
+                    IsExistItem = true,
                     customerID = i  
                 };
                     splitOrderedItems.Add(newSplitBill);
@@ -541,8 +539,7 @@ namespace POS_System.Pages
                 
             else
             {
-                PaymentWindow paymentWindow = new PaymentWindow(orderedItems, _tableNumber, _orderType, orderId, _status, false, _numberOfBill);
-                /*PaymentPage paymentPage1 = new PaymentPage(orderedItems, _tableNumber, _orderType, orderId, _status, false);*/
+                PaymentWindow paymentWindow = new PaymentWindow(this,orderedItems, _tableNumber, _orderType, orderId, _status, false, _numberOfBill);
                 paymentWindow.ShowDialog();
                 
 
