@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-        Title="MenuPage" WindowState="Maximized" Width="800" Height="450">
+           Title="Menu Page" WindowState="Maximized" Height="746" Width="1777">
+
+
+
     <Grid Background="#212121">
         <!-- Dark Gray Background -->
         <Grid.RowDefinitions>
@@ -13,8 +16,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="575.88"/>
         </Grid.RowDefinitions>
 
 
@@ -23,13 +25,21 @@
 
         <!-- Buttons -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="300"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="591"/>
+            <ColumnDefinition Width="886"/>
         </Grid.ColumnDefinitions>
-        <Button Content="Back" HorizontalAlignment="Center" Background="Orange" BorderBrush="#FF4C4B56" FontSize="14" FontFamily="Verdana" FontWeight="Bold" Height="36" Margin="10,106,0,0" VerticalAlignment="Top" Width="73" Grid.Row="4" Click="Back_to_TablePage"/>
-        <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="38" Margin="10,145,0,0" VerticalAlignment="Top" Width="73" Grid.Row="4">
+        <Button Content="Back" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,116,0,0" VerticalAlignment="Top" Width="184" Grid.Row="4" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleY="-0.55"/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-0.479"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,213,14,0" VerticalAlignment="Top" Grid.Row="4">
             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock TextWrapping="Wrap">
             Change
@@ -37,113 +47,79 @@
                 </TextBlock>
             </Viewbox>
         </Button>
-        <Button Content="Split Bill" HorizontalAlignment="Center" Background="Orange" BorderBrush="#FF4C4B56" FontSize="14" FontFamily="Verdana" FontWeight="Bold" Height="36" Margin="10,188,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="73"/>
-        <Button Content="Print Bill" HorizontalAlignment="Center" Background="Orange" BorderBrush="#FF4C4B56" FontSize="14" FontFamily="Verdana" FontWeight="Bold" Height="36" Margin="10,230,0,0" VerticalAlignment="Top" Width="73" Grid.Row="4"/>
-        <Button Content="Payment" HorizontalAlignment="Center" Background="Orange" BorderBrush="#FF4C4B56" FontSize="14" FontFamily="Verdana" FontWeight="Bold" Height="36" VerticalAlignment="Top" Width="73" Grid.Row="4" Margin="15,271,0,0"/>
+        <Button Content="Split Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,309,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4"/>
+        <Button Content="Print Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,410,0,0" Click="PrintButton_Click"/>
+        <Button Content="Payment" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,508,0,0" Click="PaymentButton"/>
 
 
 
 
-
-        <!-- Category Buttons -->
-        <TabControl Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" Grid.Column="2" Grid.RowSpan="5" BorderThickness="0">
-            <!-- First set of categories -->
-            <TabItem Header="→" Height="22" Margin="-2,0,-2,0" VerticalAlignment="Bottom">
-                <StackPanel Orientation="Horizontal" >
-                    <Button Content="Category 1" Margin="5" Background="Orange" BorderBrush="#FF4C4B56" />
-                    <Button Content="Category 2" Margin="5" Background="Orange" BorderBrush="#FF4C4B56"/>
-                    <Button Content="Category 3" Margin="5" Background="Orange" BorderBrush="#FF4C4B56"/>
-                    <Button Content="Category 4" Margin="5" Background="Orange" BorderBrush="#FF4C4B56"/>
-                </StackPanel>
-            </TabItem>
-
-
-
-            <!-- Second set of categories -->
-            <TabItem Header="→">
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="Category 5" Margin="5"/>
-                    <Button Content="Category 6" Margin="5"/>
-                    <Button Content="Category 7" Margin="5"/>
-                    <Button Content="Category 8" Margin="5"/>
-                </StackPanel>
-            </TabItem>
-        </TabControl>
 
 
 
         <!-- Table Information -->
-        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Vertical" Margin="10,0,10,185" >
+        <StackPanel Grid.Row="4" Orientation="Vertical" Margin="298,-12,22,-82" Grid.ColumnSpan="2" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Table Number:" VerticalAlignment="Center" Margin="0,5" Foreground="Orange"/>
-                <TextBox Text="1" VerticalAlignment="Center" IsReadOnly="True" Grid.Column="1" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="10,0,-10,0" />
+                <TextBlock Text="Table Number:" VerticalAlignment="Top" Margin="0,91,363,0" Foreground="Orange" FontFamily="Verdana" FontSize="15" Grid.ColumnSpan="2"/>
+                <TextBox Name="TableNumberTextBox" Text="1" VerticalAlignment="Top" IsReadOnly="True" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="116,91,0,0" FontFamily="Verdana" Height="26" Grid.Column="1" />
+                <Label  Content="Menu Page" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="560" Height="60" FontFamily="Verdana" FontSize="35" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="Orange" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             </Grid>
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="58"/>
+                    <ColumnDefinition Width="176*"/>
+                    <ColumnDefinition Width="44*"/>
+                    <ColumnDefinition Width="293*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Status:" VerticalAlignment="Top" Foreground="Orange" Height="16" FontSize="15" FontFamily="Verdana" Margin="47,25,128,0" Grid.ColumnSpan="2"/>
+                <TextBox Text="Occupied" VerticalAlignment="Top" IsReadOnly="True" Grid.Column="1" RenderTransformOrigin="0.562,0.65"  Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="52,17,0,0" Height="26" Grid.ColumnSpan="3"/>
+            </Grid>
+            <Grid Height="85" Width="470">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Status:" VerticalAlignment="Center" Margin="0,5" Foreground="Orange"/>
-                <TextBox Text="Occupied" VerticalAlignment="Center" IsReadOnly="True" Grid.Column="1" RenderTransformOrigin="0.562,0.65"  Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="10,0,-10,0"/>
+                <TextBlock Text="Type:" VerticalAlignment="Top" Margin="10,14,418,0" Foreground="Orange" FontSize="15" FontFamily="Verdana" Grid.ColumnSpan="2"/>
+                <TextBox Name="TypeTextBox" Text="Dining" VerticalAlignment="Top" IsReadOnly="True" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="58,10,-49,0" Height="26" Grid.Column="1"/>
+                <TextBlock x:Name="oderIdTextBlock" Text="Order Id"  HorizontalAlignment="Left" Margin="4,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="Orange" FontFamily="Verdana"/>
+                <TextBlock x:Name="OrderIdTextBlock" Grid.Column="1" HorizontalAlignment="Left" Margin="27,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="381" Height="24" Foreground="Orange" FontFamily="Verdana" Background="#FF454545" />
+
             </Grid>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Type:" VerticalAlignment="Center" Margin="0,5" Foreground="Orange"/>
-                <TextBox Text="Dining" VerticalAlignment="Center" IsReadOnly="True" Grid.Column="1" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" Margin="10,0,-10,0"/>
-            </Grid>
-            <ListBox x:Name="OrdersListBox" Width="297" Height="313"  Background="#FF454545"  BorderBrush="Orange">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding FoodName}" Width="150"/>
-                            <TextBlock Text="{Binding Quantity}" Width="50"/>
-                            <TextBlock Text="{Binding Price}" Width="100"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+
+            <ListView x:Name="OrdersListBox" Width="400" Height="399" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Item Name" Width="200" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="Item Price" Width="100" DisplayMemberBinding="{Binding Price, StringFormat=C}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+
+
         </StackPanel>
 
 
 
 
 
-        <Button Grid.Column="1" Content="Send" HorizontalAlignment="Left" Height="24" Margin="10,396,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="84" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" />
-        <Button Grid.Column="1" Content="Void" HorizontalAlignment="Left" Height="24" Margin="100,396,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="84" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange"  />
+        <!-- Category Buttons -->
+        <Button Grid.Column="1" Content="Void" HorizontalAlignment="Center" Height="50" Margin="0,670,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="100" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" FontSize="20" Click="VoidButton_Click" RenderTransformOrigin="-1.893,0.589" />
 
-
-
-
-
-        <Grid Grid.Column="3" HorizontalAlignment="Left" Height="423" Margin="10,10,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="300">
-            <ListBox x:Name="FoodItemsListBox" BorderThickness="0" Background="Transparent" Margin="-208,0,231,0">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Button Content="{Binding FoodName}" Width="150" Height="50" Margin="5" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-
-
-
-
-
-
-
-        </Grid>
-
-
-
+        <!-- category button list-->
+        <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="49,114,663,80" Grid.Column="2" Grid.Row="4" RenderTransformOrigin="0.471,0.536"/>
+        <!-- item button list -->
+        <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="243,108,169,85" Grid.Column="2" Grid.Row="4"/>
+        <TextBlock Name="TotalAmountTextBlock" Grid.Column="1" HorizontalAlignment="Left" Margin="330,633,0,0" Grid.Row="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="63" Width="153" FontSize="24" Foreground="#FFFBF8F8"/>
+        <Button Content="Save" HorizontalAlignment="Left" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,595,0,0" Click="SaveButton_Click"/>
 
 
 
 
     </Grid>
+
 </Window>

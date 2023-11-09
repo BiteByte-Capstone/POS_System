@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,15 +12,45 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Linq;
+
+
+
+
 
 namespace POS_System.Pages
 {
     public partial class TablePage : Window
     {
+        private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+        // Define properties to store table number and order type
+        /*        public string TableNumber { get; private set; }
+                public string OrderType { get; private set; }*/
+
+
+
         public TablePage()
         {
             InitializeComponent();
+            UpdateTableColors();
         }
+
+
+
+        public TablePage(string tableNumber, string orderType)
+        {
+            InitializeComponent();
+            UpdateTableColors();
+            // Store the table number and order type for future use
+            /*            this.TableNumber = tableNumber;
+                        this.OrderType = orderType;*/
+        }
+
+
+
+
+
+
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
@@ -30,12 +61,181 @@ namespace POS_System.Pages
             this.Close();
         }
 
+
+
+
+
+        // Handle table number, order number, order type
         private void Open_Table(object sender, RoutedEventArgs e)
         {
-            // Go to MenuPage.xaml when they double click on Table
-            MenuPage menuPage = new MenuPage();
-            menuPage.Show();
-            this.Close();
+            Button button = sender as Button;
+            if (button != null)
+            {
+                string tableName = button.Name;
+                int index = tableName.IndexOf('_');
+                string tableNumber = tableName.Substring(index + 1);
+                string orderType = tableName.Substring(0, index);
+
+
+
+                string Type = "";
+                if (orderType.Equals("table"))
+                {
+                    Type = "Dine-In";
+                }
+                else if (orderType.Equals("takeOut"))
+                {
+                    Type = "Take-Out";
+                }
+
+
+
+                bool hasUnpaidOrders = CheckForUnpaidOrders(tableNumber);
+
+
+
+                // If there are unpaid orders, open the existing order
+                if (hasUnpaidOrders)
+                {
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "Occupied", hasUnpaidOrders);
+                    menuPage.Show();
+                }
+                else
+                {
+                    // If no unpaid orders exist, create a new order
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "New Table", false);
+                    menuPage.Show();
+                }
+
+
+
+                this.Close();
+            }
         }
+
+
+
+        // Check if there are unpaid orders for the specified table
+        private bool CheckForUnpaidOrders(string tableNumber)
+        {
+            // Create a connection string
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+
+                    // Check if there are unpaid orders for the specified table
+                    string checkUnpaidOrdersSql = "SELECT order_id FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
+                    MySqlCommand checkUnpaidOrdersCmd = new MySqlCommand(checkUnpaidOrdersSql, conn);
+                    checkUnpaidOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
+                    object unpaidOrderId = checkUnpaidOrdersCmd.ExecuteScalar();
+
+
+
+                    return (unpaidOrderId != null);
+                }
+                catch (MySqlException ex)
+                {
+                    Console.WriteLine("MySQL Error: " + ex.Message);
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error checking for unpaid orders: " + ex.ToString());
+                    return false;
+                }
+            }
+        }
+
+
+
+
+
+
+
+        // Method to update table colors based on the database
+        private void UpdateTableColors()
+        {
+            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+
+
+
+
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+
+
+
+                    // Query the database for tables with paid=n
+                    string query = "SELECT table_num FROM `order` WHERE paid = 'n';";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+
+
+
+
+                    while (reader.Read())
+                    {
+                        // Get the table number from the query result
+                        int tableNumber = reader.GetInt32(0);
+
+
+
+
+
+                        // Find the corresponding table UI element in your XAML
+                        string buttonName = "table_" + tableNumber;
+
+
+
+
+
+                        // Try to find the button by name
+                        Button tableButton = FindName(buttonName) as Button;
+
+
+
+
+
+                        if (tableButton != null)
+                        {
+                            // Change the background color to green
+                            tableButton.Background = Brushes.Green;
+                        }
+                    }
+
+
+
+
+
+                    reader.Close();
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+        }
+
+
+
     }
 }
