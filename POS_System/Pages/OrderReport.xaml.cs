@@ -13,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using POS_System.Model;
+using POS_System.Models;
 
 namespace POS_System.Pages
 {
@@ -72,7 +72,7 @@ namespace POS_System.Pages
             var row = sender as DataGridRow;
             var order = row.DataContext as Order;
 
-            MessageBox.Show(order.orderID.ToString());
+            MessageBox.Show(order.OrderId.ToString());
         }
 
         private void filterBtn_Click(object sender, RoutedEventArgs e) 
