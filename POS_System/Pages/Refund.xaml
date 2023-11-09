@@ -12,7 +12,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <DataGrid Name="paymentGrid" ItemsSource="{Binding}" Margin="19,130,18,153" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*" IsReadOnly="True">
+        <DataGrid Name="paymentGrid" ItemsSource="{Binding}" Margin="19,130,18,153" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*" IsReadOnly="True" SelectionChanged="paymentGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Payment ID" Binding="{Binding payment_id}" />
                 <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />

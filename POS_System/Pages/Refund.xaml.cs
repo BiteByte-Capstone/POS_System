@@ -26,6 +26,12 @@ namespace POS_System.Pages
 
         //String to make connection to database
         string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+        string orderId;
+        string paymentId;
+        string refundAmount;
+        string refundMethod;
+        string refundReason;
+        string userId;
 
         public Refund()
         {
@@ -62,25 +68,27 @@ namespace POS_System.Pages
 
         }
 
-        private void DataGridRow_Click(object sender, RoutedEventArgs e)
+        //This method populates the refundPaymentIdBox with the paymentId of the selected row in the DataGrid whenever a row is selected
+        private void paymentGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DataRowView selectedRow = (DataRowView)paymentGrid.SelectedItem;
             if (selectedRow != null)
             {
                 refundPaymentIdBox.Text = selectedRow["payment_id"].ToString();
+                orderId = selectedRow["order_id"].ToString();
             }
         }
 
         private void RefundBtn_Click(object sender, RoutedEventArgs e)
-        {
-            string orderId = "0";
-            string paymentId = refundPaymentIdBox.Text;
-            string refundAmount = refundAmountBox.Text;
-            string refundMethod = refundMethodComboBox.Text;
-            string refundReason = refundReasonBox.Text;
-            string userId = User.id.ToString();
+        { 
+            paymentId = refundPaymentIdBox.Text;
+            refundAmount = refundAmountBox.Text;
+            refundMethod = refundMethodComboBox.Text;
+            refundReason = refundReasonBox.Text;
+            userId = User.id.ToString();
+            orderId = GetOrderID(paymentId);
 
-            MessageBox.Show(paymentId + ' ' + refundAmount + ' ' + refundMethod + ' ' + refundReason);
+            MessageBox.Show(orderId + ' ' + paymentId + ' ' + refundAmount + ' ' + refundMethod + ' ' + refundReason);
             
             if (paymentId.Length < 1 || refundAmount.Length < 1 || refundMethod.Length < 1 || refundReason.Length < 1)
             {
@@ -107,5 +115,41 @@ namespace POS_System.Pages
                 MessageBox.Show("Refund Complete");
             }
         }
+
+        private String GetOrderID(String paymentID)
+        {
+            String orderIDHolder;
+            
+            //Create a connection object
+            MySqlConnection connection = new MySqlConnection(connectionString);
+
+            //Open up connection with the user table
+            connection.Open();
+
+            String sqlquery = "select order_id from pos_db.payment where payment_id = @paymentID";
+            //String sqlquery = "select order_id from pos_db.payment where payment_id = " + paymentID + " ;";
+
+            //SQL query
+            MySqlCommand cmd = new MySqlCommand(sqlquery, connection);
+
+            //pass the value of paymentID into the sqlquery placeholder @paymentID
+            cmd.Parameters.AddWithValue("@paymentID", int.Parse(paymentID));
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                orderIDHolder = reader.GetValue(0).ToString();
+            }
+
+            return orderIDHolder = reader.GetValue(0).ToString();
+
+            //Close connection to user table
+            connection.Close();
+
+            
+        }
+
+        
     }
 }

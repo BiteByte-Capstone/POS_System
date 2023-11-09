@@ -96,6 +96,7 @@
 
                     <Button x:Name="logout_button2" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click"/>
                     <Button x:Name="print_button2" Content="Print Bill" HorizontalAlignment="Left" Margin="150,365,0,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="200" Height="100"/>
+                    <Button Content="Refund" HorizontalAlignment="Left" Margin="643,-39,0,0" VerticalAlignment="Top" Click="Button_Click"/>
 
                 </Grid>
 
