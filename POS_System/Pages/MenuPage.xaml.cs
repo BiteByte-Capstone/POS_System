@@ -1052,7 +1052,7 @@ namespace POS_System.Pages
                 Table detailsTable = new Table();
                 TableRowGroup detailTableRowGroup = new TableRowGroup();
                 // Add rows for order details
-                detailTableRowGroup.Rows.Add(CreateTableRow("Date:", "10/30/2023     Time: 7:30 PM"));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
                 detailTableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
                 if (OrderIdTextBlock != null) // Check if the TextBlock exists
                 {
@@ -1071,8 +1071,6 @@ namespace POS_System.Pages
                 dashedLineCell.Blocks.Add(dashedLineParagraph);
                 dashedLineRow.Cells.Add(dashedLineCell);
                 detailTableRowGroup.Rows.Add(dashedLineRow);
-
-
 
 
 
@@ -1098,11 +1096,11 @@ namespace POS_System.Pages
                     itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
 
                 }
-                
+
 
                 /*tableRowGroup.Rows.Add(itemsRow);*/
                 // Initialize the TableRowGroup
-                
+
                 itemSection.Blocks.Add(itemsTable);
 
                 // Create a new TableRow for the itemsCell and add it to the tableRowGroup
@@ -1144,9 +1142,6 @@ namespace POS_System.Pages
                 paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
                 //////////////////////////////////////////////////
 
-
-
-
                 detailsTable.RowGroups.Add(detailTableRowGroup);
                 itemsTable.RowGroups.Add(itemTableRowGroup);
                 paymentTable.RowGroups.Add(paymentTableRowGroup);
@@ -1158,11 +1153,22 @@ namespace POS_System.Pages
                 flowDocument.Blocks.Add(orderDetailsSection);
                 flowDocument.Blocks.Add(itemSection);
                 flowDocument.Blocks.Add(paymentSection);
-                
+                // /*****************************
+                // Create a new paragraph for the "Thank You" message
+                Paragraph thankYouParagraph = new Paragraph();
+                thankYouParagraph.TextAlignment = TextAlignment.Center;
+                thankYouParagraph.FontSize = 16; // You can set the font size as you wish
+                thankYouParagraph.Inlines.Add(new Run("Thank You for dining with us!"));
+                thankYouParagraph.Margin = new Thickness(0, 10, 0, 0); // Add some space before the message if needed
 
+                // Add a "-------------------------------------------------" separator before the "Thank You" message
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
 
+                // Add the "Thank You" paragraph to the FlowDocument
+                flowDocument.Blocks.Add(thankYouParagraph);
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
 
-
+                //**********************************
 
                 // Create a DocumentPaginator for the FlowDocument
                 IDocumentPaginatorSource paginatorSource = flowDocument;
@@ -1172,6 +1178,7 @@ namespace POS_System.Pages
                 printDialog.PrintDocument(documentPaginator, "Order Receipt");
             }
         }
+
 
         private TableRow CreateTableRow(string label, string value)
         {
@@ -1191,6 +1198,7 @@ namespace POS_System.Pages
 
             return row;
         }
+
 
 
         private TableRow CreateEmptyTableRow()
