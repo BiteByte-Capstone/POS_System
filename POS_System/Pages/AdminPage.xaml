@@ -5,17 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-        Title="AdminPage" WindowState="Maximized" Width="959" WindowStartupLocation="CenterOwner" Height="718"
+        Title="AdminPage" WindowState="Maximized" Width="973" WindowStartupLocation="CenterOwner" Height="764"
         >
     <Grid Background="#212121" Margin="0,0,0,-54">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="2674"/>
         </Grid.RowDefinitions>
 
+        <!-- Back Button (TODO: Add pictures) -->
+        <Button Click="BackButton_Click" Background="Transparent" BorderBrush="Transparent" Margin="11,18,824,2594">
+            <Image Source="pack://application:,,,/Images/BackBtn.png" Width="116" Height="56"/>
+        </Button>
+
         <!-- Title -->
-        <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="User Management" FontFamily="Verdana" FontSize="36" FontWeight="Bold" FontStyle="Italic"  Foreground="Orange" Margin="10,18,0,0" Height="62" VerticalAlignment="Top"/>
+        <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="User Management" FontFamily="Verdana" FontSize="36" FontWeight="Bold" FontStyle="Italic"  Foreground="Orange" Margin="0,18,0,0" Height="62" VerticalAlignment="Top" Width="365"/>
 
         <!-- DataGrid for displaying -->
         <DataGrid x:Name="userGrid" ItemsSource="{Binding}" Margin="0,93,48,2231" SelectionChanged="DataGrid_SelectionChanged" AutoGenerateColumns="False">
