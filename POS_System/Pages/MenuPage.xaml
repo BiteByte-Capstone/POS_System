@@ -90,7 +90,7 @@
 
             </Grid>
 
-            <ListView x:Name="OrdersListBox" Width="400" Height="399" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16">
+            <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Width="400" Height="399" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
 
