@@ -760,6 +760,10 @@ namespace POS_System.Pages {
                 // Add the "-------------------------------------------------" separator at the top
                 flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
 
+                ///^^^^^^good^^^^^^^^^^^
+
+
+                ////////order detail session!!!!
 
 
                 // Create a Section for the order details
@@ -767,69 +771,80 @@ namespace POS_System.Pages {
 
                 // Table to display order details
                 Table detailsTable = new Table();
-                TableRowGroup tableRowGroup = new TableRowGroup();
+                TableRowGroup detailTableRowGroup = new TableRowGroup();
                 // Add rows for order details
-                tableRowGroup.Rows.Add(CreateTableRow("Date:", "10/30/2023     Time: 7:30 PM"));
-                tableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
                 if (OrderIdTextBlock != null) // Check if the TextBlock exists
                 {
                     // Access the text of the OrderIdTextBlock
-                    tableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
+                    detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
                 }
-                tableRowGroup.Rows.Add(CreateTableRow("Server:", "John"));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Server:", "John"));
 
                 // Add a line with dashes after "Server: John"
                 TableRow dashedLineRow = new TableRow();
                 TableCell dashedLineCell = new TableCell();
-                
+
                 Paragraph dashedLineParagraph = new Paragraph(new Run("-------------------------------------------------"));
                 //dashedLineParagraph.TextAlignment = TextAlignment.Center;
                 dashedLineCell.ColumnSpan = 2;
                 dashedLineCell.Blocks.Add(dashedLineParagraph);
                 dashedLineRow.Cells.Add(dashedLineCell);
-                tableRowGroup.Rows.Add(dashedLineRow);
+                detailTableRowGroup.Rows.Add(dashedLineRow);
 
 
+
+                ///item session
 
                 // Create a TableRow for displaying items and their prices
-                TableRow itemsRow = new TableRow();
-                TableCell itemsCell = new TableCell();
-                TableCell pricesCell = new TableCell();
 
+                TableRowGroup itemTableRowGroup = new TableRowGroup();
+                Section itemSection = new Section();
                 // Add space (empty TableRow) for the gap
-                tableRowGroup.Rows.Add(CreateEmptyTableRow());
+                itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
 
-                
+
                 // Create a nested Table within the items cell
                 Table itemsTable = new Table();
-                TableRowGroup itemsRowGroup = new TableRowGroup();
-                // Initialize the TableRowGroup
-                itemsTable.RowGroups.Add(itemsRowGroup);
+
+
 
 
                 // Access the 'Items' collection and loop through it to add item rows.
                 foreach (var OrderedItem in orderedItems)
                 {
-                     itemsRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
-                   
+                    itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
+
                 }
 
 
+                /*tableRowGroup.Rows.Add(itemsRow);*/
+                // Initialize the TableRowGroup
+
+                itemSection.Blocks.Add(itemsTable);
+
                 // Create a new TableRow for the itemsCell and add it to the tableRowGroup
-                itemsRow.Cells.Add(itemsCell);
-                itemsRow.Cells.Add(pricesCell); // If you have a separate pricesCell, otherwise, you might not need this
-                tableRowGroup.Rows.Add(itemsRow);
+
+
 
                 // Add space (empty TableRow) for the gap
-                tableRowGroup.Rows.Add(CreateEmptyTableRow());
+                itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
+                /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
+
+                ///////sub total session
+                Table paymentTable = new Table();
+                Section paymentSection = new Section();
+                TableRowGroup paymentTableRowGroup = new TableRowGroup();
                 // Create a Paragraph for "Sub Total" with underline
                 Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
                 subTotalParagraph.FontSize = 20; // Increase the font size
                 subTotalParagraph.TextAlignment = TextAlignment.Right;
 
                 Paragraph subTotalValueParagraph = new Paragraph(new Run(TotalAmount.ToString("C")));
-                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
 
                 // Create a Paragraph for "GST"
                 Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
@@ -837,7 +852,7 @@ namespace POS_System.Pages {
                 gstLabelParagraph.TextAlignment = TextAlignment.Right;
 
                 Paragraph gstValueParagraph = new Paragraph(new Run(gstAmount.ToString("C")));
-                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
 
                 // Create a Paragraph for "Total Amount"
                 Paragraph totalAmountLabelParagraph = new Paragraph(new Run("Total Amount:"));
@@ -845,11 +860,36 @@ namespace POS_System.Pages {
                 totalAmountLabelParagraph.TextAlignment = TextAlignment.Right;
 
                 Paragraph totalAmountValueParagraph = new Paragraph(new Run(totalAmountWithGST.ToString("C")));
-                tableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
+                //////////////////////////////////////////////////
+               
+                detailsTable.RowGroups.Add(detailTableRowGroup);
+                itemsTable.RowGroups.Add(itemTableRowGroup);
+                paymentTable.RowGroups.Add(paymentTableRowGroup);
 
-                detailsTable.RowGroups.Add(tableRowGroup);
                 orderDetailsSection.Blocks.Add(detailsTable);
+                itemSection.Blocks.Add(itemsTable);
+                paymentSection.Blocks.Add(paymentTable);
+
                 flowDocument.Blocks.Add(orderDetailsSection);
+                flowDocument.Blocks.Add(itemSection);
+                flowDocument.Blocks.Add(paymentSection);
+                // /*****************************
+                // Create a new paragraph for the "Thank You" message
+                Paragraph thankYouParagraph = new Paragraph();
+                thankYouParagraph.TextAlignment = TextAlignment.Center;
+                thankYouParagraph.FontSize = 16; // You can set the font size as you wish
+                thankYouParagraph.Inlines.Add(new Run("Thank You for dining with us!"));
+                thankYouParagraph.Margin = new Thickness(0, 10, 0, 0); // Add some space before the message if needed
+
+                // Add a "-------------------------------------------------" separator before the "Thank You" message
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                // Add the "Thank You" paragraph to the FlowDocument
+                flowDocument.Blocks.Add(thankYouParagraph);
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                //**********************************
 
                 // Create a DocumentPaginator for the FlowDocument
                 IDocumentPaginatorSource paginatorSource = flowDocument;
@@ -860,25 +900,27 @@ namespace POS_System.Pages {
             }
         }
 
-        private TableRow CreateTableRow(string label, string value)
-        {
-            TableRow row = new TableRow();
+        
+                private TableRow CreateTableRow(string label, string value)
+                {
+                    TableRow row = new TableRow();
 
-            // Label cell
-            TableCell labelCell = new TableCell(new Paragraph(new Run(label)));
-            labelCell.TextAlignment = TextAlignment.Right;
-            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
-            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
-            row.Cells.Add(labelCell);
+                    // Label cell
+                    TableCell labelCell = new TableCell(new Paragraph(new Run(label)));
+                    labelCell.TextAlignment = TextAlignment.Right;
+                    labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+                    labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+                    row.Cells.Add(labelCell);
 
-            // Value cell
-            TableCell valueCell = new TableCell(new Paragraph(new Run(value)));
-            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
-            row.Cells.Add(valueCell);
+                    // Value cell
+                    TableCell valueCell = new TableCell(new Paragraph(new Run(value)));
+                    valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+                    row.Cells.Add(valueCell);
 
-            return row;
-        }
-
+                    return row;
+                }
+        
+      
 
         private TableRow CreateEmptyTableRow()
         {
@@ -892,10 +934,6 @@ namespace POS_System.Pages {
             return row;
         }
 
-           
-        
-
-
 
         // For Styling
         private void SetButtonStyle(Button button)
@@ -907,25 +945,31 @@ namespace POS_System.Pages {
             button.BorderBrush = Brushes.Orange;
             button.Margin = new Thickness(5);
         }
+     
 
-        private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
-        {
-            TableRow row = new TableRow();
 
-            // Label cell
-            TableCell labelCell = new TableCell(labelParagraph);
-            labelCell.TextAlignment = TextAlignment.Right;
-            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
-            labelCell.BorderBrush = Brushes.Transparent; //
-            // Value cell
-            TableCell valueCell = new TableCell(valueParagraph);
-            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
-            row.Cells.Add(valueCell);
 
-            return row;
-        }
-       
-       
+     
+          private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
+           {
+               TableRow row = new TableRow();
+
+               // Label cell
+               TableCell labelCell = new TableCell(labelParagraph);
+               labelCell.TextAlignment = TextAlignment.Right;
+               labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+               labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+               row.Cells.Add(labelCell);
+
+               // Value cell
+               TableCell valueCell = new TableCell(valueParagraph);
+               valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+               row.Cells.Add(valueCell);
+
+               return row;
+           }
+
+
         //Thevagi splitbill
         private void SplitBillButton_Click(object sender, RoutedEventArgs e)
         {
@@ -933,10 +977,6 @@ namespace POS_System.Pages {
             dialog.Owner = this; // Set the owner window to handle dialog behavior
             dialog.ShowDialog();
         }
-
-
-
-
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
