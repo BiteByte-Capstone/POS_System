@@ -25,23 +25,31 @@ namespace POS_System.Pages
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ManageUserButton_Click(object sender, RoutedEventArgs e)
         {
             // Open the Admin window when the button is clicked
             AdminPage adminWindow = new AdminPage();
             adminWindow.Show();
+            this.Close();
         }
-        private void Button_Click1(object sender, RoutedEventArgs e)
+        private void ManageSalesButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void ManageTableButton_Click(object sender, RoutedEventArgs e)
         {
             // Open the Admin window when the button is clicked
             TablePage adminWindow = new TablePage();
             adminWindow.Show();
+            this.Close();
         }
-        private void Button_Click2(object sender, RoutedEventArgs e)
+        private void ManageMenuButton_Click(object sender, RoutedEventArgs e)
         {
             // Open the Admin window when the button is clicked
             ManageMenu adminWindow = new ManageMenu();
             adminWindow.Show();
+            this.Close();
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -52,5 +60,7 @@ namespace POS_System.Pages
             loginScreen.Show();
             this.Close();
         }
+
+        
     }
 }
