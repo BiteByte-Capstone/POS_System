@@ -13,19 +13,26 @@ namespace POS_System.Pages
 {
     public partial class SplitByItemPage : Window
     {
-        private List<SplitBill> splitOrders = new List<SplitBill>();
+
+
+        private ObservableCollection<OrderedItem> _allOrderedItem = new ObservableCollection<OrderedItem>();
+        private ObservableCollection<OrderedItem> _splitedItem = new ObservableCollection<OrderedItem>();
+        public ObservableCollection<OrderedItem> _assignCustomerIDItems { get; set; } = new ObservableCollection<OrderedItem>();
+
         private int orderID;
-        private int currentCustomerId;
+        public int currentCustomerId;
 
         public SplitByItemPage(ObservableCollection<OrderedItem> orderedItems)
         {
             InitializeComponent();
 
+            _splitedItem.Clear();
+            _allOrderedItem = orderedItems;
             // Set the ItemsSource of fullListItems
-            fullListItems.ItemsSource = orderedItems;
+            fullListItems.ItemsSource = _allOrderedItem;
 
             // Set the ItemsSource of splitOrderedItems
-            splitOrderedItems.ItemsSource = new ObservableCollection<OrderedItem>();
+            splitOrderedItems.ItemsSource = _splitedItem;
 
             // Initialize currentCustomerId to 1
             currentCustomerId = 1;
@@ -38,19 +45,6 @@ namespace POS_System.Pages
             this.orderID = orderId;
         }
 
-        public SplitByItemPage(SharedData sharedData)
-        {
-            InitializeComponent();
-
-            DataContext = sharedData;
-
-            // Your SplitByItemPage code
-        }
-
-        public void PopulateFullListItems(List<OrderedItem> items)
-        {
-            fullListItems.ItemsSource = items;
-        }
 
         private void addItem_Button(object sender, RoutedEventArgs e)
         {
@@ -62,10 +56,14 @@ namespace POS_System.Pages
                 if (selectedItem != null)
                 {
                     // Remove the selected item from the first ListView
-                    (fullListItems.ItemsSource as ObservableCollection<OrderedItem>).Remove(selectedItem);
+                    (_allOrderedItem).Remove(selectedItem);
+
+
 
                     // Add the selected item to the second ListView
-                    (splitOrderedItems.ItemsSource as ObservableCollection<OrderedItem>).Add(selectedItem);
+                    _splitedItem.Add(selectedItem);
+
+                   
 
 
                     // Refresh the ListViews
@@ -85,10 +83,10 @@ namespace POS_System.Pages
                 if (selectedItem != null)
                 {
                     // Remove the selected item from the second ListView
-                    (splitOrderedItems.ItemsSource as ObservableCollection<OrderedItem>).Remove(selectedItem);
+                    (_splitedItem).Remove(selectedItem);
 
                     // Add the selected item back to the first ListView
-                    (fullListItems.ItemsSource as ObservableCollection<OrderedItem>).Add(selectedItem);
+                    (_allOrderedItem).Add(selectedItem);
 
                     // Refresh the ListViews
                     splitOrderedItems.Items.Refresh();
@@ -101,10 +99,31 @@ namespace POS_System.Pages
         {
             if (splitOrderedItems.Items.Count > 0)
             {
-                var selectedItems = (splitOrderedItems.ItemsSource as ObservableCollection<OrderedItem>);
+
+                foreach(OrderedItem splitedItem in _splitedItem)
+                {
+                    OrderedItem newSplitByItemBill = new OrderedItem
+                    {
+
+                        order_id = splitedItem.order_id,
+                        item_id = splitedItem.item_id,
+                        item_name = splitedItem.item_name,
+                        Quantity = splitedItem.Quantity,
+                        origialItemPrice = splitedItem.origialItemPrice,
+                        ItemPrice = splitedItem.ItemPrice,
+                        IsExistItem = true,
+                        customerID = currentCustomerId
+                    };
+                    _assignCustomerIDItems.Add(newSplitByItemBill);
+                    
+                }
+                
+                var selectedItems = (_splitedItem as ObservableCollection<OrderedItem>);
+
+
 
                 // Group items by customer
-                var groupedItems = selectedItems.GroupBy(item => item.CustomerId);
+                var groupedItems = selectedItems.GroupBy(_splitedItem => _splitedItem.customerID);
 
                 foreach (var group in groupedItems)
                 {
@@ -125,14 +144,21 @@ namespace POS_System.Pages
                     // Add the customer and items information to the ListBox
                     AddCustomerItemsToListBox(currentCustomerId, group.Select(item => item.item_name).ToList());
 
-                    // Clear the items from the second ListView
-                    foreach (var item in group.ToList())
-                    {
-                        selectedItems.Remove(item);
-                    }
 
+ 
+
+                }
+
+                if (_allOrderedItem.Count > 0)
+                {
                     // Increment the customer ID for the next customer
                     currentCustomerId++;
+                    _splitedItem.Clear();
+                }
+                else if (_allOrderedItem.Count.Equals(0))
+                {
+                    DialogResult = true;
+  
                 }
             }
         }
@@ -156,7 +182,7 @@ namespace POS_System.Pages
             // ... your other code ...
 
             // Group the SplitBill items by CustomerId
-            var groupedSplitBills = splitOrders.GroupBy(item => item.CustomerId);
+            var groupedSplitBills = _splitedItem.GroupBy(_splitedItem => _splitedItem.customerID);
 
             // Create a collection to hold the grouped data
             var groupedOrders = new ObservableCollection<OrderedItem>();
@@ -169,21 +195,17 @@ namespace POS_System.Pages
                     // Create OrderedItem objects from the SplitBill items
                     var orderedItem = new OrderedItem
                     {
-                        item_name = item.ItemName,
-                        ItemPrice = item.Price,
+                        item_name = item.item_name,
+                        ItemPrice = item.ItemPrice,
                         // Set other properties as needed
-                        CustomerId = item.CustomerId,
+                        customerID = item.customerID,
                     };
 
                     groupedOrders.Add(orderedItem);
                 }
             }
 
-            // Find the open MenuPage (assuming there's only one MenuPage open)
-            var menuPage = Application.Current.Windows.OfType<MenuPage>().FirstOrDefault();
 
-            // Update the OrdersListBox.ItemsSource in the existing MenuPage
-            menuPage?.UpdateOrders(groupedOrders);
 
             // Close the SplitByItemPage
             this.Close();

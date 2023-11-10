@@ -394,7 +394,7 @@ namespace POS_System.Pages
             if (_numberOfBill > 0)
             {
 
-                GetNewSplitItemList(_numberOfBill, _splitType);
+                GetNewSplitItemList(orderedItems,_numberOfBill, _splitType);
                 //!! remove later Since it is for connect database
                 /*                RemoveOrderByOrderID(GetOrderId(_tableNumber));
                                 addItemToDatabase(orderedItems);*/
@@ -415,25 +415,46 @@ namespace POS_System.Pages
         }
 
         //(Method) for split item
-        private ObservableCollection<OrderedItem> GetNewSplitItemList(int numberOfBill,string splitType)
+        private ObservableCollection<OrderedItem> GetNewSplitItemList(ObservableCollection<OrderedItem>splitedList,int numberOfBill,string splitType)
         {
-
-            foreach (OrderedItem orderedItem in orderedItems)
+            ObservableCollection<OrderedItem> items = splitedList;
+            foreach (OrderedItem splitOrderedItem in items)
             {
+                if (splitType == "ByItem")
+                {
+                    OrderedItem newSplitBill = new OrderedItem
+                    {
+
+                        order_id = splitOrderedItem.order_id,
+                        item_id = splitOrderedItem.item_id,
+                        item_name = splitOrderedItem.item_name,
+                        Quantity = splitOrderedItem.Quantity,
+                        origialItemPrice = splitOrderedItem.origialItemPrice,
+                        ItemPrice = splitOrderedItem.ItemPrice,
+                        IsExistItem = true,
+                        customerID = splitOrderedItem.customerID
+                    };
+                    splitOrderedItems.Add(newSplitBill);
+                }
+                else if (splitType == "ByBill")
+                {
+
                 for (int i = 1; i <= numberOfBill; i++) { 
                 OrderedItem newSplitBill = new OrderedItem
                 {
 
-                    order_id = orderedItem.order_id,
-                    item_id = orderedItem.item_id,
-                    item_name = orderedItem.item_name,
-                    Quantity = orderedItem.Quantity,
-                    origialItemPrice = orderedItem.origialItemPrice,
-                    ItemPrice = orderedItem.ItemPrice / numberOfBill,
+                    order_id = splitOrderedItem.order_id,
+                    item_id = splitOrderedItem.item_id,
+                    item_name = splitOrderedItem.item_name,
+                    Quantity = splitOrderedItem.Quantity,
+                    origialItemPrice = splitOrderedItem.origialItemPrice,
+                    ItemPrice = splitOrderedItem.ItemPrice / numberOfBill,
                     IsExistItem = true,
                     customerID = i  
                 };
                     splitOrderedItems.Add(newSplitBill);
+                }
+
                 }
             }
             orderedItems.Clear();
@@ -1244,17 +1265,37 @@ namespace POS_System.Pages
             return row;
         }
 
-/*        private TableRow CreateEmptyTableRow()
+        private void SplitbyItem_Click(object sender, RoutedEventArgs e)
         {
-            TableRow row = new TableRow();
+            SplitByItemPage splitByItemPage = new SplitByItemPage(orderedItems);
 
-            TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
-            emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+            if (splitByItemPage.ShowDialog() == true)
+            {
+                var splitOrderedItems = splitByItemPage._assignCustomerIDItems;
+                _splitType = "ByItem";
+                _numberOfBill = splitByItemPage.currentCustomerId;
+                
+                GetNewSplitItemList(splitOrderedItems, _numberOfBill, _splitType);
+                Refresh();
+            }
+            else
+            {
+                return;
+            }
+ 
+        }
 
-            row.Cells.Add(emptyCell);
+        /*        private TableRow CreateEmptyTableRow()
+                {
+                    TableRow row = new TableRow();
 
-            return row;
-        }*/
+                    TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
+                    emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+
+                    row.Cells.Add(emptyCell);
+
+                    return row;
+                }*/
 
 
 
