@@ -69,20 +69,12 @@ namespace POS_System.Pages
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
             totalAmtTextBox.Text = CalculateTotalOrderAmount().ToString("C", cultureInfo);
-
-
-
-
             DisplayBalance();
             DisplayTax();
-            MessageBox.Show("Before complete payment, the number of bill is " + _numberOfBill.ToString());
-            
-
 
         }
 
-
-        // Method to raise the event
+        //Method for payment window: after save button click it will disable the customer payment button
         protected virtual void OnPaymentCompleted()
         {
             PaymentCompleted?.Invoke(this, EventArgs.Empty);
@@ -90,9 +82,11 @@ namespace POS_System.Pages
 
     
 
-
-    // Add a private field to store the shadow value:
-    private long shadowValue = 0;
+        // Methods for get customer payment: when user type the amount, it will start from cent.
+    
+        // Add a private field to store the shadow value:
+    
+        private long shadowValue = 0;
 
         private void CustomerPayTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
