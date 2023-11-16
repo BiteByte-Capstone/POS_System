@@ -136,7 +136,17 @@ namespace POS_System.Pages
                 }
             }
             
-            DisplayTips();
+
+            if (_paymentMethod!=null && _paymentMethod.Equals("Cash"))
+            {
+                tipsTextbox.Text = "0";
+                DisplayChange();
+            }else if (_paymentMethod == null || _paymentMethod != "Cash")
+            {
+                changeTextBox.Text = "0";
+                DisplayTips();
+            }
+            
         }
 
 
@@ -147,10 +157,8 @@ namespace POS_System.Pages
             double totalAmount = 0;
             foreach (var orderedItem in _orderedItems)
             {
-/*                if (orderedItem.IsExistItem == true)   //// not sure why i add it in origial
-                {*/
+
                     totalAmount += orderedItem.ItemPrice;
-/*                }*/
                 
             }
             return totalAmount;
@@ -161,56 +169,68 @@ namespace POS_System.Pages
         //Save button (send data to payment database and reset table) 
         private void SavePaymentButton_Click(object sender, RoutedEventArgs e)
         {
-            string message = $"orderID: {_orderId}" +
-                 $"\npayment method: {_paymentMethod}" +
-                 $"\ntotal order amount: {CalculateTotalOrderAmount()}" +
-                 $"\nGST: {CalculateTaxAmount()}" +
-                 $"\ntotal customer payment: {GetCustomerPayment()}" +
-                 $"\ntotal order balance: {CalculateOrderTotalBalance()}" +
-                 $"\ncustomer change amount: {CalculateChangeAmount()}" +
-                 $"\ntip: {CalculateTipAmount()}";
-
-            MessageBoxResult result = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-
-            if (result == MessageBoxResult.Yes)
+            if (_paymentMethod != null)
             {
-                int key = _eachPaymentDictionary.Count;
-                int forConditionKey = key +1;
-
-                
-                if (key < _numberOfBill || _numberOfBill == 0)
+                if (GetCustomerPayment() >= CalculateOrderTotalBalance())
                 {
-                    MessageBox.Show($"Customer ID #{_customerID} payment saved.");
-                    AddPaymentList();
-                    OnPaymentCompleted();
-                    
-                  
 
-                    if (forConditionKey.Equals(_numberOfBill) || _numberOfBill == 0)
+                    string message = $"orderID: {_orderId}" +
+                         $"\npayment method: {_paymentMethod}" +
+                         $"\ntotal order amount: {CalculateTotalOrderAmount()}" +
+                         $"\nGST: {CalculateTaxAmount()}" +
+                         $"\ntotal customer payment: {GetCustomerPayment()}" +
+                         $"\ntotal order balance: {CalculateOrderTotalBalance()}" +
+                         $"\ncustomer change amount: {CalculateChangeAmount()}" +
+                         $"\ntip: {CalculateTipAmount()}";
+
+                    MessageBoxResult result = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+
+                    if (result == MessageBoxResult.Yes)
                     {
-                        
-                        
-                        SavePaymentToDatabase(_eachPaymentDictionary);
-                        MessageBox.Show("All customers payment completed! Thank you");
-                        TablePage tablePage = new TablePage();
-                        tablePage.Show();
-                        _parentWindow.Close();
-                        _menuPage.Close();
+                        int key = _eachPaymentDictionary.Count;
+                        int forConditionKey = key + 1;
 
- 
+
+                        if (key < _numberOfBill || _numberOfBill == 0)
+                        {
+                            MessageBox.Show($"Customer ID #{_customerID} payment saved.");
+                            AddPaymentList();
+                            OnPaymentCompleted();
+
+
+
+                            if (forConditionKey.Equals(_numberOfBill) || _numberOfBill == 0)
+                            {
+
+
+                                SavePaymentToDatabase(_eachPaymentDictionary);
+                                MessageBox.Show("All customers payment completed! Thank you");
+                                TablePage tablePage = new TablePage();
+                                tablePage.Show();
+                                _parentWindow.Close();
+                                _menuPage.Close();
+                            }
+
+                        }
+
+                    }
+                    else
+                    {
+                        return;
                     }
 
+                } else
+                {
+                    MessageBox.Show($"The payment must be greater than the \n\nBalance : ${CalculateOrderTotalBalance()}");
+
+                    return; 
                 }
-
-
-
-
-
-
             }
-            else
+
+            else if (_paymentMethod == null)
             {
+                MessageBox.Show("Please select payment type!");
                 return;
             }
         }
@@ -296,26 +316,21 @@ namespace POS_System.Pages
                     isPaidCmd.Parameters.AddWithValue("@paid", "y");
                     isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
                     isPaidCmd.ExecuteNonQuery();
-                    // You may want to clear the dictionary after successful save
+
+
                     paymentDictionary.Clear();
 
-                    // Additional logic to remove ordered items and update order status...
-                    // Be sure to wrap these in the same transaction if they need to be atomic with the payment inserts
-
-                    // ... rest of the code ...
 
                 }
                 catch (MySqlException ex)
                 {
                     MessageBox.Show("MySQL Error: " + ex.Message);
-                    // Rollback the transaction on error
-                    // transaction.Rollback(); (Add this inside a try-catch if within the try block)
+
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error sending order: " + ex.ToString());
-                    // Rollback the transaction on error
-                    // transaction.Rollback(); (Add this inside a try-catch if within the try block)
+
                 }
             }
         }
@@ -372,12 +387,22 @@ namespace POS_System.Pages
         //read values from customer payment textbox
         private double GetCustomerPayment()
         {
-            if (string.IsNullOrWhiteSpace(customerPayTextBox.Text))
+            try
+            {
+                if (string.IsNullOrWhiteSpace(customerPayTextBox.Text))
+                {
+                    customerPayTextBox.Text = "0.0";
+                }
+                return double.Parse(customerPayTextBox.Text.Replace("$", "").Trim());
+            }
+            catch(System.FormatException e) 
             {
                 customerPayTextBox.Text = "0.0";
             }
 
-            return double.Parse(customerPayTextBox.Text.Replace("$", "").Trim());
+            return 0;
+
+           
         }
 
         //***
@@ -455,10 +480,15 @@ namespace POS_System.Pages
         //Display change amount if cash
         private void DisplayChange()
         {
-            changeTextBox.Text = CalculateChangeAmount().ToString();
+            CultureInfo cultureInfo = new CultureInfo("en-CA");
+            cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+            changeTextBox.Text = CalculateChangeAmount().ToString("C", cultureInfo);
             if (string.IsNullOrWhiteSpace(changeTextBox.Text))
             {
-                changeTextBox.Text = "0";
+
+                    changeTextBox.Text = "0";
+
+                
             }
         }
 

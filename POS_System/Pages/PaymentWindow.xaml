@@ -15,25 +15,13 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1325*"/>
-            <ColumnDefinition Width="452*"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel x:Name="DisplayCustomerButton_Panel" Grid.Row="0" HorizontalAlignment="Left"  Orientation="Horizontal" Width="1328" Margin="164,0,0,10" Grid.ColumnSpan="2"/>
-        <Frame Name="PaymentPageFrame" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,3,0,0" Grid.Row="2" Grid.Column="0" Grid.RowSpan="2"/>
-        <TextBlock x:Name="CustomerNumberDisplay_TextBlock" HorizontalAlignment="Left" TextAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="823" Text="{Binding}" Height="44" FontFamily="Verdana" FontSize="40" FontWeight="Bold" Foreground="Orange" Margin="477,9,0,0"/>
+        <StackPanel x:Name="DisplayCustomerButton_Panel" Grid.Row="0" HorizontalAlignment="Left"  Orientation="Horizontal" Width="1328" Margin="164,0,0,10"/>
+        <Frame Name="PaymentPageFrame" NavigationUIVisibility="Hidden" Margin="0,3,0,0" Grid.Row="2" Grid.Column="0" Grid.RowSpan="2"/>
+        <TextBlock x:Name="CustomerNumberDisplay_TextBlock" HorizontalAlignment="Center" TextAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="823" Text="{Binding}" Height="44" FontFamily="Verdana" FontSize="40" FontWeight="Bold" Foreground="Orange" Margin="0,9,0,0"/>
         <Button Content="Cancel" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Height="57" Width="131" Click="CloseButton_Click"/>
-        <ListView x:Name="OrdersListBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding _customersPayment}" Margin="0,28,0,27" Grid.RowSpan="2" >
-            <ListView.View>
-                <GridView>
-
-                    <GridViewColumn Header="Customer ID" Width="200" DisplayMemberBinding="{Binding customerID}" />
-                    <GridViewColumn Header="Paid" Width="100" DisplayMemberBinding="{Binding customerPaymentTotalAmount, StringFormat=C}" />
-
-                </GridView>
-
-            </ListView.View>
-        </ListView>
 
     </Grid>
 </Window>
