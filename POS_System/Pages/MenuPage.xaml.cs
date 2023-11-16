@@ -1294,9 +1294,52 @@ namespace POS_System.Pages
  
         }
 
+        // new cancel button Thevagi from PK
+        //Method for CancelButtonClick - By PK
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_hasPaidOrders.Equals(false))
+            {
+                MessageBox.Show("This page has no unpaid order");
+            }
+            else
+            {
+                CancelOrder(_tableNumber);
+                TablePage tablePage = new TablePage();
+                tablePage.ShowDialog();
+                this.Close();
 
+            }
+        }
+
+        //Method for CancelOrder - By PK
+        private void CancelOrder(string tableNumber)
+        {
+            //MessageBox.Show("Order Canceled");
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    long orderId = GetOrderId(tableNumber);
+                    string cancelOrderSql = "UPDATE pos_db.order SET paid = 'c' WHERE order_id = @orderId;";
+                    MySqlCommand cancelOrderCmd = new MySqlCommand(cancelOrderSql, conn);
+                    cancelOrderCmd.Parameters.AddWithValue("@orderId", orderId);
+                    MessageBox.Show(cancelOrderSql);
+                    cancelOrderCmd.ExecuteReader();
+                    conn.Close();
+
+                    //OrdersListBox.Items.GroupDescriptions.Clear(); <--- Is this needed?
+                    orderedItems.Clear();
+                    //TotalAmount = 0; <--- Is this needed?
+
+                    MessageBox.Show("Order ID: " + orderId + " has been canceled!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error canceling orders: " + ex.ToString());
+                }
+            }
         }
     }
 }
