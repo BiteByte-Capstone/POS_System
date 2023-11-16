@@ -34,7 +34,10 @@ namespace POS_System.Pages
         }
         private void ManageSalesButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            // Open the OrderReport window when the button is clicked
+            OrderReport orderReportWindow = new OrderReport();
+            orderReportWindow.Show();
+            this.Close();
         }
 
         private void ManageTableButton_Click(object sender, RoutedEventArgs e)

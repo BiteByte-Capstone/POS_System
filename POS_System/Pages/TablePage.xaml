@@ -20,10 +20,6 @@
                         <ColumnDefinition Width="252*"/>
                     </Grid.ColumnDefinitions>
 
-
-
-
-
                     <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="447" Width="800" Margin="499,170,0,0" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -48,13 +44,6 @@
                         <Button x:Name="table_D14_2" Content="T14-2" HorizontalAlignment="Left" Margin="672,259,0,0" VerticalAlignment="Top" Height="52" Width="118" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
                         <Button x:Name="table_D15_2" Content="T15-2" HorizontalAlignment="Left" Margin="388,308,0,0" VerticalAlignment="Top" Height="48" Width="106" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
                         <Button x:Name="table_D15_3" Content="T15-3" HorizontalAlignment="Left" Margin="388,356,0,0" VerticalAlignment="Top" Height="48" Width="106" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-
-
-
-
-
-
-
                     </Grid>
 
                     <Button x:Name="logout_button" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,496,0"/>
@@ -74,10 +63,6 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-
-
-
-
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="774">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="17*"/>
@@ -88,14 +73,7 @@
                         <Button x:Name="takeOut_T3" Content="TakeOut 3" HorizontalAlignment="Left" Margin="508,2,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
                         <Button x:Name="takeOut_T4" Content="TakeOut 4" HorizontalAlignment="Left" Margin="100,235,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
                         <Button x:Name="takeOut_T5" Content="TakeOut 5" HorizontalAlignment="Left" Margin="395,235,0,0" VerticalAlignment="Top" Height="200" Width="200" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="1"/>
-
-
-
-
-
                     </Grid>
-
-
                     <Button x:Name="logout_button2" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" Foreground="Black" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,1620,0"/>
                     <Button Content="Refund" HorizontalAlignment="Left" Margin="1251,52,0,0" VerticalAlignment="Top" Click="Button_Click" Height="36"/>
 
