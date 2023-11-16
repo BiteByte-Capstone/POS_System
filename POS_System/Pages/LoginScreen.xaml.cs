@@ -1,6 +1,11 @@
-﻿using POS_System.Database;
+﻿using POS.Models;
+using POS_System.Database;
+using POS_System.Models;
+using POS_System.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +18,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-//import User model
-using POS.Models;
-
 namespace POS_System.Pages
 {
     /// <summary>
@@ -24,10 +26,12 @@ namespace POS_System.Pages
     public partial class LoginScreen : Window
     {
         private DatabaseHelper db;
-
+        private ObservableCollection<User> users = new ObservableCollection<User>();
         public LoginScreen()
         {
             InitializeComponent();
+            id.Focus();
+            /*DataContext = new LoginScreenViewModel();*/
             db = new DatabaseHelper("localhost", "pos_db", "root", "password");
         }
 
@@ -38,19 +42,25 @@ namespace POS_System.Pages
 
             if (db.AuthenticateUser(enteredUserId, enteredPassword))
             {
+                
                 string authenticatedUsername = db.GetUsername(enteredUserId);
+
                 MessageBox.Show("Login successful! " + authenticatedUsername);
 
-                // Instantiate a User object --> all pages can now get the static id and name from the User class
-                // Would be used to track user activity in the system and activity-log report.
+                int userId = int.Parse(enteredUserId);
 
-                User user = new User(int.Parse(enteredUserId), authenticatedUsername, "");
+                // Only 100 to 110 admin can go to AdminManagement page
+                if (userId >= 100 & userId <= 110)
+                {
+                    AdminManagement windowAdmin = new AdminManagement();
+                    windowAdmin.Show();
+                }
                 
-                // Pass the userId to TablePage when creating an instance
-                
-                TablePage window2 = new TablePage();
-                window2.Show();
-
+                else
+                {
+                    TablePage window2 = new TablePage();
+                    window2.Show();
+                }
 
                 // Close the current login window if needed
                 this.Close();
@@ -60,5 +70,21 @@ namespace POS_System.Pages
                 MessageBox.Show("Invalid userid or password. Please try again.");
             }
         }
+
+        private void OnKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnSubmit_Click(sender, e);
+            }
+        }
+
+
+        private void id_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
+
+
     }
 }
