@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,7 +33,7 @@ namespace POS_System.Pages
         private PaymentWindow _parentWindow;
         private MenuPage _menuPage;
         private string _paymentMethod;
-
+        private int _numberOfCompletedPayment = 1;
 
 
         // Define the event based on the delegate
@@ -69,23 +70,12 @@ namespace POS_System.Pages
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
             totalAmtTextBox.Text = CalculateTotalOrderAmount().ToString("C", cultureInfo);
 
-            foreach (OrderedItem per_customer_payment in _orderedItems)
-            {
-                string message = $"Order ID: {per_customer_payment.order_id}\n" +
-                                 $"Item ID: {per_customer_payment.item_id}\n" +
-                                 $"Item Name: {per_customer_payment.item_name}\n" +
-                                 $"Quantity: {per_customer_payment.Quantity}\n" +
-                                 $"Item Price: {per_customer_payment.ItemPrice:C}\n" +  // Display as currency
-                                 $"Is Existing Item: {per_customer_payment.IsExistItem}\n" +
-                                 $"Customer ID: {per_customer_payment.customerID}";
 
-                MessageBox.Show(message);
-            }
 
 
             DisplayBalance();
             DisplayTax();
-
+            MessageBox.Show("Before complete payment, the number of bill is " + _numberOfBill.ToString());
             
 
 
@@ -185,25 +175,31 @@ namespace POS_System.Pages
 
             if (result == MessageBoxResult.Yes)
             {
+                int key = _eachPaymentDictionary.Count;
+                int forConditionKey = key +1;
 
                 
-               
-                if (_numberOfBill == 0)
+                if (key < _numberOfBill || _numberOfBill == 0)
                 {
-                    AddPaymentList();
-                    SavePaymentToDatabase(_eachPaymentDictionary);
-                    _parentWindow.Close();
-                    _menuPage.Close();
-
-                    //show the table page but not working 
-                    TablePage tablePage = new TablePage();
-                    tablePage.ShowDialog();
-                }
-                else if (_numberOfBill>0)
-                {
-                    MessageBox.Show($"ok more thean one bill and this is for customer number {_customerID}");
+                    MessageBox.Show($"Customer ID #{_customerID} payment saved.");
                     AddPaymentList();
                     OnPaymentCompleted();
+                    
+                  
+
+                    if (forConditionKey.Equals(_numberOfBill) || _numberOfBill == 0)
+                    {
+                        
+                        
+                        SavePaymentToDatabase(_eachPaymentDictionary);
+                        MessageBox.Show("All customers payment completed! Thank you");
+                        TablePage tablePage = new TablePage();
+                        tablePage.Show();
+                        _parentWindow.Close();
+                        _menuPage.Close();
+
+ 
+                    }
 
                 }
 
@@ -224,24 +220,25 @@ namespace POS_System.Pages
         {
             
             Payment newPayment = new Payment
-                {
-                    customerID =+ _customerID,
-                    paymentID = _customerID,
-                    orderID = _orderId,
-                    orderType = _orderType,
-                    paymentMethod = _paymentMethod,
-                    baseAmount = CalculateTotalOrderAmount(),
-                    GST = CalculateTaxAmount(),
-                    customerPaymentTotalAmount = GetCustomerPayment(),
-                    grossAmount = CalculateOrderTotalBalance(),
-                    customerChangeAmount = CalculateChangeAmount(),
-                    tip = CalculateTipAmount()
-                };
+            {
+                
+                customerID =+ _customerID,
+                paymentID = _customerID,
+                orderID = _orderId,
+                orderType = _orderType,
+                paymentMethod = _paymentMethod,
+                baseAmount = CalculateTotalOrderAmount(),
+                GST = CalculateTaxAmount(),
+                customerPaymentTotalAmount = GetCustomerPayment(),
+                grossAmount = CalculateOrderTotalBalance(),
+                customerChangeAmount = CalculateChangeAmount(),
+                tip = CalculateTipAmount()
+             };
 
             // Add the new Payment to the list
-            _eachPaymentDictionary.TryAdd(_customerID, newPayment);
-
-
+            
+            int newKey = _eachPaymentDictionary.Count + 1;
+            _eachPaymentDictionary.TryAdd(newKey, newPayment);
 
         }
 

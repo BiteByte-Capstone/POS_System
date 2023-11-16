@@ -63,6 +63,9 @@ namespace POS_System.Pages
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
 
+
+        //Splited order 
+        private ObservableCollection<OrderedItem> splitOrderedItems = new ObservableCollection<OrderedItem>();
         // Event declaration
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -84,8 +87,6 @@ namespace POS_System.Pages
             }
         }
 
-        //Splited order 
-        private ObservableCollection<OrderedItem> splitOrderedItems = new ObservableCollection<OrderedItem>();
 
         private string _tableNumber;
         private string _orderType;
@@ -151,13 +152,10 @@ namespace POS_System.Pages
         //Method for refresh page: update UI after change button.
         private void Refresh()
         {
-/*            splitOrderedItems.Clear();
-            orderedItems.Clear();*/
 
             TotalAmount = 0;
             GroupItemList();
-/*            OrdersListBox.Items.GroupDescriptions.Clear();*/
-            /*            LoadUnpaidOrders(_tableNumber);*/
+
 
         }
 
@@ -383,7 +381,7 @@ namespace POS_System.Pages
             if (splitBillDialog.ShowDialog() == true)
             {
                 _numberOfBill = splitBillDialog.NumberOfPeople;
-                _splitType = "splitByBill";
+                _splitType = "ByBill";
                 
 
             }
@@ -395,9 +393,6 @@ namespace POS_System.Pages
             {
 
                 GetNewSplitItemList(orderedItems,_numberOfBill, _splitType);
-                //!! remove later Since it is for connect database
-                /*                RemoveOrderByOrderID(GetOrderId(_tableNumber));
-                                addItemToDatabase(orderedItems);*/
                 Refresh();
                 MessageBox.Show($"Splited bill into {_numberOfBill}");
 
@@ -1285,17 +1280,6 @@ namespace POS_System.Pages
  
         }
 
-        /*        private TableRow CreateEmptyTableRow()
-                {
-                    TableRow row = new TableRow();
-
-                    TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
-                    emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
-
-                    row.Cells.Add(emptyCell);
-
-                    return row;
-                }*/
 
 
 
