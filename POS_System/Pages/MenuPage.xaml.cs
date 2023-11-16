@@ -1237,7 +1237,7 @@ namespace POS_System.Pages
            // button.Background = Brushes.Orange;
             button.FontWeight = FontWeights.Bold;
             button.BorderBrush = Brushes.Orange;
-            button.Margin = new Thickness(5);
+            button.Margin = new Thickness(10);
         }
 
         private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
@@ -1259,20 +1259,61 @@ namespace POS_System.Pages
             return row;
         }
 
-/*        private TableRow CreateEmptyTableRow()
+        /*        private TableRow CreateEmptyTableRow()
+                {
+                    TableRow row = new TableRow();
+
+                    TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
+                    emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+
+                    row.Cells.Add(emptyCell);
+
+                    return row;
+                }*/
+
+        // new cancel button Thevagi from PK
+        //Method for CancelButtonClick - By PK
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            TableRow row = new TableRow();
+            if (_hasPaidOrders.Equals(false))
+            {
+                MessageBox.Show("This page has no unpaid order");
+            }
+            else
+            {
+                CancelOrder(_tableNumber);
+            }
+        }
 
-            TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
-            emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+        //Method for CancelOrder - By PK
+        private void CancelOrder(string tableNumber)
+        {
+            //MessageBox.Show("Order Canceled");
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    long orderId = GetOrderId(tableNumber);
+                    string cancelOrderSql = "UPDATE pos_db.order SET paid = 'c' WHERE order_id = @orderId;";
+                    MySqlCommand cancelOrderCmd = new MySqlCommand(cancelOrderSql, conn);
+                    cancelOrderCmd.Parameters.AddWithValue("@orderId", orderId);
+                    MessageBox.Show(cancelOrderSql);
+                    cancelOrderCmd.ExecuteReader();
+                    conn.Close();
 
-            row.Cells.Add(emptyCell);
+                    //OrdersListBox.Items.GroupDescriptions.Clear(); <--- Is this needed?
+                    orderedItems.Clear();
+                    //TotalAmount = 0; <--- Is this needed?
 
-            return row;
-        }*/
-
-
-
+                    MessageBox.Show("Order ID: " + orderId + " has been canceled!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error canceling orders: " + ex.ToString());
+                }
+            }
+        }
 
 
 
