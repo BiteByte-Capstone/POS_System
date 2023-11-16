@@ -138,9 +138,9 @@
         <Button Grid.Column="1" Content="Delete Item" HorizontalAlignment="Center" Height="50" Margin="0,640,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="120" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" FontSize="20" Click="VoidButton_Click" RenderTransformOrigin="-1.893,0.589" />
 
         <!-- category button list-->
-        <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="49,114,663,80" Grid.Column="2" Grid.Row="4" RenderTransformOrigin="0.471,0.536" />
+        <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="49,114,663,-30" Grid.Column="2" Grid.Row="4" RenderTransformOrigin="0.471,0.536" />
         <!-- item button list -->
-        <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="243,108,169,85" Grid.Column="2" Grid.Row="4"/>
+        <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="20,114,20,80" Grid.Column="2" Grid.Row="4" Width="460"/>
         <TextBlock Name="TotalAmountTextBlock" TextAlignment="Right" Grid.Column="1" HorizontalAlignment="Left" Margin="330,633,0,0" Grid.Row="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="63" Width="153" FontSize="24" Foreground="#FFFBF8F8"/>
         <Button Content="Save" HorizontalAlignment="Left" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="0,614,0,0" Click="SaveButton_Click"/>
         <Button Content="Reset Split" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="3,286,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4" Click="ResetButton_Click"/>

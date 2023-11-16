@@ -268,8 +268,9 @@ namespace POS_System.Pages
                     newCategoryButton.Tag = category;
                     newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
                     newCategoryButton.Width = 150;
-                    newCategoryButton.Height = 30;
+                    newCategoryButton.Height = 50;
                     newCategoryButton.FontSize = 15;
+                    newCategoryButton.Background = Brushes.DarkOrange;
 
                     newCategoryButton.Margin = new Thickness(5);
                     SetButtonStyle(newCategoryButton);
@@ -324,9 +325,10 @@ namespace POS_System.Pages
 
                     newItemButton.Content = textBlock;
                     newItemButton.Tag = item;
-                    newItemButton.Width = 150;
+                    newItemButton.Width = 140;
                     newItemButton.Height = 80;
                     newItemButton.FontSize = 15;
+                    newItemButton.Background = Brushes.LightGoldenrodYellow;
 
                    
                     SetButtonStyle(newItemButton);
@@ -1232,7 +1234,7 @@ namespace POS_System.Pages
         {
             button.FontFamily = new FontFamily("Verdana");
            // button.FontSize = 15;
-            button.Background = Brushes.Orange;
+           // button.Background = Brushes.Orange;
             button.FontWeight = FontWeights.Bold;
             button.BorderBrush = Brushes.Orange;
             button.Margin = new Thickness(5);

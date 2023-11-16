@@ -7,7 +7,10 @@
         mc:Ignorable="d"
         Title="MenuPage" WindowState="Maximized"  Height="926" Width="1777">
     <Grid>
-        <TextBox x:Name="UserNameTextBox" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center" Text="Welcome Back, Waiter" TextWrapping="Wrap" FontFamily="Verdana" FontSize="26" FontWeight="Bold" Background="{x:Null}" Foreground="Orange" Margin="0,10,0,20" BorderThickness="0"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Center" Text="Welcome Back, Waiter" TextWrapping="Wrap" FontFamily="Verdana" FontSize="26" FontWeight="Bold" Background="{x:Null}" Foreground="Orange" Margin="0,10,0,20" BorderThickness="0"/>
 
         <TabControl Name="TablePageTab" SelectionChanged="TablePageTab_SelectionChanged">
             <TabItem Header="DineIn" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold">
