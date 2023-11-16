@@ -144,6 +144,7 @@
         <TextBlock Name="TotalAmountTextBlock" TextAlignment="Right" Grid.Column="1" HorizontalAlignment="Left" Margin="330,633,0,0" Grid.Row="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="63" Width="153" FontSize="24" Foreground="#FFFBF8F8"/>
         <Button Content="Save" HorizontalAlignment="Left" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="0,614,0,0" Click="SaveButton_Click"/>
         <Button Content="Reset Split" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,286,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4" Click="ResetButton_Click"/>
+        <Button Content="Cancel" HorizontalAlignment="Left" Background="PowderBlue" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="139" Grid.Row="4" Margin="193,614,0,0" Click="CancelButton_Click" Grid.ColumnSpan="2"/>
 
 
 

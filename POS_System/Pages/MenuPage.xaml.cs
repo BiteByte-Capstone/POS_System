@@ -130,6 +130,50 @@ namespace POS_System.Pages
             
         }
 
+        //Method for CancelButtonClick - By PK
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_hasPaidOrders.Equals(false))
+            {
+                MessageBox.Show("This page has no unpaid order");
+            } else
+            {
+                CancelOrder(_tableNumber);
+            }
+        }
+
+        //Method for CancelOrder - By PK
+        private void CancelOrder(string tableNumber)
+        {
+            //MessageBox.Show("Order Canceled");
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    long orderId = GetOrderId(tableNumber);
+                    string cancelOrderSql = "UPDATE pos_db.order SET paid = 'c' WHERE order_id = @orderId;";
+                    
+                    MySqlCommand cancelOrderCmd = new MySqlCommand(cancelOrderSql, conn);
+                    cancelOrderCmd.Parameters.AddWithValue("@orderId", orderId);
+                    MessageBox.Show(cancelOrderSql);
+                    cancelOrderCmd.ExecuteReader();
+                    conn.Close();
+
+                    //OrdersListBox.Items.GroupDescriptions.Clear(); <--- Is this needed?
+                    orderedItems.Clear();
+                    //TotalAmount = 0; <--- Is this needed?
+
+                    MessageBox.Show("Order ID: " + orderId + " has been canceled!" );
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error canceling orders: " + ex.ToString());
+                }
+            }
+        }
+
+
         //Method for loading when Menu Page open
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -1244,17 +1288,18 @@ namespace POS_System.Pages
             return row;
         }
 
-/*        private TableRow CreateEmptyTableRow()
-        {
-            TableRow row = new TableRow();
 
-            TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
-            emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+        /*        private TableRow CreateEmptyTableRow()
+                {
+                    TableRow row = new TableRow();
 
-            row.Cells.Add(emptyCell);
+                    TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
+                    emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
 
-            return row;
-        }*/
+                    row.Cells.Add(emptyCell);
+
+                    return row;
+                }*/
 
 
 

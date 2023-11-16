@@ -1,7 +1,6 @@
 ﻿using POS.Models;
 using POS_System.Database;
 using POS_System.Models;
-using POS_System.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
