@@ -13,10 +13,7 @@
         <!-- Dark Gray Background -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="575.88"/>
+
         </Grid.RowDefinitions>
 
 

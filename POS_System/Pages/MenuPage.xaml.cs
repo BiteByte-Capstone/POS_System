@@ -266,7 +266,10 @@ namespace POS_System.Pages
                     newCategoryButton.Tag = category;
                     newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
                     newCategoryButton.Width = 150;
-                    newCategoryButton.Height = 30;
+                    newCategoryButton.Height = 50;
+                    newCategoryButton.FontSize = 15;
+                    newCategoryButton.Background = Brushes.DarkOrange;
+
                     newCategoryButton.Margin = new Thickness(5);
                     SetButtonStyle(newCategoryButton);
 
@@ -282,7 +285,7 @@ namespace POS_System.Pages
             conn.Close();
         }
 
- 
+
 
         private void LoadItemsByCategory(string categoryName)
         {
@@ -310,10 +313,22 @@ namespace POS_System.Pages
                     };
 
                     Button newItemButton = new Button();
-                    newItemButton.Content = rdr["item_name"].ToString();
+                    // Create a TextBlock for the button content
+                    TextBlock textBlock = new TextBlock
+                    {
+                        Text = rdr["item_name"].ToString(),
+                        TextWrapping = TextWrapping.Wrap, // Enable text wrapping
+                        TextAlignment = TextAlignment.Center
+                    };
+
+                    newItemButton.Content = textBlock;
                     newItemButton.Tag = item;
-                    newItemButton.Width = 150;
+                    newItemButton.Width = 140;
                     newItemButton.Height = 80;
+                    newItemButton.FontSize = 15;
+                    newItemButton.Background = Brushes.LightGoldenrodYellow;
+
+
                     SetButtonStyle(newItemButton);
                     newItemButton.Click += ItemButton_Click;
                     ItemButtonPanel.Children.Add(newItemButton);
@@ -327,6 +342,7 @@ namespace POS_System.Pages
             }
             conn.Close();
         }
+
 
 
 
@@ -642,7 +658,7 @@ namespace POS_System.Pages
         {
             if (orderedItems.Count != existItemCount)
             {
-                MessageBox.Show("yes void order!");
+
                 MessageBoxResult result = MessageBox.Show("Removed order on the list. \n Do you want to go back without save?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
@@ -657,12 +673,12 @@ namespace POS_System.Pages
 
             else if (ExistedItem() == true || StatusTextBlock.Text == "New Order")
             {
-                MessageBox.Show("no new order!");
+
                 BackToTablePage();
             }
             else if (ExistedItem() == false)
             {
-                MessageBox.Show("yes new order!");
+
                 MessageBoxResult result = MessageBox.Show("There is new item on the list. \n Do you want to go back without save?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
