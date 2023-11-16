@@ -16,29 +16,90 @@ using System.Printing;
 using System.Linq;
 using System.Globalization;
 using Org.BouncyCastle.Utilities.Collections;
-using System.Diagnostics;
+using System.Data.Common;
+using System.Windows.Shapes;
+using System.ComponentModel;
+using System.Windows.Data;
 
-namespace POS_System.Pages { 
 
-    public partial class MenuPage : Window 
+//Code for debug
+/*foreach (OrderedItem splited in splitOrderedItems)
+{
+    string message = $"Order ID: {splited.order_id}\n" +
+                     $"Item ID: {splited.item_id}\n" +
+                     $"Item Name: {splited.item_name}\n" +
+                     $"Quantity: {splited.Quantity}\n" +
+                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
+                     $"Is Existing Item: {splited.IsExistItem}\n" +
+                     $"Customer ID: {splited.customerID}";
+
+    MessageBox.Show(message);
+}
+*/
+
+/*foreach (OrderedItem splited in orderedItems)
+{
+    string message = $"Order ID: {splited.order_id}\n" +
+                     $"Item ID: {splited.item_id}\n" +
+                     $"Item Name: {splited.item_name}\n" +
+                     $"Quantity: {splited.Quantity}\n" +
+                     $"Item Price: {splited.ItemPrice:C}\n" +
+                     $"Original price: {splited.OriginalItemPrice:C}\n" +
+                     $"Is Existing Item: {splited.IsExistItem}\n" +
+                     $"Customer ID: {splited.customerID}";
+
+    MessageBox.Show(message);
+
+}*/
+
+namespace POS_System.Pages
+{
+    public partial class MenuPage : Window, INotifyPropertyChanged
     {
         // Define connStr at the class level
         public string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         //categories
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
-        //new order
-        private ObservableCollection<Item> items = new ObservableCollection<Item>();
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
+
+        // Event declaration
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // OnPropertyChanged method to raise the event
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public ObservableCollection<OrderedItem> OrderedItems
+        {
+            get { return orderedItems; }
+            set
+            {
+                if (orderedItems != value)
+                {
+                    orderedItems = value;
+                    OnPropertyChanged(nameof(OrderedItems));
+                }
+            }
+        }
+
+        //Splited order 
+        private ObservableCollection<OrderedItem> splitOrderedItems = new ObservableCollection<OrderedItem>();
 
         private string _tableNumber;
         private string _orderType;
         private string _status;
         private bool _hasPaidOrders;
+        private int _numberOfBill;
+        private string _splitType;
 
         private double TotalAmount = 0.0;
         private int existItemCount = 0;
-        bool itemClick = false;
+        private bool itemClick = false;
+        private bool isSplited = false;
+
+
         //Constructor 
         public MenuPage()
         {
@@ -63,21 +124,57 @@ namespace POS_System.Pages {
             if (hasUnpaidOrders)
             {
                 LoadUnpaidOrders(tableNumber);
+
             }
+
+            
+        }
+
+        //Method for loading when Menu Page open
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadCategoryData();
+
+        }
+
+        //Method: Group List by customer id
+        private void GroupItemList()
+        {
+
+
+            OrdersListBox.Items.GroupDescriptions.Clear();
+            var property = "FormattedCustomerID";
+            OrdersListBox.Items.GroupDescriptions.Add(new PropertyGroupDescription(property));
+
+        }
+
+        //Method for refresh page: update UI after change button.
+        private void Refresh()
+        {
+/*            splitOrderedItems.Clear();
+            orderedItems.Clear();*/
+
+            TotalAmount = 0;
+            GroupItemList();
+/*            OrdersListBox.Items.GroupDescriptions.Clear();*/
+            /*            LoadUnpaidOrders(_tableNumber);*/
+
         }
 
 
 
         private void LoadUnpaidOrders(string tableNumber)
         {
-
+            OrdersListBox.Items.GroupDescriptions.Clear();
+            orderedItems.Clear();
+            TotalAmount = 0;
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
                 {
                     conn.Open();
                     long orderId = GetOrderId(tableNumber);
-                    string unpaidOrdersSql = "SELECT o.order_id, o.item_id, o.quantity, o.item_price, i.item_name, i.item_description FROM ordered_itemlist o JOIN item i ON o.item_id = i.item_id WHERE o.order_id = @orderId;";
+                    string unpaidOrdersSql = "SELECT o.order_id, o.item_id, o.quantity, o.item_price, o.original_item_price,o.customer_id, i.item_name, i.item_description FROM ordered_itemlist o JOIN item i ON o.item_id = i.item_id WHERE o.order_id = @orderId;";
                     MySqlCommand unpaidOrdersCmd = new MySqlCommand(unpaidOrdersSql, conn);
                     unpaidOrdersCmd.Parameters.AddWithValue("@orderId", orderId);
                     MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
@@ -106,15 +203,31 @@ namespace POS_System.Pages {
                             item_name = row["item_name"].ToString(),
                             Quantity = Convert.ToInt32(row["quantity"]),
                             ItemPrice = Convert.ToDouble(row["item_price"]),
-                            IsExistItem = true
+                            origialItemPrice = Convert.ToDouble(row["original_item_price"]),
+                            IsExistItem = true,
+                            customerID = Convert.ToInt32(row["customer_id"])
                         };
                         existItemCount++;
+                        _numberOfBill = orderedItem.customerID;
+
+
+                        if (orderedItem.customerID > 0)
+                        {
+                            isSplited = true;
+                        } else if (orderedItem.customerID == 0)
+                        {
+                            isSplited = false;
+                        }
                         orderedItems.Add(orderedItem);
                         TotalAmount += orderedItem.ItemPrice;
                     }
                     TotalAmountTextBlock.Text = TotalAmount.ToString("C", new CultureInfo("en-CA"));
-                    OrdersListBox.ItemsSource = orderedItems;
-
+                    
+                    if (isSplited == true)
+                    {
+                        GroupItemList();
+                    }
+                    
 
 
                 }
@@ -204,7 +317,7 @@ namespace POS_System.Pages {
                     newItemButton.Width = 150;
                     newItemButton.Height = 80;
                     SetButtonStyle(newItemButton);
-                    newItemButton.Click += ItemClick;
+                    newItemButton.Click += ItemButton_Click;
                     ItemButtonPanel.Children.Add(newItemButton);
                 }
 
@@ -221,7 +334,7 @@ namespace POS_System.Pages {
 
 
         //add item on list box
-        private void ItemClick(object sender, RoutedEventArgs e)
+        private void ItemButton_Click(object sender, RoutedEventArgs e)
         {
             itemClick = true;
             
@@ -232,42 +345,7 @@ namespace POS_System.Pages {
 
                 if (item != null)
                 {
-                    if (StatusTextBlock.Text.Equals("New Order")) //orderedItems.Count == 0 && 
-                    {
                         AddItemToOrder(item);
-                        /*OrdersListBox.ItemsSource = orderedItems;*/
-                        foreach (OrderedItem ordered in orderedItems)
-                        {
-                            string message = $"Order ID: {ordered.order_id}\n" +
-                                             $"Item ID: {ordered.item_id}\n" +
-                                             $"Item Name: {ordered.item_name}\n" +
-                                             $"Quantity: {ordered.Quantity}\n" +
-                                             $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
-                                             $"Is Existing Item: {ordered.IsExistItem}";
-
-                            MessageBox.Show(message);
-                        }
-
-
-                    }
-                    else
-                    {
-                        //convert it into ordered list item
-                        AddItemToOrder(item);
-                        foreach (OrderedItem ordered in orderedItems)
-                        {
-                            string message = $"Order ID: {ordered.order_id}\n" +
-                                             $"Item ID: {ordered.item_id}\n" +
-                                             $"Item Name: {ordered.item_name}\n" +
-                                             $"Quantity: {ordered.Quantity}\n" +
-                                             $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
-                                             $"Is Existing Item: {ordered.IsExistItem}";
-
-                            MessageBox.Show(message);
-                        }
-
-
-                    }
                 }
             }
         }
@@ -281,26 +359,166 @@ namespace POS_System.Pages {
 
                 item_id = item.Id,
                 item_name = item.item_name,
-                Quantity = 1, // Assuming quantity of 1 for new items
+                Quantity = 1, 
+                origialItemPrice = item.ItemPrice,
                 ItemPrice = item.ItemPrice,
-                IsExistItem = false
+                IsExistItem = false,
+                customerID = 0
             };
 
             orderedItems.Add(orderedItem);
-            OrdersListBox.ItemsSource = orderedItems;
+            
             TotalAmount += orderedItem.ItemPrice;
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
             TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
         }
 
+        //(Button for Split Bill)
+        private void SplitBillButton_Click(object sender, RoutedEventArgs e)
+        {
+            SplitBillDialog splitBillDialog = new SplitBillDialog(orderedItems, TotalAmount);
+
+            
+            if (splitBillDialog.ShowDialog() == true)
+            {
+                _numberOfBill = splitBillDialog.NumberOfPeople;
+                _splitType = "splitByBill";
+                
+
+            }
+            else
+            {
+                return;
+            }
+            if (_numberOfBill > 0)
+            {
+
+                GetNewSplitItemList(_numberOfBill, _splitType);
+                //!! remove later Since it is for connect database
+                /*                RemoveOrderByOrderID(GetOrderId(_tableNumber));
+                                addItemToDatabase(orderedItems);*/
+                Refresh();
+                MessageBox.Show($"Splited bill into {_numberOfBill}");
+
+            } else
+            {
+                MessageBox.Show($"Splited bill into {_numberOfBill}, Please try again");
+            }
+        }
+
+        //(Button) on List view
+        private void CustomerNumberButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button clickedButton = sender as Button;
+            MessageBox.Show(clickedButton.Content.ToString());
+        }
+
+        //(Method) for split item
+        private ObservableCollection<OrderedItem> GetNewSplitItemList(int numberOfBill,string splitType)
+        {
+
+            foreach (OrderedItem orderedItem in orderedItems)
+            {
+                for (int i = 1; i <= numberOfBill; i++) { 
+                OrderedItem newSplitBill = new OrderedItem
+                {
+
+                    order_id = orderedItem.order_id,
+                    item_id = orderedItem.item_id,
+                    item_name = orderedItem.item_name,
+                    Quantity = orderedItem.Quantity,
+                    origialItemPrice = orderedItem.origialItemPrice,
+                    ItemPrice = orderedItem.ItemPrice / numberOfBill,
+                    IsExistItem = true,
+                    customerID = i  
+                };
+                    splitOrderedItems.Add(newSplitBill);
+                }
+            }
+            orderedItems.Clear();
+            foreach (var splitItem in splitOrderedItems)
+            {
+                orderedItems.Add(splitItem);
+            }
+
+            return orderedItems;
+        }
+
+        private void addItemToDatabase(ObservableCollection<OrderedItem> items)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    foreach (var orderedItem in items)
+                    {
+
+
+
+                        string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, original_item_price ,item_price, customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @originalItemPrice,@itemPrice, @customerID);";
+                        MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
+                        itemCmd.Parameters.AddWithValue("@orderId", orderedItem.order_id);
+                        itemCmd.Parameters.AddWithValue("@itemId", orderedItem.item_id);
+                        itemCmd.Parameters.AddWithValue("@itemName", orderedItem.item_name);
+                        itemCmd.Parameters.AddWithValue("@quantity", 1);
+                        itemCmd.Parameters.AddWithValue("@originalItemPrice", orderedItem.origialItemPrice);
+                        itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.ItemPrice);
+                        itemCmd.Parameters.AddWithValue("@customerID", orderedItem.customerID);
+                        itemCmd.ExecuteNonQuery();
+                    }
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+        }
+
+        //(Method) drop the item by order id
+        private void RemoveOrderByOrderID(long orderId)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+                    MessageBox.Show($"remove order id {orderId}");
+                    string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
+                    MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
+                    removeOrderCmd.Parameters.AddWithValue("@orderId", orderId);
+                    removeOrderCmd.ExecuteNonQuery();
+
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+
+
+        }
+
         //(button) go to payment page
         private void PaymentButton_Click(object sender, RoutedEventArgs e)
         {
-            string tableNumber = TableNumberTextBox.Text;
-            string orderType = TypeTextBox.Text;
-            string status = StatusTextBlock.Text;
-            long orderId = GetOrderId(tableNumber);
+            PaymentPage paymentPage = new PaymentPage();
+            long orderId = GetOrderId(_tableNumber);
 
             if (orderedItems.Count == 0)
             {
@@ -312,21 +530,98 @@ namespace POS_System.Pages {
                 MessageBox.Show("New Item(s) has not saved yet. Please save before payment");
                 return;
             }
-            else if (orderedItems.Count < existItemCount)
+/*            else if (orderedItems.Count < existItemCount)
             {
                 MessageBox.Show("Remove Item has not saved yet. Please save before payment");
                 return;
-            }
+            }*/
 
-                else
-                {
-                    PaymentPage paymentPage = new PaymentPage(orderedItems, tableNumber, orderType, orderId, status, false);
-                    paymentPage.Show();
-                    this.Close();
-                }
+                
+            else
+            {
+                PaymentWindow paymentWindow = new PaymentWindow(this,orderedItems, _tableNumber, _orderType, orderId, _status, false, _numberOfBill);
+                paymentWindow.ShowDialog();
+                
+
+
+            }
         }
 
-        //back button
+
+        //(button) reset button click
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+
+                    string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId and customer_id > 1;";
+                    MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
+                    removeOrderCmd.Parameters.AddWithValue("@orderId", GetOrderId(_tableNumber));
+                    removeOrderCmd.ExecuteNonQuery();
+
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+
+            ResetCustomerID(orderedItems);
+            MessageBox.Show("Reset from Split bill.");
+            
+            LoadUnpaidOrders(_tableNumber);
+        }
+
+        //(Method for reset button) reset method
+        private void ResetCustomerID(ObservableCollection<OrderedItem> items)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+
+                    foreach (var orderedItem in items)
+                    {
+
+
+
+                        string ResetItemCustomerIDSql = "UPDATE `ordered_itemlist` SET item_price = @itemPrice, customer_id = @customerID;";
+                        MySqlCommand itemCmd = new MySqlCommand(ResetItemCustomerIDSql, conn);
+                        itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.origialItemPrice);
+                        itemCmd.Parameters.AddWithValue("@customerID", 0);
+                        itemCmd.ExecuteNonQuery();
+                    }
+
+
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+        }
+
+        //(button)back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
             if (orderedItems.Count != existItemCount)
@@ -368,8 +663,8 @@ namespace POS_System.Pages {
                 
 
         }
-            
         
+
 
         //Method: for go back table page.
         private void BackToTablePage()
@@ -412,24 +707,15 @@ namespace POS_System.Pages {
             return ExistedItem;
         }
 
-
+        //button for void item: remove item from list view
         private void VoidButton_Click(object sender, RoutedEventArgs e)
         {
 
 
-            if (OrdersListBox.SelectedItem is Item selectedItem)
+            if(OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
             {
-                items.Remove(selectedItem);
-                TotalAmount -= selectedItem.ItemPrice;
-                CultureInfo cultureInfo = new CultureInfo("en-CA");
-                cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-                TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
-                
-            }
-            else if(OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
-            {
-                if (ExistedItem() == true)
-                {
+/*                if (ExistedItem() == true)
+                {*/
 
                     
                     orderedItems.Remove(selectedOrderedItem);
@@ -438,7 +724,7 @@ namespace POS_System.Pages {
                     CultureInfo cultureInfo = new CultureInfo("en-CA");
                     cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
                     TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
-                }
+/*                }*/
             }
                 
             else
@@ -450,7 +736,7 @@ namespace POS_System.Pages {
 
 
 
-        //(Save button) 
+        //button for print and save to database: click save, send to database
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
  
@@ -463,7 +749,10 @@ namespace POS_System.Pages {
             MessageBox.Show("Order sent to Kitchen successfully!");
 
             orderedItems.Clear();
-
+            TablePage tablePage = new TablePage();
+            tablePage.Show();
+            this.Close();
+            
 
 
 
@@ -471,7 +760,7 @@ namespace POS_System.Pages {
 
         }
 
-        // Method to save the order
+        // (Method for save button) save order to database
         private void AutoSave()
         {
             if (orderedItems.Count == 0 && itemClick == false)
@@ -496,17 +785,7 @@ namespace POS_System.Pages {
 
                         if (StatusTextBlock.Text.Equals("New Order"))
                         {
-                            foreach (OrderedItem ordered in orderedItems)
-                            {
-                                string message = $"Order ID: {ordered.order_id}\n" +
-                                                 $"Item ID: {ordered.item_id}\n" +
-                                                 $"Item Name: {ordered.item_name}\n" +
-                                                 $"Quantity: {ordered.Quantity}\n" +
-                                                 $"Item Price: {ordered.ItemPrice:C}\n" +  // Display as currency
-                                                 $"Is Existing Item: {ordered.IsExistItem}";
 
-                                MessageBox.Show(message);
-                            }
                             string orderSql = "INSERT INTO `order` (table_num, order_timestamp, total_amount, order_type, paid) VALUES (@tableNum, @orderTimestamp, @totalAmount, @order_type,'n');";
                             MySqlCommand orderCmd = new MySqlCommand(orderSql, conn);
                             orderCmd.Parameters.AddWithValue("@tableNum", _tableNumber);
@@ -519,12 +798,13 @@ namespace POS_System.Pages {
                             {
 
 
-                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice);";
+                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price, original_item_price ,customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice, @originalItemPrice,0);";
                                 MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
                                 itemCmd.Parameters.AddWithValue("@orderId", orderId);
                                 itemCmd.Parameters.AddWithValue("@itemId", newOrder.item_id);
                                 itemCmd.Parameters.AddWithValue("@itemName", newOrder.item_name);
                                 itemCmd.Parameters.AddWithValue("@quantity", 1);
+                                itemCmd.Parameters.AddWithValue("@originalItemPrice", newOrder.origialItemPrice);
                                 itemCmd.Parameters.AddWithValue("@itemPrice", newOrder.ItemPrice);
                                 itemCmd.ExecuteNonQuery();
 
@@ -557,12 +837,13 @@ namespace POS_System.Pages {
                             foreach (OrderedItem orderedItem in orderedItems)
                             {
 
-                                string itemSql = "INSERT INTO ordered_itemlist(order_id, item_id, item_name, quantity, item_price) VALUES(@orderId, @itemId, @itemName, @quantity, @itemPrice);";
+                                string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, item_price, original_item_price ,customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @itemPrice, @originalItemPrice,0);";
                                 MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
                                 itemCmd.Parameters.AddWithValue("@orderId", orderId);
                                 itemCmd.Parameters.AddWithValue("@itemId", orderedItem.item_id);
                                 itemCmd.Parameters.AddWithValue("@itemName", orderedItem.item_name);
                                 itemCmd.Parameters.AddWithValue("@quantity", 1);
+                                itemCmd.Parameters.AddWithValue("@originalItemPrice", orderedItem.origialItemPrice);
                                 itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.ItemPrice);
                                 itemCmd.ExecuteNonQuery();
 
@@ -577,11 +858,8 @@ namespace POS_System.Pages {
                         /*items.Clear();*/
                         TotalAmount = 0.0;
                         TotalAmountTextBlock.Text = TotalAmount.ToString("C");
-
-                        TablePage tablePage = new TablePage();
-                        tablePage.Show();
-                        this.Close();
                         conn.Close();
+
                     }
                     catch (MySqlException ex)
                     {
@@ -595,6 +873,7 @@ namespace POS_System.Pages {
             }
         }
 
+        //(Method for print bill button) print kitchen receipt
         public void PrintKitchenReceipt()
         {
             // Create a FlowDocument for the kitchen receipt
@@ -862,7 +1141,7 @@ namespace POS_System.Pages {
                 Paragraph totalAmountValueParagraph = new Paragraph(new Run(totalAmountWithGST.ToString("C")));
                 paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
                 //////////////////////////////////////////////////
-               
+
                 detailsTable.RowGroups.Add(detailTableRowGroup);
                 itemsTable.RowGroups.Add(itemTableRowGroup);
                 paymentTable.RowGroups.Add(paymentTableRowGroup);
@@ -900,27 +1179,27 @@ namespace POS_System.Pages {
             }
         }
 
-        
-                private TableRow CreateTableRow(string label, string value)
-                {
-                    TableRow row = new TableRow();
 
-                    // Label cell
-                    TableCell labelCell = new TableCell(new Paragraph(new Run(label)));
-                    labelCell.TextAlignment = TextAlignment.Right;
-                    labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
-                    labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
-                    row.Cells.Add(labelCell);
+        private TableRow CreateTableRow(string label, string value)
+        {
+            TableRow row = new TableRow();
 
-                    // Value cell
-                    TableCell valueCell = new TableCell(new Paragraph(new Run(value)));
-                    valueCell.BorderThickness = new Thickness(0); // No column lines, only space
-                    row.Cells.Add(valueCell);
+            // Label cell
+            TableCell labelCell = new TableCell(new Paragraph(new Run(label)));
+            labelCell.TextAlignment = TextAlignment.Right;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+            row.Cells.Add(labelCell);
 
-                    return row;
-                }
-        
-      
+            // Value cell
+            TableCell valueCell = new TableCell(new Paragraph(new Run(value)));
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+            row.Cells.Add(valueCell);
+
+            return row;
+        }
+
+
 
         private TableRow CreateEmptyTableRow()
         {
@@ -945,44 +1224,42 @@ namespace POS_System.Pages {
             button.BorderBrush = Brushes.Orange;
             button.Margin = new Thickness(5);
         }
-     
 
-
-
-     
-          private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
-           {
-               TableRow row = new TableRow();
-
-               // Label cell
-               TableCell labelCell = new TableCell(labelParagraph);
-               labelCell.TextAlignment = TextAlignment.Right;
-               labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
-               labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
-               row.Cells.Add(labelCell);
-
-               // Value cell
-               TableCell valueCell = new TableCell(valueParagraph);
-               valueCell.BorderThickness = new Thickness(0); // No column lines, only space
-               row.Cells.Add(valueCell);
-
-               return row;
-           }
-
-
-        //Thevagi splitbill
-        private void SplitBillButton_Click(object sender, RoutedEventArgs e)
+        private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
         {
-            SplitBillDialog dialog = new SplitBillDialog(TotalAmount);
-            dialog.Owner = this; // Set the owner window to handle dialog behavior
-            dialog.ShowDialog();
+            TableRow row = new TableRow();
+
+            // Label cell
+            TableCell labelCell = new TableCell(labelParagraph);
+            labelCell.TextAlignment = TextAlignment.Right;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+            row.Cells.Add(labelCell);
+
+            // Value cell
+            TableCell valueCell = new TableCell(valueParagraph);
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+            row.Cells.Add(valueCell);
+
+            return row;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+/*        private TableRow CreateEmptyTableRow()
         {
-            LoadCategoryData();
+            TableRow row = new TableRow();
 
-        }
+            TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
+            emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+
+            row.Cells.Add(emptyCell);
+
+            return row;
+        }*/
+
+
+
+
+
 
 
     }

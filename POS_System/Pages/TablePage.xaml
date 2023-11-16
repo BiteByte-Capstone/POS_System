@@ -59,7 +59,8 @@
 
                     <Button x:Name="logout_button" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,496,0"/>
 
-                    <Button x:Name="print_button" Content="Change Table" HorizontalAlignment="Left" Margin="84,170,0,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="239" Height="62" Click="print_button_Click"/>
+                    <Button x:Name="print_button" Content="Change Table" HorizontalAlignment="Left" Margin="84,170,0,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="239" Height="62" Click="ChangeTable_Click"/>
+                    <Button x:Name="reset_button" Content="Reset All Table" HorizontalAlignment="Left" Margin="84,736,0,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Width="239" Height="62" Click="ResetTable_Click"/>
 
 
                 </Grid>
@@ -70,16 +71,14 @@
             <TabItem Header="Takeout" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold">
                 <Grid Background="#383838" >
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="67*"/>
-                        <ColumnDefinition Width="88*"/>
-                        <ColumnDefinition Width="1616*"/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
 
 
 
 
-                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Width="774" Grid.Column="2" Margin="343,0,0,0">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="774">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="17*"/>
                             <ColumnDefinition Width="241*"/>
@@ -97,8 +96,8 @@
                     </Grid>
 
 
-                    <Button x:Name="logout_button2" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" Foreground="Black" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,4,0" Grid.ColumnSpan="2"/>
-
+                    <Button x:Name="logout_button2" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" Foreground="Black" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,1620,0"/>
+                    <Button Content="Refund" HorizontalAlignment="Left" Margin="1251,52,0,0" VerticalAlignment="Top" Click="Button_Click" Height="36"/>
 
                 </Grid>
 

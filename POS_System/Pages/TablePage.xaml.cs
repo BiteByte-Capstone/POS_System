@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,8 +23,12 @@ namespace POS_System.Pages
     {
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         // Define properties to store table number and order type
-/*        public string TableNumber { get; private set; }
-        public string OrderType { get; private set; }*/
+        public string TableNumber { get; private set; }
+        public string OrderType { get; private set; }
+
+        public string userName { get; private set; }
+        public string userId { get; private set; }
+
 
         public TablePage()
         {
@@ -97,8 +102,6 @@ namespace POS_System.Pages
         // Check if there are unpaid orders for the specified table
         private bool CheckForUnpaidOrders(string tableNumber)
         {
-            // Create a connection string
-            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -127,16 +130,19 @@ namespace POS_System.Pages
             }
         }
 
-
+        //Not working rest table colour
+        private void ResetTableButtonColor()
+        {
+            TablePage tablePage = new TablePage();
+            tablePage.Show();
+            this.Close();
+        }
 
 
 
         // Method to update table colors based on the database
         private void UpdateTableColors()
         {
-            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
-
 
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -152,11 +158,13 @@ namespace POS_System.Pages
                     MySqlDataReader reader = cmd.ExecuteReader();
 
 
-
+                    
                     while (reader.Read())
                     {
+                        
                         // Get the table number from the query result
                         string tableNumber = reader.GetString(0);
+                        
                         
 
 
@@ -170,12 +178,13 @@ namespace POS_System.Pages
 
                         if (tableButton != null)
                         {
-                            // Change the background color to green
                             tableButton.Background = Brushes.Green;
-                        } else if (takeOutButton != null)
+                        } 
+                        else if (takeOutButton != null)
                         {
                             takeOutButton.Background = Brushes.Green;
-                        }
+                        } 
+
                     }
 
 
@@ -193,7 +202,59 @@ namespace POS_System.Pages
             }
         }
 
-        private void print_button_Click(object sender, RoutedEventArgs e)
+
+
+        private void ResetTable_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Remove every table order?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                RemoveOrderAllTable();
+                ResetTableButtonColor();
+            }
+            else
+            {
+                return;
+            }
+
+            
+        }
+
+        private void RemoveOrderAllTable()
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+                    string deleteItemListQuery = "DELETE FROM ordered_itemlist WHERE order_id > 0 ;";
+                    MySqlCommand deleteItemListCmd = new MySqlCommand(deleteItemListQuery, conn);
+                    deleteItemListCmd.ExecuteNonQuery();
+
+
+                    string deleteOrderQuery = "DELETE FROM `order` WHERE order_id > 0 and paid = 'n';";
+
+                    MySqlCommand deleteOrderCmd = new MySqlCommand(deleteOrderQuery, conn);
+                    deleteOrderCmd.ExecuteNonQuery();
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+            
+
+        }
+
+        private void ChangeTable_Click(object sender, RoutedEventArgs e)
         {
 
         }
@@ -202,5 +263,14 @@ namespace POS_System.Pages
         {
 
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Refund refund = new Refund();
+            refund.Show();
+            this.Close();
+        }
+
+
     }
 }
