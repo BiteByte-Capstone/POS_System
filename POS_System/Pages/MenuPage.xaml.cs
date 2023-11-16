@@ -62,8 +62,6 @@ namespace POS_System.Pages
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
         //existing order
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
-
-
         //Splited order 
         private ObservableCollection<OrderedItem> splitOrderedItems = new ObservableCollection<OrderedItem>();
         // Event declaration
