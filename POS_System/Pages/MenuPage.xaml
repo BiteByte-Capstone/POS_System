@@ -29,7 +29,7 @@
             <ColumnDefinition Width="591"/>
             <ColumnDefinition Width="886"/>
         </Grid.ColumnDefinitions>
-        <Button Content="Back" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="-2,50,0,0" VerticalAlignment="Top" Width="184" Grid.Row="4" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" >
+        <Button Content="Back" HorizontalAlignment="Left" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="-2,50,0,0" VerticalAlignment="Top" Width="184" Grid.Row="4" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" >
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -39,7 +39,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,213,14,0" VerticalAlignment="Top" Grid.Row="4">
+        <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,142,14,0" VerticalAlignment="Top" Grid.Row="4">
             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock TextWrapping="Wrap">
             Change
@@ -47,8 +47,8 @@
                 </TextBlock>
             </Viewbox>
         </Button>
-        <Button Content="Split Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,309,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4"/>
-        <Button Content="Print Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,410,0,0" Click="PrintButton_Click"/>
+        <Button Content="Split Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,212,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4" Click="SplitBillButton_Click"/>
+        <Button Content="Print Bill" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,433,0,0" Click="PrintButton_Click"/>
         <Button Content="Payment" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,508,0,0" Click="PaymentButton_Click"/>
 
 
@@ -58,7 +58,7 @@
 
 
         <!-- Table Information -->
-        <StackPanel Grid.Row="4" Orientation="Vertical" Margin="298,-12,22,-82" Grid.ColumnSpan="2" >
+        <StackPanel Grid.Row="4" Orientation="Vertical" Margin="298,-12,22,-30" Grid.ColumnSpan="2" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -90,7 +90,7 @@
 
             </Grid>
 
-            <ListView x:Name="OrdersListBox" Width="400" Height="399" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16">
+            <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Width="400" Height="399" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
 
@@ -112,6 +112,18 @@
                     </GridView>
 
                 </ListView.View>
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Button Tag="{Binding Name}" Content="{Binding Name}" Click="CustomerNumberButton_Click"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+
+
+
             </ListView>
 
 
@@ -130,7 +142,8 @@
         <!-- item button list -->
         <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="243,108,169,85" Grid.Column="2" Grid.Row="4"/>
         <TextBlock Name="TotalAmountTextBlock" TextAlignment="Right" Grid.Column="1" HorizontalAlignment="Left" Margin="330,633,0,0" Grid.Row="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="63" Width="153" FontSize="24" Foreground="#FFFBF8F8"/>
-        <Button Content="Save" HorizontalAlignment="Left" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="100,595,0,0" Click="SaveButton_Click"/>
+        <Button Content="Save" HorizontalAlignment="Left" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Width="186" Grid.Row="4" Margin="0,614,0,0" Click="SaveButton_Click"/>
+        <Button Content="Reset Split" HorizontalAlignment="Left" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" Margin="100,286,0,0" VerticalAlignment="Top" Width="186" Grid.Row="4" Click="ResetButton_Click"/>
 
 
 

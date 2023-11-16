@@ -1,7 +1,11 @@
-﻿using POS_System.Database;
+﻿using POS.Models;
+using POS_System.Database;
+using POS_System.Models;
 using POS_System.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +26,12 @@ namespace POS_System.Pages
     public partial class LoginScreen : Window
     {
         private DatabaseHelper db;
-
+        private ObservableCollection<User> users = new ObservableCollection<User>();
         public LoginScreen()
         {
             InitializeComponent();
-            DataContext = new LoginScreenViewModel();
+            id.Focus();
+            /*DataContext = new LoginScreenViewModel();*/
             db = new DatabaseHelper("localhost", "pos_db", "root", "password");
         }
 
@@ -37,7 +42,9 @@ namespace POS_System.Pages
 
             if (db.AuthenticateUser(enteredUserId, enteredPassword))
             {
+                
                 string authenticatedUsername = db.GetUsername(enteredUserId);
+
                 MessageBox.Show("Login successful! " + authenticatedUsername);
 
                 int userId = int.Parse(enteredUserId);

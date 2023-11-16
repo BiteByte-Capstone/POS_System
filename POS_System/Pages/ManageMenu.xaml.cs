@@ -1,184 +1,536 @@
-﻿using POS.Models;
+﻿using MySql.Data.MySqlClient;
+using POS.Models;
+using POS_System.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace POS_System.Pages
 {
     public partial class ManageMenu : Window
     {
-        private List<MenuItem> menuItems; // This list represents your menu items. Replace it with your actual data structure.
+        //categories
+        private ObservableCollection<Category> categories = new ObservableCollection<Category>();
+        //new order
+        private ObservableCollection<Item> items = new ObservableCollection<Item>();
+
+        string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
 
         public ManageMenu()
         {
             InitializeComponent();
-            InitializeMenuItems(); // Load menu items (you should implement this method)
+            AddCategoryButtonVisibility(false);
+            AddItemButtonVisibility(false);
+
         }
 
-        // Initialize the list of menu items (example method, replace with your actual data)
-        private void InitializeMenuItems()
+        //Method: Add category button, if true, visible. otherwise, collapsed(ie. hide)
+        public void AddCategoryButtonVisibility(bool isVisible)
         {
-            menuItems = new List<MenuItem>
-            {
-                new MenuItem { Id = 1, Name = "Item 1", Price = 10.99 },
-                new MenuItem { Id = 2, Name = "Item 2", Price = 8.99 },
-                // Add more menu items as needed
-            };
-
-            // Bind the menu items to your ListBox named ItemList
-            ItemList.ItemsSource = menuItems; // Assuming you have a ListBox named ItemList
+            AddCategoryButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
-
-        // Event handler for the "Edit Item" button
-        private void EditItemButton_Click(object sender, RoutedEventArgs e)
+        public void AddItemButtonVisibility(bool isVisible)
         {
-            // Check if an item is selected for editing
-            if (ItemList.SelectedItem != null)
-            {
-                // Open a dialog or a new window for editing the selected item
-                MenuItem selectedItem = (MenuItem)ItemList.SelectedItem;
-
-
-
-                // After editing, update the list or reload the menu items
-                InitializeMenuItems(); // Replace with your actual data update method
-            }
-            else
-            {
-                MessageBox.Show("Please select an item to edit.");
-            }
+            AddItemButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // Event handler for the "Delete Item" button
-        private void DeleteItemButton_Click(object sender, RoutedEventArgs e)
+
+
+        private void ShowItem_Click(object sender, RoutedEventArgs e)
         {
-            // Check if an item is selected for deletion
-            if (ItemList.SelectedItem != null)
-            {
-                // Confirm deletion with a dialog
-                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this item?", "Confirmation", MessageBoxButton.YesNo);
+            itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["ItemTemplate"];
+            itemCategoryDataGrid.Content = GetAllItems();
+            AddItemButtonVisibility(true);
+            AddCategoryButtonVisibility(false);
 
-                if (result == MessageBoxResult.Yes)
-                {
-                    // Perform the deletion (you should implement this method)
-                    MenuItem selectedItem = (MenuItem)ItemList.SelectedItem;
-                    DeleteMenuItem(selectedItem.Id); // Replace with your actual deletion method
-
-                    // Update the list or reload the menu items
-                    InitializeMenuItems(); // Replace with your actual data update method
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select an item to delete.");
-            }
         }
 
-        // Event handler for the "Add Item" button
-        private void AddItemButton_Click(object sender, RoutedEventArgs e)
+        private void ShowCategory_Click(object sender, RoutedEventArgs e)
         {
-            // Create a new item with the values from the text boxes
-            string itemName = ItemNameTextBox.Text;
-            double itemPrice;
+            itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["CategoryTemplate"];
+            itemCategoryDataGrid.Content = GetAllCategories();
+            AddCategoryButtonVisibility(true);
+            AddItemButtonVisibility(false);
 
-            // Check if the price can be parsed
-            if (!string.IsNullOrWhiteSpace(itemName) && double.TryParse(ItemPriceTextBox.Text, out itemPrice))
-            {
-                // Create the new item
-                MenuItem newItem = new MenuItem
-                {
-                    Id = menuItems.Count + 1, // Assign a unique ID, you may need a better method
-                    Name = itemName,
-                    Price = itemPrice
-                };
-
-                // Add the new item to your list
-                menuItems.Add(newItem);
-
-                // Refresh the ListBox
-                ItemList.ItemsSource = null;
-                ItemList.ItemsSource = menuItems;
-
-                // Clear the input text boxes
-                ItemNameTextBox.Text = "Enter item name";
-                ItemPriceTextBox.Text = "Enter item price";
-            }
-            else
-            {
-                MessageBox.Show("Please enter a valid item name and price.");
-            }
         }
 
-        // Implement your DeleteMenuItem method here
-        private void DeleteMenuItem(int itemId)
-        {
-            // Implement the logic to delete a menu item with the specified itemId
-        }
-
-        // Event handler for the "Cancel" button in the item addition form
-        private void CancelAddItemButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Hide the item addition form
-            ItemAdditionForm.Visibility = Visibility.Collapsed;
-        }
-
-        // Event handler for the "View Sales" button (you can implement this)
         private void ViewSalesButton_Click(object sender, RoutedEventArgs e)
         {
-            // Implement the logic to view sales
+
         }
 
-        // Event handler for the "Settings" button (you can implement this)
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            // Implement the logic to open settings
+
         }
 
-        private void ItemNameTextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            TextBox textBox = (TextBox)sender;
-            if (textBox.Text == "Enter item name")
+            AdminManagement adminManagement = new AdminManagement();
+            adminManagement.Show();
+            this.Close();
+        }
+        private void DeleteItemButton_Click(Object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("click delete");
+            if (sender is Button button && button.CommandParameter is Item item)
             {
-                textBox.Text = "";
+                MessageBox.Show("second stage");
+                int id = item.Id;
+                string name = item.item_name;
+                double price = item.ItemPrice;
+                string description = item.Description;
+                string category = item.Category;
+
+
+                // Confirm user wants to delete with the user's name included
+                MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    DeleteItemFromDatabase(id,name,price,description,category);
+                    MessageBox.Show("Delete successfully");
+                    itemCategoryDataGrid.Content = GetAllItems();
+                }
+                else
+                {
+                    return;
+                }
             }
         }
 
-        private void ItemNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+
+        private void DeleteButton_Click(Object sender, RoutedEventArgs e)
         {
-            TextBox textBox = (TextBox)sender;
-            if (string.IsNullOrWhiteSpace(textBox.Text))
+            MessageBox.Show("click delete");
+            if (sender is Button button && button.CommandParameter is Category category)
             {
-                textBox.Text = "Enter item name";
+                MessageBox.Show("second stage");
+                int id = category.Id;
+                string name = category.Name;
+             
+
+                // Confirm user wants to delete with the user's name included
+                MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    DeleteCategoryFromDatabase(id);
+                    MessageBox.Show("Delete successfully");
+                    itemCategoryDataGrid.Content = GetAllCategories();
+                }
+                else
+                {
+                    return;
+                }
             }
         }
 
-        private void ItemPriceTextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void EditItemButton_Click(Object sender, RoutedEventArgs e)
         {
-            TextBox textBox = (TextBox)sender;
-            if (textBox.Text == "Enter item price")
+            if (sender is Button button && button.CommandParameter is Item item)
             {
-                textBox.Text = "";
+                MessageBox.Show("second stage");
+                int id = item.Id;
+                string name = item.item_name;
+                double price = item.ItemPrice;
+                string description = item.Description;
+                string category = item.Category;
+
+
+
+
+
+                EditItemDialog editItemDialog = new EditItemDialog(id, name, price, description,category);
+                if (editItemDialog.ShowDialog() == true)
+                {
+                    int editedId = editItemDialog.editedId;
+                    // Retrieve the category name from the dialog
+                    string editedName = editItemDialog.editedName;
+                    double editedprice = editItemDialog.editedPrice;
+                    string editedDescription = editItemDialog.editedDescripion;
+                    string editedCategory = editItemDialog.editedCategory;
+                    
+
+                    if (!string.IsNullOrWhiteSpace(editedName))
+                    {
+                        MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure want to edit from {name} to {editedName}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                        if (messageBoxResult == MessageBoxResult.Yes)
+                        {
+                            if (EditItemFromDatabase(editedId, editedName,editedprice,editedDescription,editedCategory))
+                            {
+                                MessageBox.Show($"Updated from {name} to {editedName}");
+                                itemCategoryDataGrid.Content = GetAllItems();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Category name cannot be empty.");
+                            }
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    }
+
+
+                }
             }
         }
 
-        private void ItemPriceTextBox_LostFocus(object sender, RoutedEventArgs e)
+        private void EditButton_Click(Object sender, RoutedEventArgs e)
         {
-            TextBox textBox = (TextBox)sender;
-            if (string.IsNullOrWhiteSpace(textBox.Text))
+            if (sender is Button button && button.CommandParameter is Category category)
             {
-                textBox.Text = "Enter item price";
+                int id = category.Id;
+                string name = category.Name;
+
+
+
+
+
+                var editCategoryDialog = new EditCategoryDialog(id, name);
+                if (editCategoryDialog.ShowDialog() == true)
+                {
+                    // Retrieve the category name from the dialog
+                    string categoryName = editCategoryDialog.EditedCategoryName;
+                    int categoryId = editCategoryDialog.EditedCategoryId;
+
+                    if (!string.IsNullOrWhiteSpace(categoryName))
+                    {
+                        MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure want to edit from {name} to {categoryName}?", "Delete Confirmation", MessageBoxButton.YesNo);
+                        if (messageBoxResult == MessageBoxResult.Yes)
+                        {
+                            if (EditCategoryFromDatabase(categoryName, categoryId))
+                            {
+                                MessageBox.Show($"Updated from {name} to {categoryName}");
+                                itemCategoryDataGrid.Content = GetAllCategories();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Category name cannot be empty.");
+                            }
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    }
+
+
+                }
             }
         }
-    }
 
-    // Example class representing a menu item
-    public class MenuItem
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public double Price { get; set; }
+        private void AddCategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            var addCategoryDialog = new AddCategoryDialog();
+            if (addCategoryDialog.ShowDialog() == true)
+            {
+                // Retrieve the category name from the dialog
+                string categoryName = addCategoryDialog.CategoryName;
+                int categoryId = addCategoryDialog.CategoryId;
+
+                if (!string.IsNullOrWhiteSpace(categoryName))
+                {
+                    // Insert the new category into your database
+                    if (InsertCategoryIntoDatabase(categoryName, categoryId))
+                    {
+                        MessageBox.Show("Added to Category!");
+                        itemCategoryDataGrid.Content = GetAllCategories();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Category name cannot be empty.");
+                }
+            }
+        }
+
+        private void AddItemButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddItemDialog addItemDialog = new AddItemDialog();
+            if (addItemDialog.ShowDialog() == true)
+            {
+                // Retrieve the category name from the dialog
+                int itemId = addItemDialog.id;
+                string itemName = addItemDialog.name;
+                double itemPrice = addItemDialog.price;
+                string itemDesciption = addItemDialog.descripion;
+                string itemCategory = addItemDialog.category;
+
+                if (!string.IsNullOrWhiteSpace(itemName))
+                {
+                    // Insert the new category into your database
+                    if (InsertItemIntoDatabase(itemId, itemName, itemPrice, itemDesciption, itemCategory))
+                    {
+                        MessageBox.Show("Added to Item!");
+                        itemCategoryDataGrid.Content = GetAllItems();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Item name cannot be empty.");
+                }
+            }
+        }
+
+        //Method: To get all item from database
+        private ObservableCollection<Item> GetAllItems()
+        {
+            items = new ObservableCollection<Item>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                var cmd = new MySqlCommand("SELECT * FROM item ORDER BY 1", connection);
+                try
+                {
+                    connection.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            items.Add(new Item
+                            {
+                                Id = Convert.ToInt32(reader["item_id"]),
+                                item_name = reader["item_name"].ToString(),
+                                ItemPrice = Convert.ToDouble(reader["item_price"]),
+                                Description = reader["item_description"].ToString(),
+                                Category = reader["item_category"].ToString()
+                                
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions
+                }
+            }
+            return items;
+        }
+
+
+        private void PreviewMenu_Click(object sender, RoutedEventArgs e)
+        {
+            PreviewMenuDialog previewMenuDialog = new PreviewMenuDialog();
+            previewMenuDialog.ShowDialog();
+
+        }
+        private ObservableCollection<Category> GetAllCategories()
+        {
+            var categorylist = new Category();
+            categories = new ObservableCollection<Category>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                var cmd = new MySqlCommand("SELECT * FROM category ORDER BY 1", connection);
+                try
+                {
+                    connection.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Category category = new Category
+                            {
+                                Id = Convert.ToInt32(reader["category_id"]),
+                                Name = reader["category_name"].ToString(),
+                            };
+                            categories.Add(category);
+                           
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions
+                }
+            }
+            return categories;
+        }
+
+        //Method: add new item to database category
+        private bool InsertItemIntoDatabase(int itemId, string itemName, double itemPrice, string itemDescription, string itemCategory)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string insertQuery = "INSERT INTO item (item_id, item_name, item_price, item_description, item_category) VALUES (@itemId, @itemName, @itemPrice, @itemDescription, @itemCategory);";
+                    using (MySqlCommand cmd = new MySqlCommand(insertQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@itemId", itemId);
+                        cmd.Parameters.AddWithValue("@itemName", itemName);
+                        cmd.Parameters.AddWithValue("@itemPrice", itemPrice);
+                        cmd.Parameters.AddWithValue("@itemDescription", itemDescription);
+                        cmd.Parameters.AddWithValue("@itemCategory", itemCategory);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while adding the category: " + ex.Message);
+                return false;
+            }
+        }
+
+        //Method: add category id and name to database category
+        private bool InsertCategoryIntoDatabase(string categoryName, int categoryId)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string insertQuery = "INSERT INTO category (category_name, category_id) VALUES (@categoryName, @categoryId);";
+                    using (MySqlCommand cmd = new MySqlCommand(insertQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@categoryName", categoryName);
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while adding the category: " + ex.Message);
+                return false;
+            }
+        }
+
+        //Method: delete item
+        private bool DeleteItemFromDatabase(int id, string name, double price, string description, string category)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string DeleteQuery = "DELETE FROM item WHERE item_id=@itemId;";
+                    using (MySqlCommand cmd = new MySqlCommand(DeleteQuery, conn))
+                    {
+
+                        cmd.Parameters.AddWithValue("@itemId", id);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while delete the category: " + ex.Message);
+                return false;
+            }
+        }
+
+
+
+        //Method: delete category
+        private bool DeleteCategoryFromDatabase(int categoryId)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string DeleteQuery = "DELETE FROM category WHERE category_id=@categoryId;";
+                    using (MySqlCommand cmd = new MySqlCommand(DeleteQuery, conn))
+                    {
+
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while delete the category: " + ex.Message);
+                return false;
+            }
+        }
+
+        //Method: edit category
+        private bool EditCategoryFromDatabase(string categoryName,int categoryId)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string EditCategoryQuery = "UPDATE `category` SET category_name = @categoryName WHERE category_id = @categoryId;";
+                    using (MySqlCommand cmd = new MySqlCommand(EditCategoryQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@categoryName", categoryName);
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while edit the category: " + ex.Message);
+                return false;
+            }
+        }
+
+        private bool EditItemFromDatabase(int itemId,string itemName, double itemPrice, string itemDescription, string itemCategory)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString)) // Ensure connStr is your connection string
+                {
+                    conn.Open();
+
+                    string EditItemQuery = "UPDATE `item` SET item_name = @itemName, item_price = @itemPrice, item_description = @itemDescription, item_category = @itemCategory WHERE item_id = @itemId;";
+                    using (MySqlCommand cmd = new MySqlCommand(EditItemQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@itemId", itemId);
+                        cmd.Parameters.AddWithValue("@itemName", itemName);
+                        cmd.Parameters.AddWithValue("@itemPrice", itemPrice);
+                        cmd.Parameters.AddWithValue("@itemDescription", itemDescription);
+                        cmd.Parameters.AddWithValue("@itemCategory", itemCategory);
+
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while edit the category: " + ex.Message);
+                return false;
+            }
+        }
+
+
+
+       
+
+
     }
 }

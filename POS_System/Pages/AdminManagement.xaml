@@ -61,8 +61,8 @@
                 <Image Grid.Row="0"
                        Source="pack://application:,,,/POS_System;component/Images/ManageUser.png"
                        Width="168"
-                       HorizontalAlignment="Left"
-                       Margin="24,-7,0,32" Grid.RowSpan="2"/>
+                       HorizontalAlignment="Center"
+                       Margin="0,-7,0,32" Grid.RowSpan="2"/>
                 <TextBlock Grid.Row="1"
                            Text="Manage Users" FontWeight="Bold"
                            HorizontalAlignment="Center"
@@ -94,7 +94,7 @@
                        Source="pack://application:,,,/POS_System;component/Images/ManageSales.png"
                        Width="200"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,30"
+                       Margin="0,4,0,26"
                        Grid.RowSpan="2"/>
 
                 <TextBlock Grid.Row="1" 
