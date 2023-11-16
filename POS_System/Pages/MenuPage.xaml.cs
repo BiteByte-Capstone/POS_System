@@ -1294,12 +1294,9 @@ namespace POS_System.Pages
  
         }
 
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
 
-
-
-
-
-
-
+        }
     }
 }
