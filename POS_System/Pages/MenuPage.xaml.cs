@@ -276,7 +276,7 @@ namespace POS_System.Pages
                     newCategoryButton.Content = rdr["category_name"].ToString();
                     newCategoryButton.Tag = category;
                     newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
-                    newCategoryButton.Width = 150;
+                    newCategoryButton.Width = 120;
                     newCategoryButton.Height = 50;
                     newCategoryButton.FontSize = 15;
                     newCategoryButton.Background = Brushes.DarkOrange;
@@ -334,7 +334,7 @@ namespace POS_System.Pages
 
                     newItemButton.Content = textBlock;
                     newItemButton.Tag = item;
-                    newItemButton.Width = 140;
+                    newItemButton.Width = 120;
                     newItemButton.Height = 80;
                     newItemButton.FontSize = 15;
                     newItemButton.Background = Brushes.LightGoldenrodYellow;
