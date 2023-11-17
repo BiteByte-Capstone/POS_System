@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <None Remove="Images\addUser.png" />
+    <None Remove="Images\AdminPicture.png" />
     <None Remove="Images\BackBtn.png" />
     <None Remove="Images\deleteIcon.png" />
     <None Remove="Images\editIcon.png" />
@@ -33,6 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\AdminPicture.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\BackBtn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
