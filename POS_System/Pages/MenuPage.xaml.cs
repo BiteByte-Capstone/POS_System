@@ -110,6 +110,7 @@ namespace POS_System.Pages
             //it could load the page before show up
             this.DataContext = this;
             this.Loaded += Window_Loaded; // Subscribe to the Loaded event
+
         }
 
         public MenuPage(string tableNumber, string orderType, string status, bool hasUnpaidOrders) : this()
@@ -118,10 +119,17 @@ namespace POS_System.Pages
             TypeTextBox.Text = orderType;
             StatusTextBlock.Text = status;
 
+
             _tableNumber = tableNumber;
             _orderType = orderType;
             _status = status;
             _hasPaidOrders = hasUnpaidOrders;
+            MenuLabel.Content = $"Menu   -   {_orderType}";
+
+            if (_orderType == "Take-Out")
+            {
+                TableNumberTextBlock.Text = "     Take-Out# : ";
+            }
 
             if (hasUnpaidOrders)
             {
@@ -220,12 +228,14 @@ namespace POS_System.Pages
                         orderedItems.Add(orderedItem);
                         TotalAmount += orderedItem.ItemPrice;
                     }
-                    TotalAmountTextBlock.Text = TotalAmount.ToString("C", new CultureInfo("en-CA"));
+                    TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", new CultureInfo("en-CA"));
                     
                     if (isSplited == true)
                     {
                         GroupItemList();
                     }
+
+
                     
 
 
@@ -386,7 +396,7 @@ namespace POS_System.Pages
             TotalAmount += orderedItem.ItemPrice;
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-            TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
+            TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", cultureInfo);
         }
 
         //(Button for Split Bill)
@@ -655,10 +665,10 @@ namespace POS_System.Pages
                     
                     orderedItems.Remove(selectedOrderedItem);
                     TotalAmount -= selectedOrderedItem.ItemPrice;
-                    TotalAmountTextBlock.Text = TotalAmount.ToString();
+                    TotalAmountTextBlock.Text = "Total Amount :             "  + TotalAmount.ToString();
                     CultureInfo cultureInfo = new CultureInfo("en-CA");
                     cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-                    TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
+                    TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", cultureInfo);
 /*                }*/
             }
                 
@@ -792,7 +802,7 @@ namespace POS_System.Pages
 
                         /*items.Clear();*/
                         TotalAmount = 0.0;
-                        TotalAmountTextBlock.Text = TotalAmount.ToString("C");
+                        TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C");
                         conn.Close();
 
                     }

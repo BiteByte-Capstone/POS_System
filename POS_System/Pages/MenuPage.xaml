@@ -23,59 +23,69 @@
         <!-- Buttons -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="10"/>
-            <ColumnDefinition Width="214"/>
-            <ColumnDefinition Width="12"/>
-            <ColumnDefinition Width="263"/>
-            <ColumnDefinition Width="287"/>
+            <ColumnDefinition Width="226"/>
+            <ColumnDefinition Width="550"/>
             <ColumnDefinition Width="50*" MinWidth="500"/>
             <ColumnDefinition MinWidth="20" Width="2*"/>
         </Grid.ColumnDefinitions>
 
         <!--Left panel button-->
-        <Button Content="Back" HorizontalAlignment="Left" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="44" VerticalAlignment="Center" Width="176" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" Grid.Row="1" Grid.Column="1" />
+        <Button Content="Back" HorizontalAlignment="Center" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="54" VerticalAlignment="Center" Width="226" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" Grid.Row="1" Grid.Column="1" />
 
-        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Margin="0,40,2,3">
-            <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="60" Margin="0,0,0,10">
-                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Change Table" TextWrapping="Wrap" TextAlignment="Center"/>
-                </Viewbox>
-            </Button>
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="75*"/>
-                    <ColumnDefinition Width="31*"/>
-                </Grid.ColumnDefinitions>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30*"/>
-                    <RowDefinition Height="30*"/>
-
-                </Grid.RowDefinitions>
-
-                <Button Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitBillButton_Click" Grid.Column="0" Grid.Row="0" Margin="0,0,0,39" />
-                <Button Content="Split Item" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitbyItem_Click" Grid.Column="0" Margin="0,34,0,0" />
-                <Button  Background="{x:Null}" BorderBrush="Red" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetSplitButton_Click" Grid.Column="1" Foreground="Red" BorderThickness="2,2,2,2" >
+        <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
+        Grid.Column="1" Grid.Row="1" Grid.RowSpan="5" Margin="0,54,0,0">
+            <StackPanel Orientation="Vertical" Margin="0,40,0,3">
+                <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="60" Margin="0,0,0,10">
                     <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="Reset" TextWrapping="Wrap" TextAlignment="Center"/>
+                        <TextBlock Text="Change Table" TextWrapping="Wrap" TextAlignment="Center" Height="60" FontSize="25" Width="176"/>
                     </Viewbox>
                 </Button>
-            </Grid>
+                <Grid Margin="0,0,0,10" Height="157">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="51*"/>
+                        <ColumnDefinition Width="163*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30*"/>
+                        <RowDefinition Height="30*"/>
+
+                    </Grid.RowDefinitions>
+
+                    <Button Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitBillButton_Click" Grid.Column="1" Grid.Row="0" Margin="1,0,0,0" />
+                    <Button Content="Split Item" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitbyItem_Click" Grid.Column="1" Margin="1,78,0,0" Grid.RowSpan="2" />
+                    <Button  Background="{x:Null}" BorderBrush="Red" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetSplitButton_Click" Foreground="Red" BorderThickness="3,3,3,3" Grid.RowSpan="2" >
+                        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Reset" TextWrapping="Wrap" TextAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                <TextBlock.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="91.717"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </Viewbox>
+                    </Button>
+                </Grid>
 
 
-            <Button Content="Print Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="60" Width="211" Click="PrintButton_Click" Margin="0,0,0,10"/>
-            <Button Content="Payment" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="60" Width="212" Click="PaymentButton_Click" Margin="0,0,0,10"/>
+                <Button Content="Print Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="60" Width="228" Click="PrintButton_Click" Margin="0,0,0,10"/>
+                <Button Content="Payment" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="60" Width="228" Click="PaymentButton_Click" Margin="0,0,0,10"/>
 
 
-        </StackPanel>
+            </StackPanel>
+        </Border>
 
 
-        <Button Content="Save" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="70" VerticalAlignment="Top" Grid.Row="6" Margin="38,8,28,0" Click="SaveButton_Click" Grid.Column="1"/>
-        <Button HorizontalAlignment="Left" Height="65" Margin="10,10,0,0" VerticalAlignment="Top" Width="76" Foreground="Red" Background="{x:Null}"  BorderBrush="Red" FontSize="20" Click="CancelButton_Click" RenderTransformOrigin="-1.893,0.589" FontFamily="Verdana" Grid.Row="6" BorderThickness="5,5,5,5" Grid.Column="3">
+        <Button Content="Save" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="78" VerticalAlignment="Top" Grid.Row="5" Margin="0,63,0,0" Click="SaveButton_Click" Grid.Column="1" Grid.RowSpan="2"/>
+        <Button HorizontalAlignment="Left" Height="76" Margin="0,65,0,0" VerticalAlignment="Top" Width="86" Foreground="Red" Background="{x:Null}"  BorderBrush="Red" FontSize="20" Click="CancelButton_Click" RenderTransformOrigin="-1.893,0.589" FontFamily="Verdana" Grid.Row="5" BorderThickness="5,5,5,5" Grid.Column="2" Grid.RowSpan="2">
             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Cancel Order" TextWrapping="Wrap" TextAlignment="Center" Width="74" Foreground="Red"/>
             </Viewbox>
         </Button>
-        <Button Grid.Column="3" HorizontalAlignment="Left" Height="41" Margin="132,370,0,0" VerticalAlignment="Top" Width="114" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" FontSize="20" Click="VoidButton_Click" RenderTransformOrigin="-1.893,0.589" Grid.Row="4" Grid.RowSpan="2" >
+        <Button Grid.Column="2" HorizontalAlignment="Left" Height="71" Margin="453,63,0,0" VerticalAlignment="Top" Width="97" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" FontSize="20" Click="VoidButton_Click" RenderTransformOrigin="-1.893,0.589" Grid.Row="5" Grid.RowSpan="2" >
             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="106" Height="25"/>
             </Viewbox>
@@ -85,44 +95,48 @@
 
 
         <!-- Table Information (middle part)-->
-        <Label  Content="Menu Page" HorizontalAlignment="Center" VerticalAlignment="Top" Width="530" Height="63" FontFamily="Verdana" FontSize="32" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="Orange" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="0,15,0,0"/>
+
+        <Label Name="MenuLabel" Content="Menu" HorizontalAlignment="Center" VerticalAlignment="Center" Width="550" Height="56" FontFamily="Verdana" FontSize="32" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Background="Orange" Foreground="Black" Grid.Row="1"/>
+
+        <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
+        Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Margin="0,54,0,0">
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="37*"/>
+                    <RowDefinition Height="39*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="148*"/>
+                    <ColumnDefinition Width="150*"/>
+                    <ColumnDefinition Width="113*"/>
+                    <ColumnDefinition Width="240*"/>
+                </Grid.ColumnDefinitions>
 
 
-        <Grid Grid.Column="3" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="0,2,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="37*"/>
-                <RowDefinition Height="39*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="148*"/>
-                <ColumnDefinition Width="150*"/>
-                <ColumnDefinition Width="113*"/>
-                <ColumnDefinition Width="240*"/>
-            </Grid.ColumnDefinitions>
 
 
 
-
-
-            <TextBlock 
+                <TextBlock 
+                    Name="TableNumberTextBlock"
                Foreground="Orange" 
                FontFamily="Verdana" 
                FontSize="15" 
-               Height="26" Width="116" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,8,0,0"><Run Text="Table Number"/><Run Language="en-ca" Text=" "/><Run Text=":"/></TextBlock>
+               Height="26" Width="116" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,2,0,0"><Run Text="Table Number"/><Run Language="en-ca" Text=" "/><Run Text=":"/></TextBlock>
 
-            <TextBox Name="TableNumberTextBox" 
+                <TextBox Name="TableNumberTextBox" 
              IsReadOnly="True" 
              Foreground="Orange" 
              BorderBrush="Orange" 
-             FontFamily="Verdana" Background="{x:Null}" Margin="10,8,10,10" Grid.Column="1"/>
+             FontFamily="Verdana" Background="{x:Null}" Margin="9,3,11,8" Grid.Column="1"/>
 
 
 
-            <TextBlock 
+                <TextBlock 
                Foreground="Orange" 
                FontFamily="Verdana" 
-               FontSize="15" Margin="24,7,14,11" Grid.Row="1" Grid.Column="2" RenderTransformOrigin="0.742,0.524"><Run Text="Status"/><Run Text=" "/><Run Language="en-ca" Text=": "/></TextBlock>
-            <TextBox x:Name="StatusTextBlock" 
+               FontSize="15" Margin="23,7,10,2" Grid.Row="1" Grid.Column="2" RenderTransformOrigin="0.742,0.524"><Run Text="Status"/><Run Text=" "/><Run Language="en-ca" Text=": "/></TextBlock>
+                <TextBox x:Name="StatusTextBlock" 
              IsReadOnly="True" 
              Foreground="Orange" 
              Background="{x:Null}"  
@@ -132,11 +146,11 @@
 
 
 
-            <TextBlock 
+                <TextBlock 
                Foreground="Orange" 
                FontSize="15" 
                FontFamily="Verdana" Margin="74,7,0,7" Grid.Row="1" HorizontalAlignment="Left" Width="49"><Run Text="Type"/><Run Language="en-ca" Text=" "/><Run Text=":"/></TextBlock>
-            <TextBox x:Name="TypeTextBox" 
+                <TextBox x:Name="TypeTextBox" 
              IsReadOnly="True" 
              Foreground="Orange" 
              Background="{x:Null}" 
@@ -144,13 +158,13 @@
 
 
 
-            <TextBlock
+                <TextBlock
                Text="Order ID : "
                x:Name="orderIdTextBlock" 
                Foreground="Orange" 
                FontFamily="Verdana" 
                TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2" Height="26" FontSize="15" Width="82"/>
-            <TextBox x:Name="OrderIdTextBlock" 
+                <TextBox x:Name="OrderIdTextBlock" 
                IsReadOnly="True"
                TextWrapping="Wrap" 
              Foreground="Orange" 
@@ -159,15 +173,14 @@
                FontFamily="Verdana" Grid.Column="3" Margin="34,3,45,5"/>
 
 
-        </Grid>
-
+            </Grid>
+        </Border>
         <!--list view: list all order-->
-        <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="16" Grid.Column="3" Margin="0,40,7,5" Grid.Row="3" Grid.ColumnSpan="2" Grid.RowSpan="2">
+        <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Margin="0,40,0,0" Grid.Row="3" Grid.RowSpan="2" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
-
                     <Setter Property="Foreground" Value="White"/>
-
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsExistItem}" Value="true">
                             <Setter Property="Foreground" Value="Gray"/>
@@ -178,11 +191,22 @@
             <ListView.View>
                 <GridView>
 
-                    <GridViewColumn Header="Item Name" Width="320" DisplayMemberBinding="{Binding item_name}" />
-                    <GridViewColumn Header="Item Price" Width="200" DisplayMemberBinding="{Binding ItemPrice, StringFormat=C}" />
+                    <GridViewColumn Header="Item Name" Width="360">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding item_name}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
+                    <GridViewColumn Header="Item Price" Width="177">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ItemPrice}" TextAlignment="right"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
-
             </ListView.View>
             <ListView.GroupStyle>
                 <GroupStyle>
@@ -193,10 +217,13 @@
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
             </ListView.GroupStyle>
-
-
-
         </ListView>
+
+
+        <Border BorderBrush="Orange" BorderThickness="1" 
+         Margin="0,370,0,0" Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Background="Black">
+            <TextBlock Name="TotalAmountTextBlock" TextAlignment="Right" HorizontalAlignment="Center" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="63" Width="550" FontSize="18" Foreground="#FF969696" Background="#FF454545" Padding="20" FontFamily="Verdana" />
+        </Border>
 
         <!--Right hand side-->
 
@@ -204,13 +231,19 @@
 
 
         <!-- category button list-->
-        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"  Grid.Column="5" Margin="10,0,15,0" Grid.Row="1" Grid.RowSpan="2">
-            <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="0,0,0,0"/>
-        </ScrollViewer>
+        <Border BorderBrush="Orange" BorderThickness="1" 
+         Margin="0,54,15,0" Grid.Column="3" Grid.Row="1" Grid.RowSpan="3">
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Margin="0,0,15,10" >
+                <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="0,0,0,0"/>
+            </ScrollViewer>
+        </Border>
 
         <!-- item button list -->
-        <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="10,40,15,10" Grid.Column="5" Grid.Row="3" Grid.RowSpan="3"/>
-        <TextBlock Name="TotalAmountTextBlock" TextAlignment="Left" Grid.Column="4" HorizontalAlignment="Left" Margin="83,370,0,0" Grid.Row="4" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="63" Width="194" FontSize="24" Foreground="#FFFBF8F8" Grid.RowSpan="2"/>
+        <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
+         Margin="0,40,15,0" Grid.Column="3" Grid.Row="3" Grid.RowSpan="3">
+            <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal"/>
+        </Border>
+
 
 
 

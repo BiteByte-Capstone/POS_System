@@ -259,10 +259,6 @@ namespace POS_System.Pages
 
         }
 
-        private void TablePageTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
