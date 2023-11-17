@@ -41,9 +41,6 @@ namespace POS_System.Pages
 
         private ObservableCollection<OrderedItem> _orderedItems = new ObservableCollection<OrderedItem>();
         private ObservableCollection<OrderedItem> _customerOrderedItems = new ObservableCollection<OrderedItem>();
-
-        //from payment page( store every payment)
-        private ConcurrentDictionary<int, Payment> _paymentDictionary = PaymentPage._eachPaymentDictionary;
         private List<Payment> _paymentList = new List<Payment>();
         private MenuPage _menuPage;
 
@@ -51,6 +48,19 @@ namespace POS_System.Pages
         public PaymentWindow()
         {
             InitializeComponent();
+            this.Loaded += new RoutedEventHandler(Window_Loaded);
+
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            {
+                if (DisplayCustomerButton_Panel.Children.Count > 0 &&
+                    DisplayCustomerButton_Panel.Children[0] is Button firstButton)
+                {
+                    paymentPageButton_Click(firstButton, new RoutedEventArgs(Button.ClickEvent));
+                }
+            }
 
         }
 
@@ -83,6 +93,7 @@ namespace POS_System.Pages
             do
             {
                 Button paymentPageButton = new Button();
+                
                 paymentPageButton.Content = "Customer#" + customerNumber;
                 paymentPageButton.Tag = customerNumber;
                 paymentPageButton.Click += paymentPageButton_Click;
@@ -112,6 +123,9 @@ namespace POS_System.Pages
                 {
                     // Disable the button associated with the completed payment
                     ((Button)sender).IsEnabled = false;
+                    
+
+                    ClickNextButton(button);
                 };
 
                 PaymentPageFrame.Navigate(paymentPage);
@@ -119,6 +133,19 @@ namespace POS_System.Pages
             }
         }
 
+        private void ClickNextButton(Button currentButton)
+        {
+            var buttons = DisplayCustomerButton_Panel.Children.OfType<Button>().ToList();
+            int currentIndex = buttons.IndexOf(currentButton);
+            if (currentIndex >= 0 && currentIndex < buttons.Count - 1)
+            {
+                Button nextButton = buttons[currentIndex + 1];
+                if (nextButton != null && nextButton.IsEnabled)
+                {
+                    paymentPageButton_Click(nextButton, new RoutedEventArgs(Button.ClickEvent));
+                }
+            }
+        }
 
 
         //Method for return payment page

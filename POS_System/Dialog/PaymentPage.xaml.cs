@@ -439,7 +439,14 @@ namespace POS_System.Pages
         private double CalculateTipAmount()
         {
             double tipAmount = 0.0;
-            return tipAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+            if (_paymentMethod != null && _paymentMethod.Equals("Cash")) 
+            {
+                return 0.0;
+            }else
+            {
+                return tipAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+            }
+
 
         }
 
@@ -447,7 +454,14 @@ namespace POS_System.Pages
         private double CalculateChangeAmount()
         {
             double changeAmount = 0.0;
-            return changeAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+            if (_paymentMethod != null && _paymentMethod.Equals("Cash"))
+            {
+                return changeAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+            }
+            else
+            {
+                return 0.0;
+            }
         }
 
         //Calculate Tax

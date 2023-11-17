@@ -66,7 +66,7 @@ namespace POS_System.Pages
         private string _splitType;
 
         private double TotalAmount = 0.0;
-        private int existItemCount = 0;
+        private int OriginalItemsCount = 0;
         private bool itemClick = false;
         private bool isSplited = false;
 
@@ -120,7 +120,6 @@ namespace POS_System.Pages
         private void GroupItemList()
         {
 
-
             OrdersListBox.Items.GroupDescriptions.Clear();
             var property = "FormattedCustomerID";
             OrdersListBox.Items.GroupDescriptions.Add(new PropertyGroupDescription(property));
@@ -155,8 +154,7 @@ namespace POS_System.Pages
                     unpaidOrdersCmd.Parameters.AddWithValue("@orderId", orderId);
                     MySqlDataAdapter dataAdapter = new MySqlDataAdapter(unpaidOrdersCmd);
                     DataTable unpaidOrdersTable = new DataTable();
-                    dataAdapter.Fill(unpaidOrdersTable);//!!!!!!! remove messageBox later
-                    /*items.Clear();*/
+                    dataAdapter.Fill(unpaidOrdersTable);
 
                     if (unpaidOrdersTable.Rows.Count > 0)
                     {
@@ -183,7 +181,7 @@ namespace POS_System.Pages
                             IsExistItem = true,
                             customerID = Convert.ToInt32(row["customer_id"])
                         };
-                        existItemCount++;
+                        OriginalItemsCount++;
                         _numberOfBill = orderedItem.customerID;
 
 
@@ -469,12 +467,12 @@ namespace POS_System.Pages
                 MessageBox.Show("No item on this table. Please save before payment");
                 return;
             }
-            else if (ExistedItem() == false && orderedItems.Count != existItemCount)
+            else if (ExistedItem() == false && orderedItems.Count != OriginalItemsCount)
             {
                 MessageBox.Show("New Item(s) has not saved yet. Please save before payment");
                 return;
             }
-            else if (orderedItems.Count < existItemCount)
+            else if (orderedItems.Count < OriginalItemsCount)
             {
                 MessageBox.Show("Remove Item has not saved yet. Please save before payment");
                 return;
@@ -545,7 +543,7 @@ namespace POS_System.Pages
         //(button)back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
-            if (orderedItems.Count != existItemCount)
+            if (orderedItems.Count != OriginalItemsCount)
             {
 
                 MessageBoxResult result = MessageBox.Show("Removed order on the list. \n Do you want to go back without save?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -610,21 +608,20 @@ namespace POS_System.Pages
         private bool ExistedItem()
         {
             bool ExistedItem = false;
-            foreach (OrderedItem item in orderedItems)
-            {
-                foreach (OrderedItem itemOnViewList in orderedItems)
+
+                foreach (OrderedItem itemOnListView in OrderedItems)
                 {
-                    if (itemOnViewList.IsExistItem == false)
+                    if (itemOnListView.IsExistItem == false)
                     {
                         ExistedItem = false; //added new item on list but not yet save
                     }
-                    else if (itemOnViewList.IsExistItem == true)
+                    else if (itemOnListView.IsExistItem == true)
                     {
                         ExistedItem = true; //nothing added on the existing list
                     }
 
                 }
-            }
+            
             return ExistedItem;
         }
 
@@ -660,14 +657,41 @@ namespace POS_System.Pages
         //button for print and save to database: click save, send to database
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
- 
-            // Save the order
-            AutoSave();
+            
+            if (orderedItems.Count == 0 && itemClick == false)//Condition: Empty list
+            {
+                MessageBox.Show("No Item in this table.Please add items before save!");
+                return;
+            }
+            else if (ExistedItem() == true && OriginalItemsCount == orderedItems.Count)//Condition: if no items added to existing order  
+            {
+                MessageBox.Show("No update on the list. Please check again");
+                return;
+            }
+            else
+            {
+                
+                if (OriginalItemsCount > orderedItems.Count) // Condition: if items deleted, double check is it correct
+                {
+                    MessageBoxResult result = MessageBox.Show("Saved order removed. \n Do you want to save?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        AutoSave();
+                    }
+                    else
+                    {
+                        return;
+                    }
+                } else
+                {
+                    // Save the order
+                    AutoSave();
+                }
 
-            // Print the receipt
-            PrintKitchenReceipt();
+            }
+            //Howard: Moved the print bill kichen to autosave
 
-            MessageBox.Show("Order sent to Kitchen successfully!");
+
 
             orderedItems.Clear();
             TablePage tablePage = new TablePage();
@@ -684,18 +708,7 @@ namespace POS_System.Pages
         // (Method for save button) save order to database
         private void AutoSave()
         {
-            if (orderedItems.Count == 0 && itemClick == false)
-            {
-                MessageBox.Show("No Item in this table.Please add items before save!");
-                return;
-            }
-            else if (ExistedItem() == true && orderedItems.Count > existItemCount)
-            {
-                MessageBox.Show("No update on the list. Please check again");
-                return;
-            }
-            else
-            {
+
                 using (MySqlConnection conn = new MySqlConnection(connStr))
                 {
                     try
@@ -775,6 +788,12 @@ namespace POS_System.Pages
 
                         }
                         MessageBox.Show("Order save successfully!");
+                     // Print the receipt
+                    if (OriginalItemsCount > orderedItems.Count || ExistedItem() == false)
+                    {
+                        PrintKitchenReceipt();
+                    }
+
 
                         /*items.Clear();*/
                         TotalAmount = 0.0;
@@ -791,7 +810,7 @@ namespace POS_System.Pages
                         MessageBox.Show("Error saving order: " + ex.ToString());
                     }
                 }
-            }
+            
         }
 
         //(Method for print bill button) print kitchen receipt
@@ -874,7 +893,10 @@ namespace POS_System.Pages
             {
                 // Print the kitchen receipt
                 printDialog.PrintDocument(documentPaginator, "Kitchen Receipt");
+                MessageBox.Show("Order sent to Kitchen successfully!");
             }
+
+            
 
 
         }

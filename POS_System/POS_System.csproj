@@ -9,7 +9,9 @@
 
   <ItemGroup>
     <None Remove="Images\addUser.png" />
+    <None Remove="Images\AE.png" />
     <None Remove="Images\BackBtn.png" />
+    <None Remove="Images\Cash.png" />
     <None Remove="Images\deleteIcon.png" />
     <None Remove="Images\editIcon.png" />
     <None Remove="Images\editUser.png" />
@@ -18,7 +20,9 @@
     <None Remove="Images\ManageSales.png" />
     <None Remove="Images\ManageTable.png" />
     <None Remove="Images\ManageUser.png" />
+    <None Remove="Images\MC.png" />
     <None Remove="Images\userDelete.png" />
+    <None Remove="Images\Visa.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,7 +33,13 @@
     <Resource Include="Images\addUser.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\AE.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\BackBtn.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Cash.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\deleteIcon.png">
@@ -56,7 +66,13 @@
     <Resource Include="Images\ManageUser.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\MC.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\userDelete.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Visa.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
