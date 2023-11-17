@@ -8,7 +8,7 @@
         Title="SplitByItemPage" Height="450" Width="800">
     <Grid>
         <Label x:Name="splitByOrderName" Content="Split By Order Items" HorizontalAlignment="Center" Height="37" Margin="64,37,0,0" VerticalAlignment="Top" Width="336" FontFamily="Verdana" FontSize="16" BorderBrush="Orange" BorderThickness="3,3,3,3" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-        <ListView x:Name="fullListItems" HorizontalAlignment="Left" Height="213" Margin="32,128,0,0" VerticalAlignment="Top" Width="214" BorderBrush="Orange" BorderThickness="3,3,3,3" FontFamily="Verdana">
+        <ListView x:Name="fullListItems" HorizontalAlignment="Left" Height="213" Margin="32,128,0,0" VerticalAlignment="Top" Width="214" BorderBrush="Orange" BorderThickness="3,3,3,3" FontFamily="Verdana" SelectionMode="Multiple">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Item Name" Width="150" DisplayMemberBinding="{Binding item_name}" />

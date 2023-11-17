@@ -44,71 +44,44 @@ namespace POS_System
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(NumberOfPeopleTextBox.Text, out int numberOfPeople))
+            if (NumberOfPeopleTextBox.Text == string.Empty)
             {
-                if (numberOfPeople <= 0)
+                MessageBox.Show("Please enter number of bill on the text box!");
+            }
+            else
+            {
+                NumberOfPeople = Convert.ToInt32(NumberOfPeopleTextBox.Text);
+                if (NumberOfPeople <= 0 && NumberOfPeople.Equals(""))
                 {
                     MessageBox.Show("Please enter a valid number of people.");
                 }
                 else
                 {
 
-                    if (_totalAmount > 0)
+
+                    MessageBoxResult result = MessageBox.Show($"Do you want to split into {NumberOfPeople} bills?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
                     {
-                        
-                        double amountPerPerson = _totalAmount / numberOfPeople;
-
-                        MessageBoxResult result = MessageBox.Show($"Do you want to split into {numberOfPeople} bills?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            Menu menu = new Menu();
-                            NumberOfPeople = int.Parse(NumberOfPeopleTextBox.Text);
-
-                        }
-                        else
-                        {
-                            return;
-                        }
-
-
-                        DialogResult = true;
-                        Close();
+                        NumberOfPeople = int.Parse(NumberOfPeopleTextBox.Text);
 
                     }
                     else
                     {
-                        MessageBox.Show("The total amount is not valid.");
+                        return;
                     }
+
+
+                    DialogResult = true;
+                    Close();
+
+
                 }
             }
-            else
-            {
-                MessageBox.Show("Please enter a valid number of people.");
+ 
             }
+
         }
 
-        public ObservableCollection<SplitBill> GetSplitBills()
-        {
-            
-            foreach(OrderedItem orderedItem in _orderedItems)
-            {
-                SplitBill newSplitBill = new SplitBill
-                {
-                    // Assuming paymentId and splitType are not critical and can be set to default values.
-                    PaymentId = 0,
-                    OrderId = orderedItem.order_id,
-                    ItemName = orderedItem.item_name,
-                    Quantity = orderedItem.Quantity,
-                    Price = orderedItem.ItemPrice/ NumberOfPeople,
-                    CustomerId =+ 1,
-                    SplitType = "ByBill"  // Set a default or calculated value for splitType
-                };
-                _splitBills.Add(newSplitBill);
-            }
-            
 
-            return _splitBills;
-        }
-
-    }
+    
 }
