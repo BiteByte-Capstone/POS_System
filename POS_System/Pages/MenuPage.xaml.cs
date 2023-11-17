@@ -64,6 +64,9 @@ namespace POS_System.Pages
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
         //Splited order 
         private ObservableCollection<OrderedItem> splitOrderedItems = new ObservableCollection<OrderedItem>();
+        //List for Back-up oreredItems before split
+        private List<OrderedItem> backupOrderedItems = new List<OrderedItem>();
+
         // Event declaration
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -389,8 +392,9 @@ namespace POS_System.Pages
         //(Button for Split Bill)
         private void SplitBillButton_Click(object sender, RoutedEventArgs e)
         {
-            SplitBillDialog splitBillDialog = new SplitBillDialog(orderedItems, TotalAmount);
 
+            SplitBillDialog splitBillDialog = new SplitBillDialog(orderedItems, TotalAmount);
+            MessageBox.Show(_numberOfBill.ToString());
             
             if (splitBillDialog.ShowDialog() == true)
             {
@@ -405,7 +409,7 @@ namespace POS_System.Pages
             }
             if (_numberOfBill > 0)
             {
-
+                BackupOrderedItemCollection();
                 GetNewSplitItemList(orderedItems,_numberOfBill, _splitType);
                 Refresh();
                 MessageBox.Show($"Splited bill into {_numberOfBill}");
@@ -475,74 +479,6 @@ namespace POS_System.Pages
             return orderedItems;
         }
 
-        private void addItemToDatabase(ObservableCollection<OrderedItem> items)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-                    foreach (var orderedItem in items)
-                    {
-
-
-
-                        string itemSql = "INSERT INTO ordered_itemlist (order_id, item_id, item_name, quantity, original_item_price ,item_price, customer_id) VALUES (@orderId, @itemId, @itemName, @quantity, @originalItemPrice,@itemPrice, @customerID);";
-                        MySqlCommand itemCmd = new MySqlCommand(itemSql, conn);
-                        itemCmd.Parameters.AddWithValue("@orderId", orderedItem.order_id);
-                        itemCmd.Parameters.AddWithValue("@itemId", orderedItem.item_id);
-                        itemCmd.Parameters.AddWithValue("@itemName", orderedItem.item_name);
-                        itemCmd.Parameters.AddWithValue("@quantity", 1);
-                        itemCmd.Parameters.AddWithValue("@originalItemPrice", orderedItem.origialItemPrice);
-                        itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.ItemPrice);
-                        itemCmd.Parameters.AddWithValue("@customerID", orderedItem.customerID);
-                        itemCmd.ExecuteNonQuery();
-                    }
-
-
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.ToString());
-                }
-            }
-        }
-
-        //(Method) drop the item by order id
-        private void RemoveOrderByOrderID(long orderId)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-
-
-                    MessageBox.Show($"remove order id {orderId}");
-                    string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
-                    MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
-                    removeOrderCmd.Parameters.AddWithValue("@orderId", orderId);
-                    removeOrderCmd.ExecuteNonQuery();
-
-
-
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.ToString());
-                }
-            }
-
-
-        }
 
         //(button) go to payment page
         private void PaymentButton_Click(object sender, RoutedEventArgs e)
@@ -578,78 +514,47 @@ namespace POS_System.Pages
         }
 
 
-        //(button) reset button click
-        private void ResetButton_Click(object sender, RoutedEventArgs e)
+
+        //Button for reset Split
+        private void ResetSplitButton_Click(object sender, RoutedEventArgs e)
         {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
+            MessageBoxResult result = MessageBox.Show("Do you confirm reset the splited items. \n Do you want to go back to original?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
             {
-                try
+                splitOrderedItems.Clear();
+                orderedItems.Clear();
+                _numberOfBill = 0;
+                foreach (OrderedItem backupOrderedItem in backupOrderedItems)
                 {
-                    conn.Open();
 
-
-
-                    string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId and customer_id > 1;";
-                    MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
-                    removeOrderCmd.Parameters.AddWithValue("@orderId", GetOrderId(_tableNumber));
-                    removeOrderCmd.ExecuteNonQuery();
-
-
-
+                    orderedItems.Add(backupOrderedItem);
                 }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.ToString());
-                }
+                OrdersListBox.Items.GroupDescriptions.Clear();
+
             }
-
-            ResetCustomerID(orderedItems);
-            MessageBox.Show("Reset from Split bill.");
+            else
+            {
+                return;
+            }
             
-            LoadUnpaidOrders(_tableNumber);
+            
+
         }
 
-        //(Method for reset button) reset method
-        private void ResetCustomerID(ObservableCollection<OrderedItem> items)
+        //(Method) Back up OrderedItem collection
+        private List<OrderedItem> BackupOrderedItemCollection()
         {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
+            backupOrderedItems.Clear();
+            foreach (OrderedItem items in orderedItems) 
             {
-                try
-                {
-                    conn.Open();
-
-
-
-                    foreach (var orderedItem in items)
-                    {
-
-
-
-                        string ResetItemCustomerIDSql = "UPDATE `ordered_itemlist` SET item_price = @itemPrice, customer_id = @customerID;";
-                        MySqlCommand itemCmd = new MySqlCommand(ResetItemCustomerIDSql, conn);
-                        itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.origialItemPrice);
-                        itemCmd.Parameters.AddWithValue("@customerID", 0);
-                        itemCmd.ExecuteNonQuery();
-                    }
-
-
-
-
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.ToString());
-                }
+                backupOrderedItems.Add(items);
             }
+
+
+            return backupOrderedItems;
         }
+
+
 
         //(button)back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
@@ -1277,6 +1182,7 @@ namespace POS_System.Pages
         private void SplitbyItem_Click(object sender, RoutedEventArgs e)
         {
             SplitByItemPage splitByItemPage = new SplitByItemPage(orderedItems);
+            BackupOrderedItemCollection();
 
             if (splitByItemPage.ShowDialog() == true)
             {
@@ -1341,5 +1247,6 @@ namespace POS_System.Pages
                 }
             }
         }
+
     }
 }
