@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized" d:DesignHeight="562.387" Width="832"
-        WindowStartupLocation="CenterOwner">
-    <Grid Background="#212121">
+        Title="MainWindow" WindowState="Maximized" Width="950"
+        WindowStartupLocation="CenterOwner" Height="732">
+    <Grid Background="#212121" Margin="0,0,10,-6">
         <!-- Dark Gray Background -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -45,14 +45,16 @@
                 Grid.Row="4" 
                 Grid.ColumnSpan="4" 
                 Click="btnSubmit_Click" 
-                Content="Login" 
+                
                 HorizontalAlignment="Center" 
-                Background="Orange" 
-                Width="119" 
-                BorderBrush="#FF4C4B56" 
+                Background="Transparent" 
+                Width="243"
+                BorderBrush="Transparent" 
                 FontSize="30" 
                 FontFamily="Verdana" 
                 FontWeight="Bold" 
-                Margin="0,20"/>
+                Margin="0,20,0,9">
+            <Image Source="pack://application:,,,/POS_System;component/Images/LoginButton.png" Width="166" Height="64"/>
+        </Button>
     </Grid>
 </Window>
