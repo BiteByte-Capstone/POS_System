@@ -21,37 +21,6 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Windows.Data;
 
-
-//Code for debug
-/*foreach (OrderedItem splited in splitOrderedItems)
-{
-    string message = $"Order ID: {splited.order_id}\n" +
-                     $"Item ID: {splited.item_id}\n" +
-                     $"Item Name: {splited.item_name}\n" +
-                     $"Quantity: {splited.Quantity}\n" +
-                     $"Item Price: {splited.ItemPrice:C}\n" +  // Display as currency
-                     $"Is Existing Item: {splited.IsExistItem}\n" +
-                     $"Customer ID: {splited.customerID}";
-
-    MessageBox.Show(message);
-}
-*/
-
-/*foreach (OrderedItem splited in orderedItems)
-{
-    string message = $"Order ID: {splited.order_id}\n" +
-                     $"Item ID: {splited.item_id}\n" +
-                     $"Item Name: {splited.item_name}\n" +
-                     $"Quantity: {splited.Quantity}\n" +
-                     $"Item Price: {splited.ItemPrice:C}\n" +
-                     $"Original price: {splited.OriginalItemPrice:C}\n" +
-                     $"Is Existing Item: {splited.IsExistItem}\n" +
-                     $"Customer ID: {splited.customerID}";
-
-    MessageBox.Show(message);
-
-}*/
-
 namespace POS_System.Pages
 {
     public partial class MenuPage : Window, INotifyPropertyChanged
@@ -404,8 +373,7 @@ namespace POS_System.Pages
         {
 
             SplitBillDialog splitBillDialog = new SplitBillDialog(orderedItems, TotalAmount);
-            MessageBox.Show(_numberOfBill.ToString());
-            
+                        
             if (splitBillDialog.ShowDialog() == true)
             {
                 _numberOfBill = splitBillDialog.NumberOfPeople;
@@ -506,13 +474,13 @@ namespace POS_System.Pages
                 MessageBox.Show("New Item(s) has not saved yet. Please save before payment");
                 return;
             }
-/*            else if (orderedItems.Count < existItemCount)
+            else if (orderedItems.Count < existItemCount)
             {
                 MessageBox.Show("Remove Item has not saved yet. Please save before payment");
                 return;
-            }*/
+            }
 
-                
+
             else
             {
                 PaymentWindow paymentWindow = new PaymentWindow(this,orderedItems, _tableNumber, _orderType, orderId, _status, false, _numberOfBill);
@@ -528,24 +496,32 @@ namespace POS_System.Pages
         //Button for reset Split
         private void ResetSplitButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result = MessageBox.Show("Do you confirm reset the splited items. \n Do you want to go back to original?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
+            if (_numberOfBill > 0)
             {
-                splitOrderedItems.Clear();
-                orderedItems.Clear();
-                _numberOfBill = 0;
-                foreach (OrderedItem backupOrderedItem in backupOrderedItems)
+                MessageBoxResult result = MessageBox.Show("Do you confirm reset the splited items. \n Do you want to go back to original?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
                 {
+                    splitOrderedItems.Clear();
+                    orderedItems.Clear();
+                    _numberOfBill = 0;
+                    foreach (OrderedItem backupOrderedItem in backupOrderedItems)
+                    {
 
-                    orderedItems.Add(backupOrderedItem);
+                        orderedItems.Add(backupOrderedItem);
+                    }
+                    OrdersListBox.Items.GroupDescriptions.Clear();
+
                 }
-                OrdersListBox.Items.GroupDescriptions.Clear();
-
-            }
-            else
+                else
+                {
+                    return;
+                }
+            }else
             {
+                MessageBox.Show("Sorry! there is no split items!");
                 return;
             }
+
             
             
 

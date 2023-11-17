@@ -67,7 +67,6 @@ namespace POS_System.Pages
             _hasUnpaidOrders = hasUnpaidOrders;
             _numberOfBill = numberOfBill;
             _menuPage = menuPage;
-            MessageBox.Show("Split number:" + _numberOfBill);
             ShowPaymentPageButton(_numberOfBill);
 
 
