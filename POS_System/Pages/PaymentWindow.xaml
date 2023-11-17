@@ -11,7 +11,7 @@
             <RowDefinition Height="19*"/>
             <RowDefinition Height="55"/>
             <RowDefinition Height="189*"/>
-            <RowDefinition Height="17*"/>
+            <RowDefinition Height="17*" MinHeight="30"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel x:Name="DisplayCustomerButton_Panel" Grid.Row="0" HorizontalAlignment="Left"  Orientation="Horizontal" Width="1328" Margin="164,0,0,10"/>
-        <Frame Name="PaymentPageFrame" NavigationUIVisibility="Hidden" Margin="0,3,0,0" Grid.Row="2" Grid.Column="0" Grid.RowSpan="2"/>
+        <Frame Name="PaymentPageFrame" NavigationUIVisibility="Hidden" Margin="0,3,0,0" Grid.Row="2" Grid.Column="0"/>
         <TextBlock x:Name="CustomerNumberDisplay_TextBlock" HorizontalAlignment="Center" TextAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="823" Text="{Binding}" Height="44" FontFamily="Verdana" FontSize="40" FontWeight="Bold" Foreground="Orange" Margin="0,9,0,0"/>
         <Button Content="Cancel" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Height="57" Width="131" Click="CloseButton_Click"/>
 
