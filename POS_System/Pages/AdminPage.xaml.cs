@@ -245,6 +245,13 @@ namespace POS_System.Pages
             }
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            AdminManagement adminManagement = new AdminManagement();
+            adminManagement.Show();
+            this.Close();
+        }
+
         private void RoleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = sender as ComboBox;
@@ -252,7 +259,6 @@ namespace POS_System.Pages
             if (comboBox.SelectedItem is ComboBoxItem item)
             {
                 string selectedRole = (comboBox.SelectedItem as ComboBoxItem).Content.ToString();
-
                 int newID = GetNextIDForRole(selectedRole);
                 adduser_idBox.Text = newID.ToString();
             }

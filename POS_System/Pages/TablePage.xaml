@@ -9,7 +9,7 @@
     <Grid>
         <TextBox x:Name="UserNameTextBox" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center" Text="Welcome Back, Waiter" TextWrapping="Wrap" FontFamily="Verdana" FontSize="26" FontWeight="Bold" Background="{x:Null}" Foreground="Orange" Margin="0,10,0,20" BorderThickness="0"/>
 
-        <TabControl Name="TablePageTab" SelectionChanged="TablePageTab_SelectionChanged">
+        <TabControl Name="TablePageTab">
             <TabItem Header="DineIn" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold">
                 <Grid Background="#383838" Margin="1,0,-1,0" >
                     <Grid.RowDefinitions>
@@ -71,16 +71,14 @@
             <TabItem Header="Takeout" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold">
                 <Grid Background="#383838" >
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="67*"/>
-                        <ColumnDefinition Width="88*"/>
-                        <ColumnDefinition Width="1616*"/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
 
 
 
 
-                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Width="774" Grid.Column="2" Margin="343,0,0,0">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="774">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="17*"/>
                             <ColumnDefinition Width="241*"/>
@@ -98,8 +96,8 @@
                     </Grid>
 
 
-                    <Button x:Name="logout_button2" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" Foreground="Black" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,4,0" Grid.ColumnSpan="2"/>
-
+                    <Button x:Name="logout_button2" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Orange" Background="Red" Foreground="Black" BorderThickness="3,3,3,3" Width="151" Height="59" Click="LogoutButton_Click" Margin="0,0,1620,0"/>
+                    <Button Content="Refund" HorizontalAlignment="Left" Margin="1251,52,0,0" VerticalAlignment="Top" Click="Button_Click" Height="36"/>
 
                 </Grid>
 

@@ -23,8 +23,12 @@ namespace POS_System.Pages
     {
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         // Define properties to store table number and order type
-/*        public string TableNumber { get; private set; }
-        public string OrderType { get; private set; }*/
+        public string TableNumber { get; private set; }
+        public string OrderType { get; private set; }
+
+        public string userName { get; private set; }
+        public string userId { get; private set; }
+
 
         public TablePage()
         {
@@ -255,9 +259,12 @@ namespace POS_System.Pages
 
         }
 
-        private void TablePageTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Refund refund = new Refund();
+            refund.Show();
+            this.Close();
         }
 
 

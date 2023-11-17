@@ -53,7 +53,7 @@ namespace POS_System.Database
                     MySqlCommand command = new MySqlCommand(query, sqlConn);
                     command.Parameters.AddWithValue("@userid", enteredUserId); // Corrected parameter name
                     command.Parameters.AddWithValue("@password", enteredPassword);
-
+                    
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
