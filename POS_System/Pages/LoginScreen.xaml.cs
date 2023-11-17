@@ -56,6 +56,11 @@ namespace POS_System.Pages
                     windowAdmin.Show();
                 }
                 
+                else if (userId >=200 & userId <= 299)
+                {
+                    ManagerManagement managerManagement = new ManagerManagement();
+                    managerManagement.Show();
+                }
                 else
                 {
                     TablePage window2 = new TablePage();

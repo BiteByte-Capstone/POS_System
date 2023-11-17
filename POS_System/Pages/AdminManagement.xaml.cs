@@ -44,7 +44,6 @@ namespace POS_System.Pages
             // Open the Admin window when the button is clicked
             TablePage adminWindow = new TablePage();
             adminWindow.Show();
-            this.Close();
         }
 
         private void ManageMenuButton_Click(object sender, RoutedEventArgs e)

@@ -11,8 +11,8 @@
     <Grid Margin="0,0,10,-6">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="148"/>
-            <RowDefinition Height="269.883"/>
-            <RowDefinition Height="Auto" MinHeight="577.28"/>
+            <RowDefinition Height="217"/>
+            <RowDefinition Height="Auto" MinHeight="630.163"/>
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -88,7 +88,7 @@
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
-                BorderBrush="Orange" Click="ManageSalesButton_Click" Margin="612,2,0,8" Grid.Row="1">
+                BorderBrush="Orange" Click="ManageSalesButton_Click" Margin="612,2,0,10" Grid.Row="1">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -154,7 +154,7 @@
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
-                BorderBrush="Orange" Margin="759,30,0,356"
+                BorderBrush="Orange" Margin="758,4,0,445"
                 Click="ManageMenuButton_Click">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
@@ -186,7 +186,7 @@
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
-                BorderBrush="Orange" Margin="469,30,0,356"
+                BorderBrush="Orange" Margin="461,4,0,445"
                 Click="ManageRefundButton_Click" Grid.ColumnSpan="4">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
@@ -221,7 +221,7 @@
                 Width="140" 
                 Height="107" 
                 Click="LogoutButton_Click" 
-                Grid.Column="4" Margin="1375,207,0,0" Grid.Row="2">
+                Grid.Column="4" Margin="1374,254,0,0" Grid.Row="2">
             <Image Grid.Row="0"
                 Source="pack://application:,,,/POS_System;component/Images/Logout.png" Width="114" Height="90"/>
         </Button>
