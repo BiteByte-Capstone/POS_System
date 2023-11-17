@@ -8,11 +8,11 @@
     <DockPanel Margin="10,0,10,-6">
 
 
-        <Grid Width="1756" Background="#212121" Height="793" RenderTransformOrigin="0.571,0.493">
+        <Grid Width="1756" Background="#212121" Height="728" RenderTransformOrigin="0.571,0.493">
 
             <Grid.RowDefinitions>
 
-                <RowDefinition Height="110" />
+                <RowDefinition Height="*" MinHeight="50"/>
                 <RowDefinition Height="110"/>
 
                 <RowDefinition Height="110" MinHeight="50" />
@@ -24,7 +24,7 @@
                 <RowDefinition Height="110" MinHeight="50"/>
 
                 <RowDefinition Height="110"/>
-                <RowDefinition Height="267.872"/>
+                <RowDefinition Height="*"/>
 
             </Grid.RowDefinitions>
 
@@ -33,22 +33,31 @@
 
                 <ColumnDefinition Width="Auto" MinWidth="279" />
 
-                <ColumnDefinition Width="369*" />
-                <ColumnDefinition Width="330*"/>
-                <ColumnDefinition Width="278*"/>
-                <ColumnDefinition Width="500*"/>
+                <ColumnDefinition Width="301*" />
+                <ColumnDefinition Width="282*"/>
+                <ColumnDefinition Width="306*"/>
+                <ColumnDefinition Width="300*" MinWidth="300"/>
+                <ColumnDefinition Width="288*"/>
 
             </Grid.ColumnDefinitions>
 
             <!-- Buttons -->
 
-            <Button x:Name="cashBtn" Content="Cash" Grid.Column="0" Grid.Row="1" Margin="40,10,40,10" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="cashBtn_Click" />
+            <Button x:Name="cashBtn" Grid.Column="0" Grid.Row="1" Margin="40,10,40,10" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="cashBtn_Click" >
+                <Image Height="100" Width="189" Source="pack://application:,,,/Images/Cash.png"/>
+            </Button>
 
-            <Button x:Name="visaBtn" Content="Visa" Grid.Column="0" Margin="40,8,40,12" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="visaBtn_Click" Grid.Row="2"/>
+            <Button x:Name="visaBtn" Grid.Column="0" Margin="40,8,40,12" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="visaBtn_Click" Grid.Row="2">
+                <Image Height="100" Width="147" Source="pack://application:,,,/Images/Visa.png"/>
+            </Button>
 
-            <Button x:Name="mcBtn" Content="M/C" Grid.Row="3" Grid.Column="0" Margin="40,8,40,12" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="mcBtn_Click"/>
+            <Button x:Name="mcBtn" Grid.Row="3" Grid.Column="0" Margin="40,8,40,12" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="mcBtn_Click">
+                <Image Height="100" Width="143" Source="pack://application:,,,/Images/MC.png"/>
+            </Button>
 
-            <Button x:Name="amexBtn" Content="AMEX" Grid.Row="4" Grid.Column="0" Margin="40,7,40,13" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="amexBtn_Click"/>
+            <Button x:Name="amexBtn" Grid.Row="4" Grid.Column="0" Margin="40,7,40,13" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="amexBtn_Click">
+                <Image Height="100" Width="149" Source="pack://application:,,,/Images/AE.png"/>
+            </Button>
 
             <Button x:Name="SaveButton" Content="Save" Grid.Row="5" Margin="40,10,40,10" Foreground="Black" Background="Green" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SavePaymentButton_Click" />
 
@@ -56,32 +65,32 @@
 
             <!-- Labels and TextBlocks -->
 
-            <Label x:Name="orderAmtLabel" Content="Total Order Amount:" Grid.Column="1" Margin="109,0,10,0" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" RenderTransformOrigin="0.247,0.55" Height="80" VerticalAlignment="Center" Grid.Row="1" VerticalContentAlignment="Center"/>
+            <Label x:Name="orderAmtLabel" Content="Total Order Amount:" Grid.Column="1" Margin="74,50,0,0" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" RenderTransformOrigin="0.247,0.55" Height="80" VerticalAlignment="Top" Grid.Row="1" VerticalContentAlignment="Center" Grid.RowSpan="2"/>
 
-            <Label x:Name="customerPayLabel" Content="Customer Payment : " Grid.Column="1" Margin="109,10,10,10" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" Grid.Row="4" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" VerticalContentAlignment="Center"/>
+            <Label x:Name="customerPayLabel" Content="Customer Payment : " Grid.Column="1" Margin="64,8,10,12" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" Grid.Row="5" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" VerticalContentAlignment="Center"/>
 
-            <Label x:Name="tipsLabel" Content="Tips : " Grid.Column="1" Margin="109,10,10,10" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" Grid.Row="5" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" VerticalContentAlignment="Center"/>
+            <Label x:Name="tipsLabel" Content="Tips : " Grid.Column="3" Margin="10,10,18,10" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" Grid.Row="4" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" VerticalContentAlignment="Center"/>
 
-            <Label x:Name="changeLabel" Content="Change : " Grid.Column="1" Margin="109,12,10,12" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" Grid.Row="6" BorderThickness="3" BorderBrush="#FF4C4B56" VerticalContentAlignment="Center"/>
+            <Label x:Name="changeLabel" Content="Change : " Grid.Column="3" Margin="10,10,18,14" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" Grid.Row="5" BorderThickness="3" BorderBrush="#FF4C4B56" VerticalContentAlignment="Center"/>
 
 
-            <TextBlock x:Name="totalAmtTextBox" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,20,0" TextWrapping="Wrap" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Grid.Row="1" Foreground="Orange" Height="50" Cursor="ArrowCD"/>
+            <TextBlock x:Name="totalAmtTextBox" TextAlignment="Right" Grid.Column="2" VerticalAlignment="Top" Margin="0,73,65,0" TextWrapping="Wrap" FontSize="25" FontFamily="Verdana" FontWeight="Bold"  Grid.Row="1" Foreground="Orange" Height="50" Cursor="ArrowCD" Grid.RowSpan="2"/>
 
-            <TextBox x:Name="customerPayTextBox" PreviewTextInput="CustomerPayTextBox_PreviewTextInput" PreviewKeyDown="CustomerPayTextBox_PreviewKeyDown" TextChanged="CustomerPayTextBox_TextChanged" Grid.Column="2" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Width="300" Height="90"  FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Margin="10,0,0,0" Foreground="White" BorderThickness="5,5,5,5" BorderBrush="#FFFFDF6D" Background="#FF4C4B56"/>
+            <TextBox x:Name="customerPayTextBox" PreviewTextInput="CustomerPayTextBox_PreviewTextInput" PreviewKeyDown="CustomerPayTextBox_PreviewKeyDown" TextChanged="CustomerPayTextBox_TextChanged" Grid.Column="2" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="90"  FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Foreground="White" BorderThickness="5,5,5,5" BorderBrush="#FFFFDF6D" Background="#FF4C4B56"/>
 
-            <TextBlock x:Name="tipsTextbox" Grid.Column="2" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="50" Width="300" Background="{x:Null}" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Margin="10,0,0,0" Foreground="Orange" />
+            <TextBlock x:Name="tipsTextbox" Grid.Column="4" Grid.Row="4" TextWrapping="Wrap" Background="{x:Null}" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Margin="28,30,97,30" Foreground="Orange" />
 
-            <Label x:Name="totalTax" Content="GST : " Grid.Column="1" Margin="109,8,10,12" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" RenderTransformOrigin="0.247,0.55" Grid.Row="3" VerticalContentAlignment="Center"/>
+            <Label x:Name="totalTax" Content="GST : " Grid.Column="1" Margin="74,20,0,0" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" RenderTransformOrigin="0.247,0.55" Grid.Row="2" VerticalContentAlignment="Center"/>
 
-            <TextBlock x:Name="totalTaxTextBox" Grid.Column="2" HorizontalAlignment="Left" TextWrapping="Wrap" Width="300" Background="{x:Null}" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Grid.Row="3" Height="50" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="Orange"/>
+            <TextBlock x:Name="totalTaxTextBox" Grid.Column="2" TextAlignment="Right" TextWrapping="Wrap" Background="{x:Null}" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.Row="2" Height="50" VerticalAlignment="Top" Margin="0,40,65,0" Foreground="Orange"/>
 
-            <TextBlock x:Name="changeTextBox" Grid.Column="2" Margin="10,0,0,0" Grid.Row="6" TextWrapping="Wrap" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" RenderTransformOrigin="0.495,0.567" Height="50" VerticalAlignment="Center" HorizontalAlignment="Left" Width="300" Foreground="Orange" />
+            <TextBlock x:Name="changeTextBox" Grid.Column="4" Margin="28,28,97,32" Grid.Row="5" TextWrapping="Wrap" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" RenderTransformOrigin="0.495,0.567" Foreground="Orange" />
 
-            <Label x:Name="Balance" Content="Balance : " Grid.Column="1" Margin="109,10,10,10" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" Grid.Row="2" VerticalContentAlignment="Center"/>
+            <Label x:Name="Balance" Content="Balance : " Grid.Column="1" Margin="74,0,0,20" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" Grid.Row="3" VerticalContentAlignment="Center"/>
 
-            <TextBlock x:Name="balanceTextBox" Grid.Column="2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Height="50" Width="300" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Grid.Row="2" Margin="10,0,0,0" Foreground="Orange"/>
+            <TextBlock x:Name="balanceTextBox" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Top" Height="50" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Right" Grid.Row="3" Margin="0,20,65,0" Foreground="Orange"/>
 
-            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="109,0,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Height="0" Width="205" RenderTransformOrigin="0.5,0.5">
+            <TextBlock Grid.Column="1" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Height="0" Width="206" RenderTransformOrigin="0.5,0.5">
 
                 <TextBlock.RenderTransform>
 
@@ -101,17 +110,17 @@
 
             </TextBlock>
 
-            <TextBlock x:Name="TableNumberLabel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,19,0,0" VerticalAlignment="Top" TextAlignment="Center" Height="30" Width="166" Text="Table Number :" FontFamily="Verdana" FontSize="20" Foreground="White"/>
+            <TextBlock x:Name="TableNumberLabel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Center" Height="30" Width="166" Text="Table Number :" FontFamily="Verdana" FontSize="20" Foreground="White"/>
 
-            <TextBox x:Name="tableNumTextbox" Grid.Column="1" HorizontalAlignment="Left" Margin="181,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173" Height="33" FontFamily="Verdana" FontSize="20" BorderBrush="Orange" Foreground="Orange" Background="{x:Null}" />
+            <TextBox x:Name="tableNumTextbox" Grid.Column="1" HorizontalAlignment="Left" Margin="181,7,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" Height="33" FontFamily="Verdana" FontSize="20" BorderBrush="Orange" Foreground="Orange" Background="{x:Null}" />
 
-            <TextBlock x:Name="OrderIdLabel" Grid.Column="2" Margin="10,19,198,0" VerticalAlignment="Top" Height="36" TextAlignment="Center" Text="Order ID :" FontFamily="Verdana" FontSize="20" Foreground="White"/>
+            <TextBlock x:Name="OrderIdLabel" Grid.Column="2" Margin="10,13,141,1" TextAlignment="Center" Text="Order ID :" FontFamily="Verdana" FontSize="20" Foreground="White"/>
 
-            <TextBox x:Name="orderIdTextbox" Grid.Column="2" Margin="137,16,33,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="30" FontFamily="Verdana" FontSize="20" Foreground="Orange" BorderBrush="Orange" Background="{x:Null}" />
+            <TextBox x:Name="orderIdTextbox" Grid.Column="2" Margin="137,0,33,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="30" FontFamily="Verdana" FontSize="20" Foreground="Orange" BorderBrush="Orange" Background="{x:Null}" />
 
-            <TextBlock x:Name="typeLabel" Grid.Column="3" HorizontalAlignment="Left" Margin="0,18,0,60" TextWrapping="Wrap" Width="88" Text="Type :" FontFamily="Verdana" FontSize="20" Foreground="White" TextAlignment="Center"/>
+            <TextBlock x:Name="typeLabel" Grid.Column="3" HorizontalAlignment="Left" Margin="0,8,0,12" TextWrapping="Wrap" Width="88" Text="Type :" FontFamily="Verdana" FontSize="20" Foreground="White" TextAlignment="Center"/>
 
-            <TextBox x:Name="typeTextBox" Grid.Column="3" HorizontalAlignment="Left" Margin="88,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172" Height="33" FontFamily="Verdana" FontSize="20" BorderBrush="Orange" Background="{x:Null}" Foreground="Orange"/>
+            <TextBox x:Name="typeTextBox" Grid.Column="3" Margin="93,0,18,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="34" FontFamily="Verdana" FontSize="20" BorderBrush="Orange" Background="{x:Null}" Foreground="Orange"/>
 
         </Grid>
 
