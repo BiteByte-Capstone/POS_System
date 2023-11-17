@@ -52,9 +52,9 @@
 
                     </Grid.RowDefinitions>
 
-                    <Button Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitBillButton_Click" Grid.Column="1" Grid.Row="0" Margin="1,0,0,0" />
-                    <Button Content="Split Item" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitbyItem_Click" Grid.Column="1" Margin="1,78,0,0" Grid.RowSpan="2" />
-                    <Button  Background="{x:Null}" BorderBrush="Red" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetSplitButton_Click" Foreground="Red" BorderThickness="3,3,3,3" Grid.RowSpan="2" >
+                    <Button Name="SplitBillButton" Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitBillButton_Click" Grid.Column="1" Grid.Row="0" Margin="1,0,0,0" />
+                    <Button Name="SplitItemButton" Content="Split Item" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitbyItem_Click" Grid.Column="1" Margin="1,78,0,0" Grid.RowSpan="2" />
+                    <Button Name="ResetSplitButton" Background="{x:Null}" BorderBrush="Red" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetSplitButton_Click" Foreground="Red" BorderThickness="3,3,3,3" Grid.RowSpan="2" >
                         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock Text="Reset" TextWrapping="Wrap" TextAlignment="Center" RenderTransformOrigin="0.5,0.5">
                                 <TextBlock.RenderTransform>

@@ -98,6 +98,11 @@ namespace POS_System.Pages
             if (_orderType == "Take-Out")
             {
                 TableNumberTextBlock.Text = "     Take-Out# : ";
+                SplitBillButton.IsEnabled = false;
+                SplitItemButton.IsEnabled = false;
+                ResetSplitButton.IsEnabled = false;
+
+
             }
 
             if (hasUnpaidOrders)
