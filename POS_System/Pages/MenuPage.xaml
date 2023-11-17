@@ -14,8 +14,8 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="54.04"/>
             <RowDefinition Height="41.96"/>
-            <RowDefinition Height="40.04"/>
-            <RowDefinition Height="370"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="355.04"/>
             <RowDefinition Height="66"/>
             <RowDefinition Height="93.96"/>
 
@@ -96,7 +96,7 @@
 
         <!-- Table Information (middle part)-->
 
-        <Label Name="MenuLabel" Content="Menu" HorizontalAlignment="Center" VerticalAlignment="Center" Width="550" Height="56" FontFamily="Verdana" FontSize="32" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Background="Orange" Foreground="Black" Grid.Row="1"/>
+        <Label Name="MenuLabel" Content="Menu" VerticalAlignment="Center" Height="56" FontFamily="Verdana" FontSize="32" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Background="Orange" Foreground="Black" Grid.Row="1"/>
 
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
         Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Margin="0,54,0,0">
@@ -176,7 +176,7 @@
             </Grid>
         </Border>
         <!--list view: list all order-->
-        <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Margin="0,40,0,0" Grid.Row="3" Grid.RowSpan="2" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold">
+        <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Grid.Row="4" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Foreground" Value="White"/>
@@ -221,7 +221,7 @@
 
 
         <Border BorderBrush="Orange" BorderThickness="1" 
-         Margin="0,370,0,0" Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Background="Black">
+         Margin="0,4,0,0" Grid.Column="2" Grid.Row="5" Background="Black">
             <TextBlock Name="TotalAmountTextBlock" TextAlignment="Right" HorizontalAlignment="Center" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="63" Width="550" FontSize="18" Foreground="#FF969696" Background="#FF454545" Padding="20" FontFamily="Verdana" />
         </Border>
 
@@ -232,16 +232,16 @@
 
         <!-- category button list-->
         <Border BorderBrush="Orange" BorderThickness="1" 
-         Margin="0,54,15,0" Grid.Column="3" Grid.Row="1" Grid.RowSpan="3">
-            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Margin="0,0,15,10" >
+         Margin="0,54,15,0" Grid.Column="3" Grid.RowSpan="3" Grid.Row="1">
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Margin="-1,-1,-1,-1" >
                 <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="0,0,0,0"/>
             </ScrollViewer>
         </Border>
 
         <!-- item button list -->
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
-         Margin="0,40,15,0" Grid.Column="3" Grid.Row="3" Grid.RowSpan="3">
-            <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal"/>
+         Margin="0,0,15,0" Grid.Column="3" Grid.Row="4" Grid.RowSpan="2">
+            <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="0,18,0,0"/>
         </Border>
 
 
