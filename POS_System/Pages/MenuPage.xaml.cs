@@ -120,9 +120,9 @@ namespace POS_System.Pages
         private void GroupItemList()
         {
 
-            OrdersListBox.Items.GroupDescriptions.Clear();
+            OrdersListView.Items.GroupDescriptions.Clear();
             var property = "FormattedCustomerID";
-            OrdersListBox.Items.GroupDescriptions.Add(new PropertyGroupDescription(property));
+            OrdersListView.Items.GroupDescriptions.Add(new PropertyGroupDescription(property));
 
         }
 
@@ -140,7 +140,7 @@ namespace POS_System.Pages
 
         private void LoadUnpaidOrders(string tableNumber)
         {
-            OrdersListBox.Items.GroupDescriptions.Clear();
+            OrdersListView.Items.GroupDescriptions.Clear();
             orderedItems.Clear();
             TotalAmount = 0;
             using (MySqlConnection conn = new MySqlConnection(connStr))
@@ -178,7 +178,7 @@ namespace POS_System.Pages
                                 Quantity = Convert.ToInt32(row["quantity"]),
                                 ItemPrice = Convert.ToDouble(row["item_price"]),
                                 origialItemPrice = Convert.ToDouble(row["original_item_price"]),
-                                IsExistItem = true,
+                                IsSavedItem = true,
                                 customerID = Convert.ToInt32(row["customer_id"])
                             };
                             OriginalItemsCount++;
@@ -359,7 +359,7 @@ namespace POS_System.Pages
                 Quantity = 1, 
                 origialItemPrice = item.ItemPrice,
                 ItemPrice = item.ItemPrice,
-                IsExistItem = false,
+                IsSavedItem = false,
                 customerID = 0
             };
 
@@ -461,7 +461,7 @@ namespace POS_System.Pages
                         Quantity = splitOrderedItem.Quantity,
                         origialItemPrice = splitOrderedItem.origialItemPrice,
                         ItemPrice = splitOrderedItem.ItemPrice,
-                        IsExistItem = true,
+                        IsSavedItem = true,
                         customerID = i
 
                     };
@@ -484,7 +484,7 @@ namespace POS_System.Pages
                     Quantity = splitOrderedItem.Quantity,
                     origialItemPrice = splitOrderedItem.origialItemPrice,
                     ItemPrice = splitOrderedItem.ItemPrice / numberOfBill,
-                    IsExistItem = true,
+                    IsSavedItem = true,
                     customerID = i  
                 };
                     splitOrderedItems.Add(newSplitBill);
@@ -513,7 +513,7 @@ namespace POS_System.Pages
                 MessageBox.Show("No item on this table. Please save before payment");
                 return;
             }
-            else if (ExistedItem() == false && orderedItems.Count != OriginalItemsCount)
+            else if (IsSavedItem() == false && orderedItems.Count != OriginalItemsCount)
             {
                 MessageBox.Show("New Item(s) has not saved yet. Please save before payment");
                 return;
@@ -532,6 +532,54 @@ namespace POS_System.Pages
                 
 
 
+            }
+        }
+
+        // new cancel button Thevagi from PK
+        //Method for CancelButtonClick - By PK
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_hasPaidOrders.Equals(false))
+            {
+                MessageBox.Show("This page has no unpaid order");
+            }
+            else
+            {
+                CancelOrder(_tableNumber);
+                TablePage tablePage = new TablePage();
+                tablePage.ShowDialog();
+                this.Close();
+
+            }
+        }
+
+        //Method for CancelOrder - By PK
+        private void CancelOrder(string tableNumber)
+        {
+            //MessageBox.Show("Order Canceled");
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    long orderId = GetOrderId(tableNumber);
+                    string cancelOrderSql = "UPDATE pos_db.order SET paid = 'c' WHERE order_id = @orderId;";
+                    MySqlCommand cancelOrderCmd = new MySqlCommand(cancelOrderSql, conn);
+                    cancelOrderCmd.Parameters.AddWithValue("@orderId", orderId);
+                    MessageBox.Show(cancelOrderSql);
+                    cancelOrderCmd.ExecuteReader();
+                    conn.Close();
+
+                    //OrdersListBox.Items.GroupDescriptions.Clear(); <--- Is this needed?
+                    orderedItems.Clear();
+                    //TotalAmount = 0; <--- Is this needed?
+
+                    MessageBox.Show("Order ID: " + orderId + " has been canceled!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error canceling orders: " + ex.ToString());
+                }
             }
         }
 
@@ -565,7 +613,7 @@ namespace POS_System.Pages
                 }
             }
 
-            else if (OriginalItemsCount > 0 && ExistedItem() == false) //Condition: it is for existing order and added items
+            else if (OriginalItemsCount > 0 && IsSavedItem() == false) //Condition: it is for existing order and added items
             {
                 MessageBoxResult result = MessageBox.Show("There are unsave item(s) on the list. \n Do you want to remove all add items?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
@@ -624,7 +672,7 @@ namespace POS_System.Pages
                 orderedItems.Add(backupOrderedItem);
                 TotalAmount +=backupOrderedItem.ItemPrice;
             }
-            OrdersListBox.Items.GroupDescriptions.Clear();
+            OrdersListView.Items.GroupDescriptions.Clear();
             TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", new CultureInfo("en-CA"));
         }
 
@@ -646,51 +694,48 @@ namespace POS_System.Pages
         //(button)back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
-            if (orderedItems.Count != OriginalItemsCount)
+            if (orderedItems.Count < OriginalItemsCount) // Condition: removed item
             {
 
-                MessageBoxResult result = MessageBox.Show("Removed order on the list. \n Do you want to go back without save?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                MessageBoxResult result = MessageBox.Show("Removed Item on the list. \n\n\n Do you want to save? \nYes --- Save the order \nNo --- Close window", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    BackToTablePage();
-                    
+                    AutoSave();
+
                 }
                 else
                 {
-                    return;
+                    BackToTablePage();
                 }
             }
 
-            else if (ExistedItem() == true || StatusTextBlock.Text == "New Order")
+            else if (IsSavedItem() == false && orderedItems.Count > OriginalItemsCount ) // Condition: added item 
             {
 
+                MessageBoxResult result = MessageBox.Show("There is new item on the list. \n\n\n Do you want to save? \nYes --- Save the order \nNo --- Close window", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    AutoSave();
+                }
+                else
+                {
+                    BackToTablePage();
+                }
+            }
+
+            else if (IsSavedItem() == true || StatusTextBlock.Text == "New Order")
+            {
                 BackToTablePage();
             }
-            else if (ExistedItem() == false)
-            {
-
-                MessageBoxResult result = MessageBox.Show("There is new item on the list. \n Do you want to go back without save?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    BackToTablePage();
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-
-
-                
 
         }
         
 
 
-        //Method: for go back table page.
+        //Method : for go back table page.
         private void BackToTablePage()
         {
+            orderedItems.Clear();
             TablePage tablePage = new TablePage();
 
             if (TypeTextBox.Text.Equals("Take-Out"))
@@ -707,33 +752,33 @@ namespace POS_System.Pages
             this.Close();
         }
 
-        //Method: check if any item is old item (ie. exist items)
-        private bool ExistedItem()
+        //Method : check if any item is old item (ie. exist items)
+        private bool IsSavedItem()
         {
-            bool ExistedItem = false;
+            bool IsSavedItem = false;
 
                 foreach (OrderedItem itemOnListView in OrderedItems)
                 {
-                    if (itemOnListView.IsExistItem == false)
+                    if (itemOnListView.IsSavedItem == false)
                     {
-                        ExistedItem = false; //added new item on list but not yet save
+                    IsSavedItem = false; //added new item on list but not yet save
                     }
-                    else if (itemOnListView.IsExistItem == true)
+                    else if (itemOnListView.IsSavedItem == true)
                     {
-                        ExistedItem = true; //nothing added on the existing list
+                    IsSavedItem = true; //nothing added on the existing list
                     }
 
                 }
             
-            return ExistedItem;
+            return IsSavedItem;
         }
 
         //button for void item: remove item from list view
-        private void VoidButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteItemButton_Click(object sender, RoutedEventArgs e)
         {
 
 
-            if(OrdersListBox.SelectedItem is OrderedItem selectedOrderedItem)
+            if(OrdersListView.SelectedItem is OrderedItem selectedOrderedItem)
             {
 /*                if (ExistedItem() == true)
                 {*/
@@ -766,7 +811,7 @@ namespace POS_System.Pages
                 MessageBox.Show("No Item in this table.Please add items before save!");
                 return;
             }
-            else if (ExistedItem() == true && OriginalItemsCount == orderedItems.Count)//Condition: if no items added to existing order  
+            else if (IsSavedItem() == true && OriginalItemsCount == orderedItems.Count)//Condition: if no items added to existing order  
             {
                 MessageBox.Show("No update on the list. Please check again");
                 return;
@@ -798,10 +843,7 @@ namespace POS_System.Pages
 
 
 
-            orderedItems.Clear();
-            TablePage tablePage = new TablePage();
-            tablePage.Show();
-            this.Close();
+
             
 
 
@@ -894,18 +936,13 @@ namespace POS_System.Pages
                         }
                         MessageBox.Show("Order save successfully!");
                      // Print the receipt
-                    if (OriginalItemsCount > orderedItems.Count || ExistedItem() == false)
+                    if (OriginalItemsCount > orderedItems.Count || IsSavedItem() == false)
                     {
                         PrintKitchenReceipt();
                     }
-
-
-                        /*items.Clear();*/
-                        TotalAmount = 0.0;
-                        TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C");
-                        conn.Close();
-
-                    }
+                    conn.Close();
+                    BackToTablePage();
+                }
                     catch (MySqlException ex)
                     {
                         MessageBox.Show("MySQL Error: " + ex.Message);
@@ -1280,53 +1317,7 @@ namespace POS_System.Pages
         }
 
 
-        // new cancel button Thevagi from PK
-        //Method for CancelButtonClick - By PK
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_hasPaidOrders.Equals(false))
-            {
-                MessageBox.Show("This page has no unpaid order");
-            }
-            else
-            {
-                CancelOrder(_tableNumber);
-                TablePage tablePage = new TablePage();
-                tablePage.ShowDialog();
-                this.Close();
-
-            }
-        }
-
-        //Method for CancelOrder - By PK
-        private void CancelOrder(string tableNumber)
-        {
-            //MessageBox.Show("Order Canceled");
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-                    long orderId = GetOrderId(tableNumber);
-                    string cancelOrderSql = "UPDATE pos_db.order SET paid = 'c' WHERE order_id = @orderId;";
-                    MySqlCommand cancelOrderCmd = new MySqlCommand(cancelOrderSql, conn);
-                    cancelOrderCmd.Parameters.AddWithValue("@orderId", orderId);
-                    MessageBox.Show(cancelOrderSql);
-                    cancelOrderCmd.ExecuteReader();
-                    conn.Close();
-
-                    //OrdersListBox.Items.GroupDescriptions.Clear(); <--- Is this needed?
-                    orderedItems.Clear();
-                    //TotalAmount = 0; <--- Is this needed?
-
-                    MessageBox.Show("Order ID: " + orderId + " has been canceled!");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error canceling orders: " + ex.ToString());
-                }
-            }
-        }
+        
 
     }
 }

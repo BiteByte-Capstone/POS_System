@@ -111,7 +111,7 @@ namespace POS_System.Pages
                         Quantity = splitedItem.Quantity,
                         origialItemPrice = splitedItem.origialItemPrice,
                         ItemPrice = splitedItem.ItemPrice,
-                        IsExistItem = true,
+                        IsSavedItem = true,
                         customerID = currentCustomerId
                     };
                     _assignCustomerIDItems.Add(newSplitByItemBill);
