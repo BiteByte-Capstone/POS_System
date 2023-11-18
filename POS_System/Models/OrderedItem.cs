@@ -1,5 +1,6 @@
 ﻿using Org.BouncyCastle.Security;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace POS_System.Models
@@ -22,6 +23,7 @@ namespace POS_System.Models
         private bool _isExistItem;
         private bool _isSettled;
         private int _customerID;
+
 
         // Properties
         public int order_id

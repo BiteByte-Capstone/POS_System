@@ -20,6 +20,7 @@ using System.Data.Common;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Windows.Data;
+using POS.Models;
 
 namespace POS_System.Pages
 {
@@ -29,7 +30,7 @@ namespace POS_System.Pages
         public string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         //categories
         private ObservableCollection<Category> categories = new ObservableCollection<Category>();
-        //existing order
+        //existing order & !!! it is collect to show on list view
         private ObservableCollection<OrderedItem> orderedItems = new ObservableCollection<OrderedItem>();
         //Splited order 
         private ObservableCollection<OrderedItem> splitOrderedItems = new ObservableCollection<OrderedItem>();
@@ -62,12 +63,12 @@ namespace POS_System.Pages
         private string _orderType;
         private string _status;
         private bool _hasPaidOrders;
-        private int _numberOfBill;
+        private int _numberOfBill; //if more than 0, mean splitted order
         private string _splitType = "No Split";
 
         private double TotalAmount = 0.0;
         private int OriginalItemsCount = 0;
-        private bool itemClick = false;
+        private bool itemClick = false; //for condition for empty list (save button)
         private bool isSplited = false;
 
 
@@ -100,7 +101,6 @@ namespace POS_System.Pages
                 TableNumberTextBlock.Text = "     Take-Out# : ";
                 SplitBillButton.IsEnabled = false;
                 SplitItemButton.IsEnabled = false;
-                ResetButton.IsEnabled = false;
             }
 
             if (hasUnpaidOrders)
@@ -156,53 +156,54 @@ namespace POS_System.Pages
                     DataTable unpaidOrdersTable = new DataTable();
                     dataAdapter.Fill(unpaidOrdersTable);
 
-                    if (unpaidOrdersTable.Rows.Count > 0)
-                    {
-
-                        OrderIdTextBlock.Text = orderId.ToString();
-                    }
-                    else if (unpaidOrdersTable.Rows.Count == 0)
-                    {
-
-                        StatusTextBlock.Text = "Deleted all saved order before";
-                        OrderIdTextBlock.Text = orderId.ToString();
-                    }
-
-                    foreach (DataRow row in unpaidOrdersTable.Rows)
-                    {
-                        OrderedItem orderedItem = new OrderedItem
+                        if (unpaidOrdersTable.Rows.Count > 0)
                         {
-                            order_id = Convert.ToInt32(row["order_id"]),
-                            item_id = Convert.ToInt32(row["item_id"]),
-                            item_name = row["item_name"].ToString(),
-                            Quantity = Convert.ToInt32(row["quantity"]),
-                            ItemPrice = Convert.ToDouble(row["item_price"]),
-                            origialItemPrice = Convert.ToDouble(row["original_item_price"]),
-                            IsExistItem = true,
-                            customerID = Convert.ToInt32(row["customer_id"])
-                        };
-                        OriginalItemsCount++;
-                        _numberOfBill = orderedItem.customerID;
 
-
-                        if (orderedItem.customerID > 0)
-                        {
-                            isSplited = true;
-                        } else if (orderedItem.customerID == 0)
-                        {
-                            isSplited = false;
+                            OrderIdTextBlock.Text = orderId.ToString();
                         }
-                        orderedItems.Add(orderedItem);
-                        BackupOrderedItemCollection();
+                        else if (unpaidOrdersTable.Rows.Count == 0)
+                        {
 
-                        TotalAmount += orderedItem.ItemPrice;
-                    }
-                    TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", new CultureInfo("en-CA"));
-                    
-                    if (isSplited == true)
-                    {
-                        GroupItemList();
-                    }
+                            StatusTextBlock.Text = "Deleted all saved order before";
+                            OrderIdTextBlock.Text = orderId.ToString();
+                        }
+
+                        foreach (DataRow row in unpaidOrdersTable.Rows)
+                        {
+                            OrderedItem orderedItem = new OrderedItem
+                            {
+                                order_id = Convert.ToInt32(row["order_id"]),
+                                item_id = Convert.ToInt32(row["item_id"]),
+                                item_name = row["item_name"].ToString(),
+                                Quantity = Convert.ToInt32(row["quantity"]),
+                                ItemPrice = Convert.ToDouble(row["item_price"]),
+                                origialItemPrice = Convert.ToDouble(row["original_item_price"]),
+                                IsExistItem = true,
+                                customerID = Convert.ToInt32(row["customer_id"])
+                            };
+                            OriginalItemsCount++;
+                            _numberOfBill = orderedItem.customerID;
+
+
+                            if (orderedItem.customerID > 0)
+                            {
+                                isSplited = true;
+                            }
+                            else if (orderedItem.customerID == 0)
+                            {
+                                isSplited = false;
+                            }
+                            orderedItems.Add(orderedItem);
+                            BackupOrderedItemCollection();
+
+                            TotalAmount += orderedItem.ItemPrice;
+                        }
+                        TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", new CultureInfo("en-CA"));
+
+                        if (isSplited == true)
+                        {
+                            GroupItemList();
+                        }
 
 
                     
@@ -213,6 +214,9 @@ namespace POS_System.Pages
                 {
                     MessageBox.Show("Error loading unpaid orders: " + ex.ToString());
                 }
+            
+                    
+                
             }
         }
 
@@ -350,7 +354,6 @@ namespace POS_System.Pages
             // Convert Item to OrderedItem
             OrderedItem orderedItem = new OrderedItem
             {
-
                 item_id = item.Id,
                 item_name = item.item_name,
                 Quantity = 1, 
@@ -447,7 +450,9 @@ namespace POS_System.Pages
             {
                 if (splitType == "ByItem")
                 {
-                    OrderedItem newSplitBill = new OrderedItem
+                    for (int i = 1; numberOfBill > 0; i++)
+                    {
+                        OrderedItem newSplitBill = new OrderedItem
                     {
 
                         order_id = splitOrderedItem.order_id,
@@ -457,9 +462,14 @@ namespace POS_System.Pages
                         origialItemPrice = splitOrderedItem.origialItemPrice,
                         ItemPrice = splitOrderedItem.ItemPrice,
                         IsExistItem = true,
-                        customerID = splitOrderedItem.customerID
+                        customerID = i
+
                     };
-                    splitOrderedItems.Add(newSplitBill);
+                        splitOrderedItems.Add(newSplitBill);
+                        
+                        numberOfBill--;
+                    }
+
                 }
                 else if (splitType == "ByBill")
                 {
@@ -530,45 +540,23 @@ namespace POS_System.Pages
         //Button for reset Split
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_splitType == "No Split")
+            if (orderedItems.Count == 0) //Condition: it is for empty list
             {
-                MessageBox.Show("Sorry! there is no split items!");
+                MessageBox.Show("Sorry! there is nothing to reset!");
                 return;
             }
-            else if (_numberOfBill > 0 && (_splitType == "By Item" || _splitType == "By Bill")) //Condition: it is for split order
+            
+            else if (OriginalItemsCount == orderedItems.Count)
             {
-                MessageBoxResult result = MessageBox.Show("Do you confirm reset split items?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                MessageBox.Show("Sorry! there is no change on the list");
+            }
+
+            else if (_numberOfBill > 0 && (_splitType == "ByItem" || _splitType == "ByBill")) //Condition: it is for split order
+            {
+                MessageBoxResult result = MessageBox.Show("There is splitted order. \nDo you confirm reset split items?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    splitOrderedItems.Clear();
-                    orderedItems.Clear();
-                    _numberOfBill = 0;
-                    foreach (OrderedItem backupOrderedItem in backupOrderedItems)
-                    {
-
-                        orderedItems.Add(backupOrderedItem);
-                    }
-                    OrdersListBox.Items.GroupDescriptions.Clear();
-
-                }
-                else
-                {
-                    return;
-                }
-            }else if (OriginalItemsCount > 0 && ExistedItem() == false) //Condition: it is for existing order and added items
-            {
-                MessageBoxResult result = MessageBox.Show("Do you confirm reset order before adding new item. \n Do you want to reset and without split order?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    splitOrderedItems.Clear();
-                    orderedItems.Clear();
-                    _numberOfBill = 0;
-                    foreach (OrderedItem backupOrderedItem in backupOrderedItems)
-                    {
-
-                        orderedItems.Add(backupOrderedItem);
-                    }
-                    OrdersListBox.Items.GroupDescriptions.Clear();
+                    Reset();
 
                 }
                 else
@@ -577,10 +565,67 @@ namespace POS_System.Pages
                 }
             }
 
+            else if (OriginalItemsCount > 0 && ExistedItem() == false) //Condition: it is for existing order and added items
+            {
+                MessageBoxResult result = MessageBox.Show("There are unsave item(s) on the list. \n Do you want to remove all add items?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Reset();
 
+                }
+                else
+                {
+                    return;
+                }
+            } 
             
-            
+            else if (OriginalItemsCount > orderedItems.Count)
+            {
+                MessageBoxResult result = MessageBox.Show("Saved Item was removed before. \n Do you want to put back the saved item?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Reset();
 
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            else if (OriginalItemsCount == 0 && itemClick == true && orderedItems.Count>0)
+            {
+                MessageBoxResult result = MessageBox.Show("New item added on the list \n Do you want to clear all items?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Reset();
+
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+        }
+
+        //(Method) Reset order to backup
+        private void Reset()
+        {
+            splitOrderedItems.Clear();
+            orderedItems.Clear();
+            _numberOfBill = 0;
+            TotalAmount = 0;
+            _splitType = "No Split";
+
+            foreach (OrderedItem backupOrderedItem in backupOrderedItems)
+            {
+
+                orderedItems.Add(backupOrderedItem);
+                TotalAmount +=backupOrderedItem.ItemPrice;
+            }
+            OrdersListBox.Items.GroupDescriptions.Clear();
+            TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", new CultureInfo("en-CA"));
         }
 
         //(Method) Back up OrderedItem collection
@@ -999,7 +1044,6 @@ namespace POS_System.Pages
         }
 
 
-        // Print customer receipt
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
             PrintDialog printDialog = new PrintDialog();
@@ -1012,176 +1056,164 @@ namespace POS_System.Pages
                 // Calculate TotalAmount with GST included
                 double totalAmountWithGST = TotalAmount + gstAmount;
 
-                // Create a FlowDocument
-                FlowDocument flowDocument = new FlowDocument();
-
-                // Add the "-------------------------------------------------" separator at the top
-                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
-                // Create a paragraph for restaurant information
-                Paragraph restaurantInfoParagraph = new Paragraph();
-                restaurantInfoParagraph.TextAlignment = TextAlignment.Center;
-
-                // Restaurant Name
-                Run restaurantNameRun = new Run("Thai Bistro\n");
-                restaurantNameRun.FontSize = 20;
-                restaurantInfoParagraph.Inlines.Add(restaurantNameRun);
-
-                // Address
-                Run addressRun = new Run("233 Centre St S #102,\n Calgary, AB T2G 2B7\n");
-                addressRun.FontSize = 12;
-                restaurantInfoParagraph.Inlines.Add(addressRun);
-
-                // Phone
-                Run phoneRun = new Run("Phone: (403) 313-9922\n");
-                phoneRun.FontSize = 12;
-                restaurantInfoParagraph.Inlines.Add(phoneRun);
-
-                // Add the restaurant info paragraph
-                flowDocument.Blocks.Add(restaurantInfoParagraph);
-
-                // Add the "-------------------------------------------------" separator at the top
-                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
-
-                ///^^^^^^good^^^^^^^^^^^
-
-
-                ////////order detail session!!!!
-
-
-                // Create a Section for the order details
-                Section orderDetailsSection = new Section();
-
-                // Table to display order details
-                Table detailsTable = new Table();
-                TableRowGroup detailTableRowGroup = new TableRowGroup();
-                // Add rows for order details
-                detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
-                detailTableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
-                if (OrderIdTextBlock != null) // Check if the TextBlock exists
+                // Iterate through split bills
+                for (int customerID = 1; customerID <= _numberOfBill; customerID++)
                 {
-                    // Access the text of the OrderIdTextBlock
-                    detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
+                    // Create a FlowDocument for each split bill
+                    FlowDocument flowDocument = new FlowDocument();
+
+                    // Add the "-------------------------------------------------" separator at the top
+                    flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+                    // Create a paragraph for restaurant information
+                    Paragraph restaurantInfoParagraph = new Paragraph();
+                    restaurantInfoParagraph.TextAlignment = TextAlignment.Center;
+
+                    // Restaurant Name
+                    Run restaurantNameRun = new Run("Thai Bistro\n");
+                    restaurantNameRun.FontSize = 20;
+                    restaurantInfoParagraph.Inlines.Add(restaurantNameRun);
+
+                    // Address
+                    Run addressRun = new Run("233 Centre St S #102,\n Calgary, AB T2G 2B7\n");
+                    addressRun.FontSize = 12;
+                    restaurantInfoParagraph.Inlines.Add(addressRun);
+
+                    // Phone
+                    Run phoneRun = new Run("Phone: (403) 313-9922\n");
+                    phoneRun.FontSize = 12;
+                    restaurantInfoParagraph.Inlines.Add(phoneRun);
+
+                    // Add the restaurant info paragraph
+                    flowDocument.Blocks.Add(restaurantInfoParagraph);
+
+                    // Add the "-------------------------------------------------" separator at the top
+                    flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                    ///^^^^^^good^^^^^^^^^^^
+
+                    ////////order detail session!!!!
+
+                    // Create a Section for the order details
+                    Section orderDetailsSection = new Section();
+
+                    // Table to display order details
+                    Table detailsTable = new Table();
+                    TableRowGroup detailTableRowGroup = new TableRowGroup();
+                    // Add rows for order details
+                    detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
+                    detailTableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
+                    if (OrderIdTextBlock != null) // Check if the TextBlock exists
+                    {
+                        // Access the text of the OrderIdTextBlock
+                        detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
+                    }
+                    detailTableRowGroup.Rows.Add(CreateTableRow("Server:", "John"));
+
+                    // Add a line with dashes after "Server: John"
+                    TableRow dashedLineRow = new TableRow();
+                    TableCell dashedLineCell = new TableCell();
+
+                    Paragraph dashedLineParagraph = new Paragraph(new Run("-------------------------------------------------"));
+                    //dashedLineParagraph.TextAlignment = TextAlignment.Center;
+                    dashedLineCell.ColumnSpan = 2;
+                    dashedLineCell.Blocks.Add(dashedLineParagraph);
+                    dashedLineRow.Cells.Add(dashedLineCell);
+                    detailTableRowGroup.Rows.Add(dashedLineRow);
+
+                    ///item session
+
+                    // Create a TableRow for displaying items and their prices
+                    TableRowGroup itemTableRowGroup = new TableRowGroup();
+                    Section itemSection = new Section();
+                    // Add space (empty TableRow) for the gap
+                    itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
+
+                    // Create a nested Table within the items cell
+                    Table itemsTable = new Table();
+
+                    // Access the 'Items' collection and loop through it to add item rows.
+                    foreach (var OrderedItem in orderedItems.Where(item => item.customerID == customerID))
+                    {
+                        itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
+                    }
+
+                    // Initialize the TableRowGroup
+                    itemSection.Blocks.Add(itemsTable);
+
+                    // Create a new TableRow for the itemsCell and add it to the tableRowGroup
+                    // Add space (empty TableRow) for the gap
+                    itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
+                    /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                    ///////sub total session
+                    Table paymentTable = new Table();
+                    Section paymentSection = new Section();
+                    TableRowGroup paymentTableRowGroup = new TableRowGroup();
+                    // Create a Paragraph for "Sub Total" with underline
+                    Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
+                    subTotalParagraph.FontSize = 20; // Increase the font size
+                    subTotalParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerTotalAmount = orderedItems.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
+                    Paragraph subTotalValueParagraph = new Paragraph(new Run(customerTotalAmount.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+
+                    // Create a Paragraph for "GST"
+                    Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
+                    gstLabelParagraph.FontSize = 20; // Increase the font size
+                    gstLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerGSTAmount = customerTotalAmount * gstRate;
+                    Paragraph gstValueParagraph = new Paragraph(new Run(customerGSTAmount.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
+
+                    // Create a Paragraph for "Total Amount"
+                    Paragraph totalAmountLabelParagraph = new Paragraph(new Run("Total Amount:"));
+                    totalAmountLabelParagraph.FontSize = 20; // Increase the font size
+                    totalAmountLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerTotalAmountWithGST = customerTotalAmount + customerGSTAmount;
+                    Paragraph totalAmountValueParagraph = new Paragraph(new Run(customerTotalAmountWithGST.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
+                    //////////////////////////////////////////////////
+
+                    detailsTable.RowGroups.Add(detailTableRowGroup);
+                    itemsTable.RowGroups.Add(itemTableRowGroup);
+                    paymentTable.RowGroups.Add(paymentTableRowGroup);
+
+                    orderDetailsSection.Blocks.Add(detailsTable);
+                    itemSection.Blocks.Add(itemsTable);
+                    paymentSection.Blocks.Add(paymentTable);
+
+                    flowDocument.Blocks.Add(orderDetailsSection);
+                    flowDocument.Blocks.Add(itemSection);
+                    flowDocument.Blocks.Add(paymentSection);
+                    // /*****************************
+                    // Create a new paragraph for the "Thank You" message
+                    Paragraph thankYouParagraph = new Paragraph();
+                    thankYouParagraph.TextAlignment = TextAlignment.Center;
+                    thankYouParagraph.FontSize = 16; // You can set the font size as you wish
+                    thankYouParagraph.Inlines.Add(new Run("Thank You for dining with us!"));
+                    thankYouParagraph.Margin = new Thickness(0, 10, 0, 0); // Add some space before the message if needed
+
+                    // Add a "-------------------------------------------------" separator before the "Thank You" message
+                    flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                    // Add the "Thank You" paragraph to the FlowDocument
+                    flowDocument.Blocks.Add(thankYouParagraph);
+                    flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                    //**********************************
+
+                    // Create a DocumentPaginator for the FlowDocument
+                    IDocumentPaginatorSource paginatorSource = flowDocument;
+                    DocumentPaginator documentPaginator = paginatorSource.DocumentPaginator;
+
+                    // Send the document to the printer
+                    printDialog.PrintDocument(documentPaginator, $"Order Receipt - Customer {customerID}");
                 }
-                detailTableRowGroup.Rows.Add(CreateTableRow("Server:", "John"));
-
-                // Add a line with dashes after "Server: John"
-                TableRow dashedLineRow = new TableRow();
-                TableCell dashedLineCell = new TableCell();
-
-                Paragraph dashedLineParagraph = new Paragraph(new Run("-------------------------------------------------"));
-                //dashedLineParagraph.TextAlignment = TextAlignment.Center;
-                dashedLineCell.ColumnSpan = 2;
-                dashedLineCell.Blocks.Add(dashedLineParagraph);
-                dashedLineRow.Cells.Add(dashedLineCell);
-                detailTableRowGroup.Rows.Add(dashedLineRow);
-
-
-
-                ///item session
-
-                // Create a TableRow for displaying items and their prices
-
-                TableRowGroup itemTableRowGroup = new TableRowGroup();
-                Section itemSection = new Section();
-                // Add space (empty TableRow) for the gap
-                itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
-
-
-                // Create a nested Table within the items cell
-                Table itemsTable = new Table();
-
-
-
-
-                // Access the 'Items' collection and loop through it to add item rows.
-                foreach (var OrderedItem in orderedItems)
-                {
-                    itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
-
-                }
-
-
-                /*tableRowGroup.Rows.Add(itemsRow);*/
-                // Initialize the TableRowGroup
-
-                itemSection.Blocks.Add(itemsTable);
-
-                // Create a new TableRow for the itemsCell and add it to the tableRowGroup
-
-
-
-                // Add space (empty TableRow) for the gap
-                itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
-                /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-                ///////sub total session
-                Table paymentTable = new Table();
-                Section paymentSection = new Section();
-                TableRowGroup paymentTableRowGroup = new TableRowGroup();
-                // Create a Paragraph for "Sub Total" with underline
-                Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
-                subTotalParagraph.FontSize = 20; // Increase the font size
-                subTotalParagraph.TextAlignment = TextAlignment.Right;
-
-                Paragraph subTotalValueParagraph = new Paragraph(new Run(TotalAmount.ToString("C")));
-                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
-
-                // Create a Paragraph for "GST"
-                Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
-                gstLabelParagraph.FontSize = 20; // Increase the font size
-                gstLabelParagraph.TextAlignment = TextAlignment.Right;
-
-                Paragraph gstValueParagraph = new Paragraph(new Run(gstAmount.ToString("C")));
-                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
-
-                // Create a Paragraph for "Total Amount"
-                Paragraph totalAmountLabelParagraph = new Paragraph(new Run("Total Amount:"));
-                totalAmountLabelParagraph.FontSize = 20; // Increase the font size
-                totalAmountLabelParagraph.TextAlignment = TextAlignment.Right;
-
-                Paragraph totalAmountValueParagraph = new Paragraph(new Run(totalAmountWithGST.ToString("C")));
-                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
-                //////////////////////////////////////////////////
-
-                detailsTable.RowGroups.Add(detailTableRowGroup);
-                itemsTable.RowGroups.Add(itemTableRowGroup);
-                paymentTable.RowGroups.Add(paymentTableRowGroup);
-
-                orderDetailsSection.Blocks.Add(detailsTable);
-                itemSection.Blocks.Add(itemsTable);
-                paymentSection.Blocks.Add(paymentTable);
-
-                flowDocument.Blocks.Add(orderDetailsSection);
-                flowDocument.Blocks.Add(itemSection);
-                flowDocument.Blocks.Add(paymentSection);
-                // /*****************************
-                // Create a new paragraph for the "Thank You" message
-                Paragraph thankYouParagraph = new Paragraph();
-                thankYouParagraph.TextAlignment = TextAlignment.Center;
-                thankYouParagraph.FontSize = 16; // You can set the font size as you wish
-                thankYouParagraph.Inlines.Add(new Run("Thank You for dining with us!"));
-                thankYouParagraph.Margin = new Thickness(0, 10, 0, 0); // Add some space before the message if needed
-
-                // Add a "-------------------------------------------------" separator before the "Thank You" message
-                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
-
-                // Add the "Thank You" paragraph to the FlowDocument
-                flowDocument.Blocks.Add(thankYouParagraph);
-                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
-
-                //**********************************
-
-                // Create a DocumentPaginator for the FlowDocument
-                IDocumentPaginatorSource paginatorSource = flowDocument;
-                DocumentPaginator documentPaginator = paginatorSource.DocumentPaginator;
-
-                // Send the document to the printer
-                printDialog.PrintDocument(documentPaginator, "Order Receipt");
             }
         }
-
 
         private TableRow CreateTableRow(string label, string value)
         {
