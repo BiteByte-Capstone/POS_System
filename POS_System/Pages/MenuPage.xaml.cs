@@ -694,10 +694,16 @@ namespace POS_System.Pages
         //(button)back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
-            if (orderedItems.Count < OriginalItemsCount) // Condition: removed item
+            if (orderedItems.Count == 0 && OriginalItemsCount > 0)
+            {
+                MessageBox.Show("Since it is a saved order and nothing on the list now. \n\n Please canel order before closing window!");
+                return;
+            }
+
+            else if (orderedItems.Count < OriginalItemsCount) // Condition: removed item
             {
 
-                MessageBoxResult result = MessageBox.Show("Removed Item on the list. \n\n\n Do you want to save? \nYes --- Save the order \nNo --- Close window", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                MessageBoxResult result = MessageBox.Show("Removed Item on the list. \n\n\n Do you want to save? \nYes --- Save the order \nNo --- Back to Table Page", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     AutoSave();
@@ -712,7 +718,7 @@ namespace POS_System.Pages
             else if (IsSavedItem() == false && orderedItems.Count > OriginalItemsCount ) // Condition: added item 
             {
 
-                MessageBoxResult result = MessageBox.Show("There is new item on the list. \n\n\n Do you want to save? \nYes --- Save the order \nNo --- Close window", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                MessageBoxResult result = MessageBox.Show("There is new item on the list. \n\n\n Do you want to save? \nYes --- Save the order \nNo ---  Back to Table Page", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     AutoSave();
@@ -722,6 +728,8 @@ namespace POS_System.Pages
                     BackToTablePage();
                 }
             }
+
+            
 
             else if (IsSavedItem() == true || StatusTextBlock.Text == "New Order")
             {
@@ -780,17 +788,36 @@ namespace POS_System.Pages
 
             if(OrdersListView.SelectedItem is OrderedItem selectedOrderedItem)
             {
-/*                if (ExistedItem() == true)
-                {*/
 
-                    
+                if (IsSavedItem() == false) //Condition: new item delete
+                {
                     orderedItems.Remove(selectedOrderedItem);
                     TotalAmount -= selectedOrderedItem.ItemPrice;
                     TotalAmountTextBlock.Text = "Total Amount :             "  + TotalAmount.ToString();
                     CultureInfo cultureInfo = new CultureInfo("en-CA");
                     cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
                     TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", cultureInfo);
-/*                }*/
+                }
+
+                else
+                {
+                    MessageBoxResult result = MessageBox.Show("Selected the saved item \n \n Are you sure to delete the saved item", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);// condition: saved item delete confirmation
+                    if (result == MessageBoxResult.Yes)
+                    {
+ 
+                        orderedItems.Remove(selectedOrderedItem);
+                        TotalAmount -= selectedOrderedItem.ItemPrice;
+                        TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString();
+                        CultureInfo cultureInfo = new CultureInfo("en-CA");
+                        cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+                        TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", cultureInfo);
+                        
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
             }
                 
             else
