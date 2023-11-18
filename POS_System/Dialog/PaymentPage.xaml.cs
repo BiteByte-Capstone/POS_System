@@ -342,6 +342,16 @@ namespace POS_System.Pages
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             amexBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
 
+            //since initial amount is 0.0
+            if (tipsTextbox.Text.Length > 3)
+            {
+                tipsTextbox.Text = "0.0";
+                CultureInfo cultureInfo = new CultureInfo("en-CA");
+                cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+                changeTextBox.Text = CalculateChangeAmount().ToString("C", cultureInfo);
+
+            }
+
         }
 
         //visa button (payment type = visa)
@@ -352,6 +362,14 @@ namespace POS_System.Pages
             visaBtn.Background = Brushes.White;
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             amexBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
+            if (changeTextBox.Text.Length > 3)
+            {
+                changeTextBox.Text = "0.0";
+                CultureInfo cultureInfo = new CultureInfo("en-CA");
+                cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+                tipsTextbox.Text = CalculateTipAmount().ToString("C", cultureInfo);
+
+            }
         }
 
         //Master card button (payment type = MC)
@@ -362,8 +380,15 @@ namespace POS_System.Pages
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = Brushes.White;
             amexBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
-            
 
+            if (changeTextBox.Text.Length > 3)
+            {
+                changeTextBox.Text = "0.0";
+                CultureInfo cultureInfo = new CultureInfo("en-CA");
+                cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+                tipsTextbox.Text = CalculateTipAmount().ToString("C", cultureInfo);
+
+            }
         }
 
         //Amex button (payment type = amex)
@@ -374,6 +399,14 @@ namespace POS_System.Pages
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             mcBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             amexBtn.Background = Brushes.White;
+            if (changeTextBox.Text.Length > 3)
+            {
+                changeTextBox.Text = "0.0";
+                CultureInfo cultureInfo = new CultureInfo("en-CA");
+                cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
+                tipsTextbox.Text = CalculateTipAmount().ToString("C", cultureInfo);
+
+            }
         }
         //***
 
@@ -406,7 +439,14 @@ namespace POS_System.Pages
         private double CalculateTipAmount()
         {
             double tipAmount = 0.0;
-            return tipAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+            if (_paymentMethod != null && _paymentMethod.Equals("Cash")) 
+            {
+                return 0.0;
+            }else
+            {
+                return tipAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+            }
+
 
         }
 
@@ -414,7 +454,14 @@ namespace POS_System.Pages
         private double CalculateChangeAmount()
         {
             double changeAmount = 0.0;
-            return changeAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+            if (_paymentMethod != null && _paymentMethod.Equals("Cash"))
+            {
+                return changeAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
+            }
+            else
+            {
+                return 0.0;
+            }
         }
 
         //Calculate Tax

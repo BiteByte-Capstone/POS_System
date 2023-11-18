@@ -27,6 +27,7 @@ namespace POS_System.Pages
     {
         private DatabaseHelper db;
         private ObservableCollection<User> users = new ObservableCollection<User>();
+        public User user = new User();
         public LoginScreen()
         {
             InitializeComponent();
@@ -38,7 +39,10 @@ namespace POS_System.Pages
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
             string enteredUserId = id.Text;
+            int UserID = int.Parse(enteredUserId);
             string enteredPassword = password.Password;
+            user.Id = UserID;
+            
 
             if (db.AuthenticateUser(enteredUserId, enteredPassword))
             {

@@ -8,7 +8,7 @@
        Title="Menu Page" WindowState="Maximized">
 
 
-    <Grid Background="#212121" Margin="0,0,0,-6">
+    <Grid Background="#212121" Margin="0,0,0,0">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -22,84 +22,61 @@
         </Grid.RowDefinitions>
         <!-- Buttons -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="40"/>
+            <ColumnDefinition MinWidth="40" Width="2*"/>
             <ColumnDefinition Width="226"/>
             <ColumnDefinition Width="550"/>
-            <ColumnDefinition Width="50*" MinWidth="500" MaxWidth="1050"/>
-            <ColumnDefinition MinWidth="40"/>
+            <ColumnDefinition Width="25*" MinWidth="500" MaxWidth="1050"/>
+            <ColumnDefinition MinWidth="40" Width="2*"/>
         </Grid.ColumnDefinitions>
 
         <!--Left panel button-->
-        <Button Content="Back" HorizontalAlignment="Center" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="54" VerticalAlignment="Center" Width="226" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" Grid.Row="1" Grid.Column="1" />
+        <Button Content="Back" BorderBrush="Orange" BorderThickness="1" Background="red" FontSize="25" FontFamily="Verdana" FontWeight="Bold" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" Grid.Column="1" Grid.Row="1" />
 
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
         Grid.Column="1" Grid.Row="1" Grid.RowSpan="5" Margin="0,54,0,0">
             <StackPanel Orientation="Vertical" Margin="0,40,0,3">
-                <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="60" Margin="0,0,0,10">
+                <Button Foreground="Red" Background="Red"  BorderBrush="Red" FontSize="20"  RenderTransformOrigin="-1.893,0.589" FontFamily="Verdana"  Height="50" Width="214" Margin="0,0,0,10" Click="CancelButton_Click">
                     <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="Change Table" TextWrapping="Wrap" TextAlignment="Center" Height="60" FontSize="25" Width="176"/>
+                        <TextBlock Text="Cancel Order" TextWrapping="Wrap" TextAlignment="Center" Width="201" Foreground="Black" FontSize="25" FontWeight="Bold"/>
                     </Viewbox>
                 </Button>
-                <Grid Margin="0,0,0,10" Height="157">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="51*"/>
-                        <ColumnDefinition Width="163*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30*"/>
-                        <RowDefinition Height="30*"/>
-
-                    </Grid.RowDefinitions>
-
-                    <Button Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitBillButton_Click" Grid.Column="1" Grid.Row="0" Margin="1,0,0,0" />
-                    <Button Content="Split Item" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="SplitbyItem_Click" Grid.Column="1" Margin="1,78,0,0" Grid.RowSpan="2" />
-                    <Button  Background="{x:Null}" BorderBrush="Red" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetSplitButton_Click" Foreground="Red" BorderThickness="3,3,3,3" Grid.RowSpan="2" >
-                        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Reset" TextWrapping="Wrap" TextAlignment="Center" RenderTransformOrigin="0.5,0.5">
-                                <TextBlock.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform/>
-                                        <SkewTransform/>
-                                        <RotateTransform Angle="91.717"/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-                                </TextBlock.RenderTransform>
-                            </TextBlock>
-                        </Viewbox>
-                    </Button>
-                </Grid>
+                <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="50" Margin="0,0,0,10" Width="216">
+                    <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Change Table" TextWrapping="Wrap" TextAlignment="Center" Height="33" FontSize="25" Width="201"/>
+                    </Viewbox>
+                </Button>
+                <Button x:Name="SplitItemButton" Content="Split Item" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="50" Margin="0,0,0,10"  Click="SplitbyItem_Click"  />
 
 
-                <Button Content="Print Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="60" Width="228" Click="PrintButton_Click" Margin="0,0,0,10"/>
-                <Button Content="Payment" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="60" Width="228" Click="PaymentButton_Click" Margin="0,0,0,10"/>
+                <Button x:Name="SplitBillButton" Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Margin="0,0,0,10" Height="50"  Click="SplitBillButton_Click"/>
 
+
+
+
+                <Button Content="Print Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="50" Width="212" Click="PrintButton_Click" Margin="0,0,0,10"/>
+
+                <Button Content="Payment" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="50" Width="214" Click="PaymentButton_Click" Margin="0,0,0,20"/>
+                <Button Content="Save" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Margin="0,0,0,10" Click="SaveButton_Click" Width="169"/>
 
             </StackPanel>
         </Border>
 
 
-        <Button Content="Save" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="78" VerticalAlignment="Top" Grid.Row="5" Margin="0,63,0,0" Click="SaveButton_Click" Grid.Column="1" Grid.RowSpan="2"/>
-        <Button HorizontalAlignment="Left" Height="76" Margin="0,65,0,0" VerticalAlignment="Top" Width="86" Foreground="Red" Background="{x:Null}"  BorderBrush="Red" FontSize="20" Click="CancelButton_Click" RenderTransformOrigin="-1.893,0.589" FontFamily="Verdana" Grid.Row="5" BorderThickness="5,5,5,5" Grid.Column="2" Grid.RowSpan="2">
-            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Cancel Order" TextWrapping="Wrap" TextAlignment="Center" Width="74" Foreground="Red"/>
-            </Viewbox>
-        </Button>
-        <Button Grid.Column="2" HorizontalAlignment="Left" Height="71" Margin="453,63,0,0" VerticalAlignment="Top" Width="97" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" FontSize="20" Click="VoidButton_Click" RenderTransformOrigin="-1.893,0.589" Grid.Row="5" Grid.RowSpan="2" >
-            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="83" Height="55"/>
-            </Viewbox>
-        </Button>
+
+
+
+
+
 
 
 
 
         <!-- Table Information (middle part)-->
 
-        <Label Name="MenuLabel" Content="Menu" VerticalAlignment="Center" Height="56" FontFamily="Verdana" FontSize="32" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Background="Orange" Foreground="Black" Grid.Row="1"/>
+        <Label Name="MenuLabel" Content="Menu" BorderBrush="#FFFFA500" BorderThickness="1,1,1,1" FontFamily="Verdana" FontSize="32" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Background="{x:Null}" Foreground="Orange" Grid.Row="1"/>
 
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
-        Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Margin="549,0,14,0" Grid.ColumnSpan="2">
+        Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" Margin="0,0,15,0">
 
             <Grid Margin="4,-6,61,-6">
 
@@ -177,7 +154,7 @@
             </Grid>
         </Border>
         <!--list view: list all order-->
-        <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold" Margin="0,54,0,62" Grid.RowSpan="5">
+        <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold" Margin="0,54,0,0" Grid.RowSpan="4">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Foreground" Value="White"/>
@@ -203,7 +180,7 @@
                     <GridViewColumn Header="Item Price" Width="177">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding ItemPrice}" TextAlignment="right"/>
+                                <TextBlock Text="{Binding ItemPrice ,StringFormat=F2}" TextAlignment="right"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -221,10 +198,30 @@
         </ListView>
 
 
-        <Border BorderBrush="Orange" BorderThickness="1" 
-         Margin="0,4,0,0" Grid.Column="2" Grid.Row="5" Background="Black">
-            <TextBlock Name="TotalAmountTextBlock" TextAlignment="Right" HorizontalAlignment="Center" Margin="0,-1,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="69" Width="550" FontSize="18" Foreground="#FF969696" Background="#FF454545" Padding="20" FontFamily="Verdana" />
-        </Border>
+        <Grid Grid.Row="4" Grid.Column="2" Margin="0,333,0,0" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="69*"/>
+                <ColumnDefinition Width="166*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Name="ResetButton" Background="OrangeRed" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetButton_Click" Foreground="Black" BorderThickness="1,1,1,1" Grid.Column="0" Grid.Row="0">
+                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Reset" TextWrapping="Wrap" TextAlignment="Center" RenderTransformOrigin="0.5,0.5" Height="34" Width="92" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Viewbox>
+            </Button>
+
+            <Button HorizontalAlignment="Center" Width="138" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" FontSize="20" Click="VoidButton_Click" Grid.Column="1"  >
+                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="121" Height="28" FontFamily="Verdana"/>
+                </Viewbox>
+            </Button>
+
+
+            <TextBox Name="TotalAmountTextBlock" TextAlignment="Right" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="66" FontSize="18" Foreground="White" Background="#FF454545" Padding="20" FontFamily="Verdana" BorderBrush="Orange" BorderThickness="1" Grid.Column="2"/>
+
+        </Grid>
+
 
         <!--Right hand side-->
 
