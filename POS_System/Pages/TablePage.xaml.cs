@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using POS.Models;
 
 
 
@@ -34,6 +35,8 @@ namespace POS_System.Pages
         {
             InitializeComponent();
             UpdateTableColors();
+
+            UserNameTextBox.Text = User.id.ToString();
         }
 
         public TablePage(string tableNumber, string orderType)
@@ -41,8 +44,9 @@ namespace POS_System.Pages
             InitializeComponent();
             UpdateTableColors();
             // Store the table number and order type for future use
-/*            this.TableNumber = tableNumber;
-            this.OrderType = orderType;*/
+            /*            this.TableNumber = tableNumber;
+                        this.OrderType = orderType;*/
+            
         }
 
 

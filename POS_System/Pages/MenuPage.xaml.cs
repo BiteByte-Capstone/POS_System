@@ -63,7 +63,7 @@ namespace POS_System.Pages
         private string _status;
         private bool _hasPaidOrders;
         private int _numberOfBill;
-        private string _splitType;
+        private string _splitType = "No Split";
 
         private double TotalAmount = 0.0;
         private int OriginalItemsCount = 0;
@@ -100,18 +100,13 @@ namespace POS_System.Pages
                 TableNumberTextBlock.Text = "     Take-Out# : ";
                 SplitBillButton.IsEnabled = false;
                 SplitItemButton.IsEnabled = false;
-                ResetSplitButton.IsEnabled = false;
-
-
+                ResetButton.IsEnabled = false;
             }
 
             if (hasUnpaidOrders)
             {
                 LoadUnpaidOrders(tableNumber);
-
             }
-
-            
         }
 
         //Method for loading when Menu Page open
@@ -198,6 +193,8 @@ namespace POS_System.Pages
                             isSplited = false;
                         }
                         orderedItems.Add(orderedItem);
+                        BackupOrderedItemCollection();
+
                         TotalAmount += orderedItem.ItemPrice;
                     }
                     TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", new CultureInfo("en-CA"));
@@ -341,8 +338,8 @@ namespace POS_System.Pages
                 Item item = clickedButton.Tag as Item;
 
                 if (item != null)
-                {
-                        AddItemToOrder(item);
+                { 
+                    AddItemToOrder(item);
                 }
             }
         }
@@ -374,32 +371,66 @@ namespace POS_System.Pages
         //(Button for Split Bill)
         private void SplitBillButton_Click(object sender, RoutedEventArgs e)
         {
-
-            SplitBillDialog splitBillDialog = new SplitBillDialog(orderedItems, TotalAmount);
-                        
-            if (splitBillDialog.ShowDialog() == true)
-            {
-                _numberOfBill = splitBillDialog.NumberOfPeople;
-                _splitType = "ByBill";
-                
-
-            }
-            else
-            {
-                return;
-            }
             if (_numberOfBill > 0)
             {
-                BackupOrderedItemCollection();
-                GetNewSplitItemList(orderedItems,_numberOfBill, _splitType);
-                Refresh();
-                MessageBox.Show($"Splited bill into {_numberOfBill}");
-
-            } else
-            {
-                MessageBox.Show($"Splited bill into {_numberOfBill}, Please try again");
+                MessageBox.Show("The order is splitted. \nPlease reset before split again!");
+                return;
             }
+            else if (_numberOfBill == 0)
+            {
+                SplitBillDialog splitBillDialog = new SplitBillDialog(orderedItems, TotalAmount);
+
+                if (splitBillDialog.ShowDialog() == true)
+                {
+                    _numberOfBill = splitBillDialog.NumberOfPeople;
+                    _splitType = "ByBill";
+                    BackupOrderedItemCollection();
+                    GetNewSplitItemList(orderedItems, _numberOfBill, _splitType);
+                    Refresh();
+                    MessageBox.Show($"Splited bill into {_numberOfBill}");
+
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+
         }
+
+        //(Button) split by item 
+        private void SplitbyItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_numberOfBill > 0)
+            {
+                MessageBox.Show("The order is splitted. \nPlease reset before split again!");
+                return;
+            }
+            else if (_numberOfBill == 0)
+            {
+                SplitByItemPage splitByItemPage = new SplitByItemPage(orderedItems);
+                BackupOrderedItemCollection();
+
+                if (splitByItemPage.ShowDialog() == true)
+                {
+                    var splitOrderedItems = splitByItemPage._assignCustomerIDItems;
+                    _splitType = "ByItem";
+                    _numberOfBill = splitByItemPage.currentCustomerId;
+
+                    GetNewSplitItemList(splitOrderedItems, _numberOfBill, _splitType);
+                    Refresh();
+
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+
+        }
+
 
         //(Button) on List view
         private void CustomerNumberButton_Click(object sender, RoutedEventArgs e)
@@ -497,11 +528,16 @@ namespace POS_System.Pages
 
 
         //Button for reset Split
-        private void ResetSplitButton_Click(object sender, RoutedEventArgs e)
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_numberOfBill > 0)
+            if (_splitType == "No Split")
             {
-                MessageBoxResult result = MessageBox.Show("Do you confirm reset the splited items. \n Do you want to go back to original?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                MessageBox.Show("Sorry! there is no split items!");
+                return;
+            }
+            else if (_numberOfBill > 0 && (_splitType == "By Item" || _splitType == "By Bill")) //Condition: it is for split order
+            {
+                MessageBoxResult result = MessageBox.Show("Do you confirm reset split items?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     splitOrderedItems.Clear();
@@ -519,11 +555,28 @@ namespace POS_System.Pages
                 {
                     return;
                 }
-            }else
+            }else if (OriginalItemsCount > 0 && ExistedItem() == false) //Condition: it is for existing order and added items
             {
-                MessageBox.Show("Sorry! there is no split items!");
-                return;
+                MessageBoxResult result = MessageBox.Show("Do you confirm reset order before adding new item. \n Do you want to reset and without split order?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    splitOrderedItems.Clear();
+                    orderedItems.Clear();
+                    _numberOfBill = 0;
+                    foreach (OrderedItem backupOrderedItem in backupOrderedItems)
+                    {
+
+                        orderedItems.Add(backupOrderedItem);
+                    }
+                    OrdersListBox.Items.GroupDescriptions.Clear();
+
+                }
+                else
+                {
+                    return;
+                }
             }
+
 
             
             
@@ -673,6 +726,8 @@ namespace POS_System.Pages
                 MessageBox.Show("No update on the list. Please check again");
                 return;
             }
+
+
             else
             {
                 
@@ -1192,26 +1247,6 @@ namespace POS_System.Pages
             return row;
         }
 
-        private void SplitbyItem_Click(object sender, RoutedEventArgs e)
-        {
-            SplitByItemPage splitByItemPage = new SplitByItemPage(orderedItems);
-            BackupOrderedItemCollection();
-
-            if (splitByItemPage.ShowDialog() == true)
-            {
-                var splitOrderedItems = splitByItemPage._assignCustomerIDItems;
-                _splitType = "ByItem";
-                _numberOfBill = splitByItemPage.currentCustomerId;
-                
-                GetNewSplitItemList(splitOrderedItems, _numberOfBill, _splitType);
-                Refresh();
-            }
-            else
-            {
-                return;
-            }
- 
-        }
 
         // new cancel button Thevagi from PK
         //Method for CancelButtonClick - By PK
