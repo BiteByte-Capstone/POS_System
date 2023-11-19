@@ -15,8 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using POS.Models;
-
-
+using POS_System.Dialog;
 
 namespace POS_System.Pages
 {
@@ -36,7 +35,8 @@ namespace POS_System.Pages
             InitializeComponent();
             UpdateTableColors();
 
-            UserNameTextBox.Text = User.id.ToString();
+            UserNameTextBox.Text = "Welcome User ID: " + User.id + "!";
+
         }
 
         public TablePage(string tableNumber, string orderType)
@@ -260,8 +260,13 @@ namespace POS_System.Pages
 
         private void ChangeTable_Click(object sender, RoutedEventArgs e)
         {
+            var dialog = new ChangeTableDialog();
+
+            // Show the dialog
+            dialog.Show();
 
         }
+
 
 
 
