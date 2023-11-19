@@ -167,9 +167,9 @@ namespace POS_System.Pages
                         Quantity = order.Quantity,
                         ItemPrice = order.ItemPrice,
                         origialItemPrice = order.origialItemPrice,
-                        IsExistItem = true,
+                        IsSavedItem = true,
                         customerID = order.customerID,
-                        IsSettled = false
+                        isSettled = false
 
 
                     };

@@ -54,10 +54,14 @@ namespace POS_System.Pages
                 int userId = int.Parse(enteredUserId);
 
                 // Only 100 to 110 admin can go to AdminManagement page
-                if (userId >= 100 & userId <= 110)
+                if (userId >= 100 & userId <= 199)
                 {
                     AdminManagement windowAdmin = new AdminManagement();
                     windowAdmin.Show();
+                } else if (userId >= 200 & userId <= 299)
+                {
+                    ManagerManagement windowManager = new ManagerManagement();
+                    windowManager.Show();
                 }
                 
                 else

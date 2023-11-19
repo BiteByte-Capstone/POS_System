@@ -154,13 +154,13 @@
             </Grid>
         </Border>
         <!--list view: list all order-->
-        <ListView x:Name="OrdersListBox" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold" Margin="0,54,0,0" Grid.RowSpan="4">
+        <ListView x:Name="OrdersListView" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold" Margin="0,54,0,0" Grid.RowSpan="4">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Foreground" Value="White"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsExistItem}" Value="true">
+                        <DataTrigger Binding="{Binding IsSavedItem}" Value="true">
                             <Setter Property="Foreground" Value="Gray"/>
                         </DataTrigger>
                     </Style.Triggers>
@@ -211,14 +211,14 @@
                 </Viewbox>
             </Button>
 
-            <Button HorizontalAlignment="Center" Width="138" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" FontSize="20" Click="VoidButton_Click" Grid.Column="1"  >
+            <Button HorizontalAlignment="Center" Width="138" Foreground="Orange" Background="#FF454545"  BorderBrush="Orange" FontSize="20" Click="DeleteItemButton_Click" Grid.Column="1"  >
                 <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="121" Height="28" FontFamily="Verdana"/>
                 </Viewbox>
             </Button>
 
 
-            <TextBox Name="TotalAmountTextBlock" TextAlignment="Right" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="66" FontSize="18" Foreground="White" Background="#FF454545" Padding="20" FontFamily="Verdana" BorderBrush="Orange" BorderThickness="1" Grid.Column="2"/>
+            <TextBox Name="TotalAmountTextBlock" TextAlignment="Right" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Center" Height="66" FontSize="18" Foreground="White" Background="#FF454545" Padding="20" FontFamily="Verdana" BorderBrush="Orange" BorderThickness="1" Grid.Column="2"/>
 
         </Grid>
 
