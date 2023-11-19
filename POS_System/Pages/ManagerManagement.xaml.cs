@@ -1,5 +1,4 @@
-﻿using POS.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,27 +15,22 @@ using System.Windows.Shapes;
 namespace POS_System.Pages
 {
     /// <summary>
-    /// Interaction logic for AdminManagement.xaml
+    /// Interaction logic for ManagerManagement.xaml
     /// </summary>
-    public partial class AdminManagement : Window
+    public partial class ManagerManagement : Window
     {
-        public AdminManagement()
+        public ManagerManagement()
         {
             InitializeComponent();
         }
 
-        private void ManageUserButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Open the Admin window when the button is clicked
-            AdminPage adminWindow = new AdminPage();
-            adminWindow.Show();
-            this.Close();
-        }
+
         private void ManageSalesButton_Click(object sender, RoutedEventArgs e)
         {
             // Open the OrderReport window when the button is clicked
             OrderReport orderReportWindow = new OrderReport();
             orderReportWindow.Show();
+            this.Close();
         }
 
         private void ManageTableButton_Click(object sender, RoutedEventArgs e)
@@ -44,6 +38,15 @@ namespace POS_System.Pages
             // Open the Admin window when the button is clicked
             TablePage adminWindow = new TablePage();
             adminWindow.Show();
+            this.Close();
+        }
+
+        private void ManageRefundButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Open the Admin window when the button is clicked
+            Refund adminWindow = new Refund();
+            adminWindow.Show();
+            this.Close();
         }
 
         private void ManageMenuButton_Click(object sender, RoutedEventArgs e)
@@ -54,12 +57,6 @@ namespace POS_System.Pages
             this.Close();
         }
 
-        private void ManageRefundButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Open the Admin window when the button is clicked
-            Refund adminWindow = new Refund();
-            adminWindow.Show();
-        }
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             // Perform logout actions here
@@ -68,7 +65,5 @@ namespace POS_System.Pages
             loginScreen.Show();
             this.Close();
         }
-
-        
     }
 }
