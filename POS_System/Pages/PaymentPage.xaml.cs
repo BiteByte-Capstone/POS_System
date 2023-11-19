@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using MySql.Data.MySqlClient;
@@ -17,7 +18,10 @@ namespace POS_System.Pages
 {
     public partial class PaymentPage : Page
     {
-        private ObservableCollection<OrderedItem> _orderedItems = new ObservableCollection<OrderedItem>();
+        private ObservableCollection<OrderedItem> _eachCustomerOrderedItems = new ObservableCollection<OrderedItem>();
+
+        private List<Payment> eachPaymentList = new List<Payment>();
+
         public static ConcurrentDictionary<int, Payment> _eachPaymentDictionary { get; } = new ConcurrentDictionary<int, Payment>();
 
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
@@ -49,10 +53,10 @@ namespace POS_System.Pages
 
 
 
-        public PaymentPage(MenuPage menuPage,PaymentWindow parentWindow, ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int customerID, int numberOfBill) : this()
+        public PaymentPage(MenuPage menuPage, PaymentWindow parentWindow, ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int customerID, int numberOfBill) : this()
         {
             _tableNumber = tableNumber;
-            _orderedItems = orderedItems;
+            _eachCustomerOrderedItems = orderedItems;
             _orderType = orderType;
             _orderId = orderId;
             _status = status;
@@ -80,12 +84,12 @@ namespace POS_System.Pages
             PaymentCompleted?.Invoke(this, EventArgs.Empty);
         }
 
-    
+
 
         // Methods for get customer payment: when user type the amount, it will start from cent.
-    
+
         // Add a private field to store the shadow value:
-    
+
         private long shadowValue = 0;
 
         private void CustomerPayTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -129,18 +133,19 @@ namespace POS_System.Pages
                     customerPayTextBox.TextChanged += CustomerPayTextBox_TextChanged;
                 }
             }
-            
 
-            if (_paymentMethod!=null && _paymentMethod.Equals("Cash"))
+
+            if (_paymentMethod != null && _paymentMethod.Equals("Cash"))
             {
                 tipsTextbox.Text = "0";
                 DisplayChange();
-            }else if (_paymentMethod == null || _paymentMethod != "Cash")
+            }
+            else if (_paymentMethod == null || _paymentMethod != "Cash")
             {
                 changeTextBox.Text = "0";
                 DisplayTips();
             }
-            
+
         }
 
 
@@ -149,11 +154,11 @@ namespace POS_System.Pages
         private double CalculateTotalOrderAmount()
         {
             double totalAmount = 0;
-            foreach (var orderedItem in _orderedItems)
+            foreach (var orderedItem in _eachCustomerOrderedItems)
             {
 
-                    totalAmount += orderedItem.ItemPrice;
-                
+                totalAmount += orderedItem.ItemPrice;
+
             }
             return totalAmount;
         }
@@ -214,11 +219,12 @@ namespace POS_System.Pages
                         return;
                     }
 
-                } else
+                }
+                else
                 {
                     MessageBox.Show($"The payment must be greater than the \n\nBalance : ${CalculateOrderTotalBalance()}");
 
-                    return; 
+                    return;
                 }
             }
 
@@ -232,33 +238,35 @@ namespace POS_System.Pages
         //(method for add the payment to list)
         private void AddPaymentList()
         {
-            
-            Payment newPayment = new Payment
+            foreach (OrderedItem items in _eachCustomerOrderedItems)
             {
-                
-                customerID =+ _customerID,
-                paymentID = _customerID,
-                orderID = _orderId,
-                orderType = _orderType,
-                paymentMethod = _paymentMethod,
-                baseAmount = CalculateTotalOrderAmount(),
-                GST = CalculateTaxAmount(),
-                customerPaymentTotalAmount = GetCustomerPayment(),
-                grossAmount = CalculateOrderTotalBalance(),
-                customerChangeAmount = CalculateChangeAmount(),
-                tip = CalculateTipAmount()
-             };
+                Payment eachCustomerPayment = new Payment
+                {
 
-            // Add the new Payment to the list
-            
-            int newKey = _eachPaymentDictionary.Count + 1;
-            _eachPaymentDictionary.TryAdd(newKey, newPayment);
+                    customerID = +_customerID,
+                    paymentID = _customerID,
+                    orderID = _orderId,
+                    orderType = _orderType,
+                    tableNumber = _tableNumber,
+                    paymentMethod = _paymentMethod,
+                    baseAmount = CalculateTotalOrderAmount(),
+                    GST = CalculateTaxAmount(),
+                    customerPaymentTotalAmount = GetCustomerPayment(),
+                    grossAmount = CalculateOrderTotalBalance(),
+                    customerChangeAmount = CalculateChangeAmount(),
+                    tip = CalculateTipAmount(),
+                    eachCustomerItems = _eachCustomerOrderedItems
 
+
+                };
+
+                int newKey = _eachPaymentDictionary.Count + 1;
+                _eachPaymentDictionary.TryAdd(newKey, eachCustomerPayment);
+            }
         }
 
         private void SavePaymentToDatabase(ConcurrentDictionary<int, Payment> paymentDictionary)
         {
-
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
@@ -310,7 +318,7 @@ namespace POS_System.Pages
                     isPaidCmd.Parameters.AddWithValue("@paid", "y");
                     isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
                     isPaidCmd.ExecuteNonQuery();
-
+                    PrintAllReceipts(paymentDictionary);
 
                     paymentDictionary.Clear();
 
@@ -327,6 +335,254 @@ namespace POS_System.Pages
 
                 }
             }
+        }
+
+        //Method: Convert Payment Dictionary to List
+        private void ConvertPaymentDictionaryToListMethod()
+        {
+            eachPaymentList.Clear(); // Clear the list to avoid duplicating items
+
+            foreach (var kvp in _eachPaymentDictionary)
+            {
+                eachPaymentList.Add(kvp.Value);
+            }
+        }
+
+        private void PrintAllReceipts(ConcurrentDictionary<int, Payment> paymentDictionary)
+        {
+            foreach (var kvp in paymentDictionary)
+            {
+                Payment eachCustomerPayment = kvp.Value;
+                PrintSettledPaymentReceipt(eachCustomerPayment);
+            }
+        }
+
+        private void PrintSettledPaymentReceipt(Payment eachCustomerPayment)
+        {
+            try
+            {
+
+                // Calculate GST (5% of TotalAmount)
+                double gstRate = 0.05;  // GST rate as 5%
+
+                // Create a FlowDocument for each split bill
+                FlowDocument flowDocument = new FlowDocument();
+
+                // Add the "-------------------------------------------------" separator at the top
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+                // Create a paragraph for restaurant information
+                Paragraph restaurantInfoParagraph = new Paragraph();
+                restaurantInfoParagraph.TextAlignment = TextAlignment.Center;
+
+                // Restaurant Name
+                Run restaurantNameRun = new Run("Thai Bistro\n");
+                restaurantNameRun.FontSize = 20;
+                restaurantInfoParagraph.Inlines.Add(restaurantNameRun);
+
+                // Address
+                Run addressRun = new Run("233 Centre St S #102,\n Calgary, AB T2G 2B7\n");
+                addressRun.FontSize = 12;
+                restaurantInfoParagraph.Inlines.Add(addressRun);
+
+                // Phone
+                Run phoneRun = new Run("Phone: (403) 313-9922\n");
+                phoneRun.FontSize = 12;
+                restaurantInfoParagraph.Inlines.Add(phoneRun);
+
+                // Add the restaurant info paragraph
+                flowDocument.Blocks.Add(restaurantInfoParagraph);
+
+                // Add the "-------------------------------------------------" separator at the top
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                ///^^^^^^good^^^^^^^^^^^
+
+
+
+                ////////order detail session!!!!
+
+                // Create a Section for the order details
+                Section orderDetailsSection = new Section();
+
+                // Table to display order details
+                Table detailsTable = new Table();
+                TableRowGroup detailTableRowGroup = new TableRowGroup();
+                // Add rows for order details
+                detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Table:", eachCustomerPayment.tableNumber));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", eachCustomerPayment.orderID.ToString()));
+                detailTableRowGroup.Rows.Add(CreateTableRow("Server:", User.id.ToString()));
+
+                // Add a line with dashes after "Server: John"
+                TableRow dashedLineRow = new TableRow();
+                TableCell dashedLineCell = new TableCell();
+
+                Paragraph dashedLineParagraph = new Paragraph(new Run("-------------------------------------------------"));
+                //dashedLineParagraph.TextAlignment = TextAlignment.Center;
+                dashedLineCell.ColumnSpan = 2;
+                dashedLineCell.Blocks.Add(dashedLineParagraph);
+                dashedLineRow.Cells.Add(dashedLineCell);
+                detailTableRowGroup.Rows.Add(dashedLineRow);
+
+                ///item session
+
+                // Create a TableRow for displaying items and their prices
+                TableRowGroup itemTableRowGroup = new TableRowGroup();
+                Section itemSection = new Section();
+                // Add space (empty TableRow) for the gap
+                itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
+
+                // Create a nested Table within the items cell
+                Table itemsTable = new Table();
+
+                // Access the 'Items' collection and loop through it to add item rows.
+                foreach (var OrderedItem in eachCustomerPayment.eachCustomerItems)
+                {
+                    itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
+                }
+
+                // Initialize the TableRowGroup
+                itemSection.Blocks.Add(itemsTable);
+
+                // Create a new TableRow for the itemsCell and add it to the tableRowGroup
+                // Add space (empty TableRow) for the gap
+                itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
+                /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                ///////sub total session
+                Table paymentTable = new Table();
+                Section paymentSection = new Section();
+                TableRowGroup paymentTableRowGroup = new TableRowGroup();
+
+
+                // Create a Paragraph for "Sub Total" with underline
+                Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
+                subTotalParagraph.FontSize = 20; // Increase the font size
+                subTotalParagraph.TextAlignment = TextAlignment.Right;
+
+                //double customerTotalAmount = orderedItems.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
+                double subTotalAmount = eachCustomerPayment.baseAmount;
+                Paragraph subTotalValueParagraph = new Paragraph(new Run(subTotalAmount.ToString("C")));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+
+                // Create a Paragraph for "GST"
+                Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
+                gstLabelParagraph.FontSize = 20; // Increase the font size
+                gstLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                double customerGSTAmount = eachCustomerPayment.GST;
+                Paragraph gstValueParagraph = new Paragraph(new Run(customerGSTAmount.ToString("C")));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
+
+                // Create a Paragraph for "Total Amount"
+                Paragraph totalDueAmountLabelParagraph = new Paragraph(new Run("Total Due:"));
+                totalDueAmountLabelParagraph.FontSize = 20; // Increase the font size
+                totalDueAmountLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                double totalDueAmountWithGST = eachCustomerPayment.grossAmount;
+                Paragraph totalDueAmountValueParagraph = new Paragraph(new Run(totalDueAmountWithGST.ToString("C")));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalDueAmountLabelParagraph, totalDueAmountValueParagraph));
+                //////////////////////////////////////////////////
+
+                detailsTable.RowGroups.Add(detailTableRowGroup);
+                itemsTable.RowGroups.Add(itemTableRowGroup);
+                paymentTable.RowGroups.Add(paymentTableRowGroup);
+
+                orderDetailsSection.Blocks.Add(detailsTable);
+                itemSection.Blocks.Add(itemsTable);
+                paymentSection.Blocks.Add(paymentTable);
+
+                flowDocument.Blocks.Add(orderDetailsSection);
+                flowDocument.Blocks.Add(itemSection);
+                flowDocument.Blocks.Add(paymentSection);
+                // /*****************************
+                // Create a new paragraph for the "Thank You" message
+                Paragraph thankYouParagraph = new Paragraph();
+                thankYouParagraph.TextAlignment = TextAlignment.Center;
+                thankYouParagraph.FontSize = 16; // You can set the font size as you wish
+                thankYouParagraph.Inlines.Add(new Run("Thank You for dining with us!"));
+                thankYouParagraph.Margin = new Thickness(0, 10, 0, 0); // Add some space before the message if needed
+
+                // Add a "-------------------------------------------------" separator before the "Thank You" message
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                // Add the "Thank You" paragraph to the FlowDocument
+                flowDocument.Blocks.Add(thankYouParagraph);
+                flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                //**********************************
+
+                // Create a DocumentPaginator for the FlowDocument
+                IDocumentPaginatorSource paginatorSource = flowDocument;
+                DocumentPaginator documentPaginator = paginatorSource.DocumentPaginator;
+
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    printDialog.PrintDocument(documentPaginator, $"Settled Payment Receipt - Customer {eachCustomerPayment.customerID}");
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+                string errorMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                MessageBox.Show("An error occurred: " + errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+
+        }
+
+        private TableRow CreateTableRow(string label, string value)
+        {
+            TableRow row = new TableRow();
+
+            // Label cell
+            TableCell labelCell = new TableCell(new Paragraph(new Run(label)));
+            labelCell.TextAlignment = TextAlignment.Right;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+            row.Cells.Add(labelCell);
+
+            // Value cell
+            TableCell valueCell = new TableCell(new Paragraph(new Run(value)));
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+            row.Cells.Add(valueCell);
+
+            return row;
+        }
+
+
+
+        private TableRow CreateEmptyTableRow()
+        {
+            TableRow row = new TableRow();
+
+            TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
+            emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
+
+            row.Cells.Add(emptyCell);
+
+            return row;
+        }
+
+        private TableRow CreateTableRowWithParagraph(Paragraph labelParagraph, Paragraph valueParagraph)
+        {
+            TableRow row = new TableRow();
+
+            // Label cell
+            TableCell labelCell = new TableCell(labelParagraph);
+            labelCell.TextAlignment = TextAlignment.Right;
+            labelCell.BorderThickness = new Thickness(0, 0, 20, 0); // Add space on the right side
+            labelCell.BorderBrush = Brushes.Transparent; // Set the border brush to transparent to hide the line
+            row.Cells.Add(labelCell);
+
+            // Value cell
+            TableCell valueCell = new TableCell(valueParagraph);
+            valueCell.BorderThickness = new Thickness(0); // No column lines, only space
+            row.Cells.Add(valueCell);
+
+            return row;
         }
 
 
@@ -422,14 +678,14 @@ namespace POS_System.Pages
                 }
                 return double.Parse(customerPayTextBox.Text.Replace("$", "").Trim());
             }
-            catch(System.FormatException e) 
+            catch (System.FormatException e)
             {
                 customerPayTextBox.Text = "0.0";
             }
 
             return 0;
 
-           
+
         }
 
         //***
@@ -439,10 +695,11 @@ namespace POS_System.Pages
         private double CalculateTipAmount()
         {
             double tipAmount = 0.0;
-            if (_paymentMethod != null && _paymentMethod.Equals("Cash")) 
+            if (_paymentMethod != null && _paymentMethod.Equals("Cash"))
             {
                 return 0.0;
-            }else
+            }
+            else
             {
                 return tipAmount = GetCustomerPayment() - CalculateOrderTotalBalance();
             }
@@ -478,7 +735,7 @@ namespace POS_System.Pages
         // Calculate Order Total Balance and show in the textbox
         private double CalculateOrderTotalBalance()
         {
-            
+
             double totalOrderAmount = CalculateTotalOrderAmount();
             double totalTaxAmount = CalculateTaxAmount();
             return totalOrderAmount + totalTaxAmount;
@@ -492,7 +749,7 @@ namespace POS_System.Pages
         {
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-            
+
             tipsTextbox.Text = CalculateTipAmount().ToString("C", cultureInfo);
             if (string.IsNullOrWhiteSpace(tipsTextbox.Text))
             {
@@ -504,7 +761,7 @@ namespace POS_System.Pages
         //Display Balance
         private void DisplayBalance()
         {
-            
+
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
             balanceTextBox.Text = CalculateOrderTotalBalance().ToString("C", cultureInfo);
@@ -527,9 +784,9 @@ namespace POS_System.Pages
             if (string.IsNullOrWhiteSpace(changeTextBox.Text))
             {
 
-                    changeTextBox.Text = "0";
+                changeTextBox.Text = "0";
 
-                
+
             }
         }
 

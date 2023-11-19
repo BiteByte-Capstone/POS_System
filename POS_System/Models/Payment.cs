@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace POS_System.Models
 {
     public class Payment : INotifyPropertyChanged
     {
-        private int _numberOfCompletedPayment;
         private int _customerID;
         private int _paymentID;
         private long _orderID;
+        private string _tableNumber;
         private string _orderType;
         private string _paymentMethod;
         private double _baseAmount;
@@ -17,6 +18,8 @@ namespace POS_System.Models
         private double _grossAmount;
         private double _customerChangeAmount;
         private double _tip;
+        public ObservableCollection<OrderedItem> eachCustomerItems { get; set; }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -25,19 +28,28 @@ namespace POS_System.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public int numberOfCompletedPayment
+        public Payment()
         {
-            get => _numberOfCompletedPayment;
-            set
-            {
-                if (_numberOfCompletedPayment != value)
-                {
-                    _numberOfCompletedPayment = value;
-                    OnPropertyChanged(nameof(numberOfCompletedPayment));
-                }
-            }
+
         }
 
+        public Payment(int customerID, int paymentID, long orderID,string tableNumber ,string orderType, string paymentMethod, double baseAmount, double GST, double customerPaymentTotalAmount, double grossAmount, double customerChangeAmount, double tip, ObservableCollection<OrderedItem> eachCustomerItems)
+        {
+
+            this._customerID = customerID;
+            this._paymentID = paymentID;
+            this._orderID = orderID;
+            this._tableNumber = tableNumber;
+            this._orderType = orderType;
+            this._paymentMethod = paymentMethod;
+            this._baseAmount = baseAmount;
+            this._GST = GST;
+            this._customerPaymentTotalAmount = customerPaymentTotalAmount;
+            this._grossAmount = grossAmount;
+            this._customerChangeAmount = customerChangeAmount;
+            this._tip = tip;
+            this.eachCustomerItems = eachCustomerItems ?? new ObservableCollection<OrderedItem>();
+        }
 
         public int customerID
         {
@@ -74,6 +86,19 @@ namespace POS_System.Models
                 {
                     _orderID = value;
                     OnPropertyChanged(nameof(orderID));
+                }
+            }
+        }
+
+        public string tableNumber
+        {
+            get => _tableNumber;
+            set
+            {
+                if (_tableNumber != value)
+                {
+                    _tableNumber = value;
+                    OnPropertyChanged(nameof(tableNumber));
                 }
             }
         }

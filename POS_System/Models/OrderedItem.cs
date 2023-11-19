@@ -1,6 +1,7 @@
 ﻿using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace POS_System.Models
@@ -23,6 +24,7 @@ namespace POS_System.Models
         private bool _isSavedItem;
         private bool _isSettled;
         private int _customerID;
+
 
 
         // Properties

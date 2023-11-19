@@ -539,16 +539,21 @@ namespace POS_System.Pages
             {
                 PaymentWindow paymentWindow = new PaymentWindow(this,orderedItems, _tableNumber, _orderType, orderId, _status, false, _numberOfBill);
                 paymentWindow.ShowDialog();
-                
-
-
             }
         }
+
+        //Method: Getting each customer payment
 
         // new cancel button Thevagi from PK
         //Method for CancelButtonClick - By PK
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            if (User.id >= 300)
+            {
+                MessageBox.Show("You do not have permission to cancel orders.");
+                return;
+            }
+
             if (_hasPaidOrders.Equals(false))
             {
                 MessageBox.Show("This page has no unpaid order");
@@ -566,7 +571,8 @@ namespace POS_System.Pages
         //Method for CancelOrder - By PK
         private void CancelOrder(string tableNumber)
         {
-            //MessageBox.Show("Order Canceled");
+
+
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 try
@@ -580,9 +586,8 @@ namespace POS_System.Pages
                     cancelOrderCmd.ExecuteReader();
                     conn.Close();
 
-                    //OrdersListBox.Items.GroupDescriptions.Clear(); <--- Is this needed?
                     orderedItems.Clear();
-                    //TotalAmount = 0; <--- Is this needed?
+
 
                     MessageBox.Show("Order ID: " + orderId + " has been canceled!");
                 }
@@ -1345,7 +1350,6 @@ namespace POS_System.Pages
         {
             button.FontFamily = new FontFamily("Verdana");
             button.FontSize = 20;
-            button.Background = Brushes.Orange;
             button.FontWeight = FontWeights.Bold;
             button.BorderBrush = Brushes.Orange;
             button.Margin = new Thickness(5);
