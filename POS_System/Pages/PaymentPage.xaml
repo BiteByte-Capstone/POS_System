@@ -36,8 +36,7 @@
                 <ColumnDefinition Width="301*" />
                 <ColumnDefinition Width="282*"/>
                 <ColumnDefinition Width="306*"/>
-                <ColumnDefinition Width="300*" MinWidth="300"/>
-                <ColumnDefinition Width="288*"/>
+                <ColumnDefinition Width="588*" MinWidth="300"/>
 
             </Grid.ColumnDefinitions>
 
@@ -78,13 +77,13 @@
 
             <TextBox x:Name="customerPayTextBox" PreviewTextInput="CustomerPayTextBox_PreviewTextInput" PreviewKeyDown="CustomerPayTextBox_PreviewKeyDown" TextChanged="CustomerPayTextBox_TextChanged" Grid.Column="2" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="90"  FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Foreground="White" BorderThickness="5,5,5,5" BorderBrush="#FFFFDF6D" Background="#FF4C4B56"/>
 
-            <TextBlock x:Name="tipsTextbox" Grid.Column="4" Grid.Row="4" TextWrapping="Wrap" Background="{x:Null}" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Margin="28,30,97,30" Foreground="Orange" />
+            <TextBlock x:Name="tipsTextbox" Grid.Column="4" Grid.Row="4" TextWrapping="Wrap" Background="{x:Null}" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" Margin="28,30,385,30" Foreground="Orange" />
 
             <Label x:Name="totalTax" Content="GST : " Grid.Column="1" Margin="74,20,0,0" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" RenderTransformOrigin="0.247,0.55" Grid.Row="2" VerticalContentAlignment="Center"/>
 
             <TextBlock x:Name="totalTaxTextBox" Grid.Column="2" TextAlignment="Right" TextWrapping="Wrap" Background="{x:Null}" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Grid.Row="2" Height="50" VerticalAlignment="Top" Margin="0,40,65,0" Foreground="Orange"/>
 
-            <TextBlock x:Name="changeTextBox" Grid.Column="4" Margin="28,28,97,32" Grid.Row="5" TextWrapping="Wrap" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" RenderTransformOrigin="0.495,0.567" Foreground="Orange" />
+            <TextBlock x:Name="changeTextBox" Grid.Column="4" Margin="28,28,385,32" Grid.Row="5" TextWrapping="Wrap" FontSize="25" FontFamily="Verdana" FontWeight="Bold" TextAlignment="Center" RenderTransformOrigin="0.495,0.567" Foreground="Orange" />
 
             <Label x:Name="Balance" Content="Balance : " Grid.Column="1" Margin="74,0,0,20" FontSize="20" Background="Orange" HorizontalContentAlignment="Right" BorderBrush="#FF4C4B56" BorderThickness="3" FontFamily="Verdana" Grid.Row="3" VerticalContentAlignment="Center"/>
 

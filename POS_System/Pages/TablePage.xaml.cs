@@ -264,13 +264,6 @@ namespace POS_System.Pages
         }
 
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Refund refund = new Refund();
-            refund.Show();
-            this.Close();
-        }
-
 
     }
 }
