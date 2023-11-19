@@ -22,12 +22,13 @@ namespace POS_System.Dialog
     public partial class ChangeTableDialog : Window
     {
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+        public event EventHandler TableColorUpdated;
 
-        
 
         public ChangeTableDialog()
         {
             InitializeComponent();
+            
 
         }
 
@@ -44,6 +45,26 @@ namespace POS_System.Dialog
 
             // Close the dialog
             this.Close();
+        }
+
+        private void UpdateTableColor(Button tableButton, Button takeOutButton)
+        {
+            if (tableButton != null)
+            {
+                tableButton.Background = Brushes.Green;
+            }
+            else if (takeOutButton != null)
+            {
+                takeOutButton.Background = Brushes.Green;
+            }
+
+            // Raise the event to notify that the table color has been updated
+            OnTableColorUpdated();
+        }
+
+        protected virtual void OnTableColorUpdated()
+        {
+            TableColorUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         private void UpdateTableNumber(string fromTable, string toTable)
@@ -65,7 +86,11 @@ namespace POS_System.Dialog
                     if (rowsAffected > 0)
                     {
                         MessageBox.Show($"Table updated from {fromTable} to {toTable}.");
-                        
+
+                        // Update the table color for the 'fromTable'
+                        UpdateTableColor(FindName("table_" + fromTable) as Button, FindName("takeOut_" + fromTable) as Button);
+                        // Update the table color for the 'toTable'
+                        UpdateTableColor(FindName("table_" + toTable) as Button, FindName("takeOut_" + toTable) as Button);
                     }
                     else
                     {
@@ -82,6 +107,8 @@ namespace POS_System.Dialog
                 }
             }
         }
+
+
 
 
 

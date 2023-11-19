@@ -206,6 +206,27 @@ namespace POS_System.Pages
             }
         }
 
+        private void ChangeTable_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ChangeTableDialog();
+
+            // Subscribe to the event
+            dialog.TableColorUpdated += Dialog_TableColorUpdated;
+
+            // Populate ComboBoxes with tables (modify as needed)
+            // ...
+
+            // Show the dialog
+            dialog.ShowDialog();
+        }
+
+        private void Dialog_TableColorUpdated(object sender, EventArgs e)
+        {
+            // Handle the event and update the UI if necessary
+            // For example, you can call UpdateTableColors() here
+            UpdateTableColors();
+        }
+
 
 
         private void ResetTable_Click(object sender, RoutedEventArgs e)
@@ -258,14 +279,7 @@ namespace POS_System.Pages
 
         }
 
-        private void ChangeTable_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new ChangeTableDialog();
-
-            // Show the dialog
-            dialog.Show();
-
-        }
+        
 
 
 
