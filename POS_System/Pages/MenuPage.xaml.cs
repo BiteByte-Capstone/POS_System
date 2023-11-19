@@ -880,15 +880,6 @@ namespace POS_System.Pages
             }
             //Howard: Moved the print bill kichen to autosave
 
-
-
-
-            
-
-
-
-
-
         }
 
         // (Method for save button) save order to database
