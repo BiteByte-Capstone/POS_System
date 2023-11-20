@@ -1,37 +1,24 @@
 ﻿using MySql.Data.MySqlClient;
-using POS_System.Pages;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace POS_System.Dialog
 {
-    /// <summary>
-    /// Interaction logic for ChangeTableDialog.xaml
-    /// </summary>
     public partial class ChangeTableDialog : Window
     {
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         public event EventHandler TableColorUpdated;
 
-
         public ChangeTableDialog()
         {
             InitializeComponent();
-            
 
+            // Populate the ComboBox with tables that have unpaid orders
+            PopulateComboBoxWithUnpaidTables();
         }
-
 
         // OK Button
         private void OK_Click(object sender, RoutedEventArgs e)
@@ -45,6 +32,42 @@ namespace POS_System.Dialog
 
             // Close the dialog
             this.Close();
+        }
+
+        private void PopulateComboBoxWithUnpaidTables()
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Query the database for tables with unpaid orders
+                    string query = "SELECT DISTINCT table_num FROM `order` WHERE paid = 'n';";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+                    // Clear existing items in the ComboBox
+                    cboFromTable.Items.Clear();
+
+                    // Add tables with unpaid orders to the ComboBox
+                    while (reader.Read())
+                    {
+                        string tableNumber = reader.GetString(0);
+                        cboFromTable.Items.Add(tableNumber);
+                    }
+
+                    reader.Close();
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
         }
 
         private void UpdateTableColor(Button tableButton, Button takeOutButton)
@@ -107,10 +130,6 @@ namespace POS_System.Dialog
                 }
             }
         }
-
-
-
-
 
         // Cancel Button
         private void Cancel_Click(object sender, RoutedEventArgs e)
