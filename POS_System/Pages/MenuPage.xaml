@@ -205,7 +205,7 @@
                 <ColumnDefinition Width="166*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Name="ResetButton" Background="OrangeRed" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetButton_Click" Foreground="Black" BorderThickness="1,1,1,1" Grid.Column="0" Grid.Row="0">
+            <Button Name="ResetButton" Background="Red" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetButton_Click" Foreground="Black" BorderThickness="1,1,1,1" Grid.Column="0" Grid.Row="0">
                 <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="Reset" TextWrapping="Wrap" TextAlignment="Center" RenderTransformOrigin="0.5,0.5" Height="34" Width="92" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Viewbox>
