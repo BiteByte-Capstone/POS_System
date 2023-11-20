@@ -22,11 +22,11 @@
         </Grid.RowDefinitions>
         <!-- Buttons -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="20" Width="20*"/>
+            <ColumnDefinition MinWidth="20" Width="20" MaxWidth="20"/>
             <ColumnDefinition Width="226"/>
             <ColumnDefinition Width="550"/>
             <ColumnDefinition Width="239*" MinWidth="500" MaxWidth="1050"/>
-            <ColumnDefinition Width="30" MinWidth="20"/>
+            <ColumnDefinition Width="20" MinWidth="20" MaxWidth="20"/>
         </Grid.ColumnDefinitions>
 
         <!--Left panel button-->
@@ -205,9 +205,29 @@
                 <ColumnDefinition Width="166*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Name="ResetButton" Background="Red" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetButton_Click" Foreground="Black" BorderThickness="1,1,1,1" Grid.Column="0" Grid.Row="0">
-                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Reset" TextWrapping="Wrap" TextAlignment="Center" RenderTransformOrigin="0.5,0.5" Height="34" Width="92" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Name="ResetButton"
+                    Background="Orange"
+                    BorderBrush="Orange"
+                    FontSize="25"
+                    FontFamily="Verdana"
+                    FontWeight="Bold"
+                    Click="ResetButton_Click"
+                    Foreground="Black"
+                    BorderThickness="1,1,1,1"
+                    Grid.Column="0" Grid.Row="0">
+                <Viewbox HorizontalAlignment="Center"
+                         VerticalAlignment="Center">
+                    <StackPanel>
+                        <Image
+                       Source="pack://application:,,,/POS_System;component/Images/ResetBtn.png"
+                       Width="499" Height="275"
+                       />
+                        <TextBlock Grid.Row="1"
+                           Text="RESET" FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="10,18,0,0" Height="87" Width="264"
+                                   FontSize="70"/>
+                    </StackPanel>
                 </Viewbox>
             </Button>
 

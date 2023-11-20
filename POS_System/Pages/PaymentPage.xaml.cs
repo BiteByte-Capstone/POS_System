@@ -243,7 +243,7 @@ namespace POS_System.Pages
                 Payment eachCustomerPayment = new Payment
                 {
 
-                    customerID = +_customerID, 
+                    customerID = +_customerID,
                     paymentID = _customerID,
                     orderID = _orderId,
                     orderType = _orderType,
@@ -400,7 +400,6 @@ namespace POS_System.Pages
                 detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
                 detailTableRowGroup.Rows.Add(CreateTableRow("Table:", eachCustomerPayment.tableNumber));
                 detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", eachCustomerPayment.orderID.ToString()));
-              
                 detailTableRowGroup.Rows.Add(CreateTableRow("Server:", User.id.ToString()));
 
                 // Add a line with dashes after "Server: John"
