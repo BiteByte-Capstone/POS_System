@@ -8,7 +8,7 @@
         Title="Menu Page" WindowState="Maximized">
 
 
-    <Grid Background="#212121" Margin="0,0,0,0">
+    <Grid Background="#212121" Height="751">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="19"/>
@@ -30,10 +30,10 @@
         </Grid.ColumnDefinitions>
 
         <!--Left panel button-->
-        <Button Content="Back" BorderBrush="Orange" BorderThickness="1" Background="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" Grid.Column="1" Grid.Row="1" />
+        <Button Content="Back" BorderBrush="Orange" BorderThickness="1" Background="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" RenderTransformOrigin="0.5,0.5" Click="Back_to_TablePage" Grid.Column="1" Grid.Row="1" Margin="0,24,0,58" Grid.RowSpan="2" />
 
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
-        Grid.Column="1" Grid.Row="2" Grid.RowSpan="4">
+        Grid.Column="1" Grid.Row="2" Grid.RowSpan="5" Margin="0,24,0,-6">
             <StackPanel Orientation="Vertical" Margin="0,40,0,3">
                 <Button Foreground="Red" Background="Red"  BorderBrush="Red" FontSize="20"  RenderTransformOrigin="-1.893,0.589" FontFamily="Verdana"  Height="50" Width="214" Margin="0,0,0,10" Click="CancelButton_Click">
                     <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -73,10 +73,10 @@
 
         <!-- Table Information (middle part)-->
 
-        <Label Name="MenuLabel" Content="Menu" BorderBrush="#FFFFA500" BorderThickness="1,1,1,1" FontFamily="Verdana" FontSize="32" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Background="{x:Null}" Foreground="Orange" Grid.Row="1"/>
+        <Label Name="MenuLabel" Content="Menu" BorderBrush="#FFFFA500" BorderThickness="1,1,1,1" FontFamily="Verdana" FontSize="32" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Background="{x:Null}" Foreground="Orange" Grid.Row="1" Margin="0,24,0,58" Grid.RowSpan="2"/>
 
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
-        Grid.Column="3" Height="51" VerticalAlignment="Center" Grid.Row="1" Margin="1,0,1,0">
+        Grid.Column="3" Height="51" VerticalAlignment="Top" Grid.Row="1" Margin="1,24,1,0" Grid.RowSpan="2">
 
             <Grid Margin="3,-1,10,-1">
 
@@ -154,7 +154,7 @@
             </Grid>
         </Border>
         <!--list view: list all order-->
-        <ListView x:Name="OrdersListView" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold" Grid.RowSpan="3">
+        <ListView x:Name="OrdersListView" ItemsSource="{Binding OrderedItems}" Background="#FF454545" BorderBrush="Orange" FontFamily="Verdana" Foreground="#FFFBF8F8" FontSize="18" Grid.Column="2" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" FontWeight="Bold" Grid.RowSpan="4" Margin="0,24,0,22">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Foreground" Value="White"/>
@@ -198,20 +198,47 @@
         </ListView>
 
 
-        <Grid Grid.Row="5" Grid.Column="2">
+        <Grid Grid.Row="5" Grid.Column="2" Margin="0,24,0,-6" Grid.RowSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80"/>
                 <ColumnDefinition Width="69*"/>
                 <ColumnDefinition Width="166*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Name="ResetButton" Background="OrangeRed" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="ResetButton_Click" Foreground="Black" BorderThickness="1,1,1,1" Grid.Column="0" Grid.Row="0">
-                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Reset" TextWrapping="Wrap" TextAlignment="Center" RenderTransformOrigin="0.5,0.5" Height="34" Width="92" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Name="ResetButton"
+                    Background="Orange"
+                    BorderBrush="Orange"
+                    FontSize="25"
+                    FontFamily="Verdana"
+                    FontWeight="Bold"
+                    Click="ResetButton_Click"
+                    Foreground="Black"
+                    BorderThickness="1,1,1,1"
+                    Grid.Column="0"
+                    Grid.Row="0">
+                <Viewbox HorizontalAlignment="Center"
+                         VerticalAlignment="Center">
+                    <StackPanel>
+                        <Image
+                       Source="pack://application:,,,/POS_System;component/Images/ResetBtn.png"
+                       Width="499" Height="275"
+                       />
+                        <TextBlock Grid.Row="1"
+                           Text="RESET" FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="10,18,0,0" Height="87" Width="264"
+                                   FontSize="70"/>
+                    </StackPanel>
                 </Viewbox>
             </Button>
 
-            <Button HorizontalAlignment="Center" Width="138" Foreground="Black" Background="Orange"  BorderBrush="Orange" FontSize="20" Click="DeleteItemButton_Click" Grid.Column="1" FontWeight="Bold"  >
+            <Button HorizontalAlignment="Center"
+                    Width="138" Foreground="Black"
+                    Background="Orange"
+                    BorderBrush="Orange"
+                    FontSize="20"
+                    Click="DeleteItemButton_Click"
+                    Grid.Column="1" FontWeight="Bold">
                 <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="173" Height="31" FontFamily="Verdana" FontSize="25"/>
                 </Viewbox>
@@ -230,7 +257,7 @@
 
         <!-- category button list-->
         <Border BorderBrush="Orange" BorderThickness="1" 
-         Margin="0,50,1,0" Grid.Column="3" Grid.Row="1" Grid.RowSpan="2">
+         Margin="0,23,1,27" Grid.Column="3" Grid.Row="2" Grid.RowSpan="2">
             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Margin="3,3,1,2" >
                 <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="0,0,0,0"/>
             </ScrollViewer>
@@ -238,7 +265,7 @@
 
         <!-- item button list -->
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
-         Margin="0,82,1,0" Grid.Column="3" Grid.Row="2" Grid.RowSpan="4">
+         Margin="0,24,1,-6" Grid.Column="3" Grid.Row="3" Grid.RowSpan="4">
             <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="0,18,-2,0"/>
         </Border>
 
