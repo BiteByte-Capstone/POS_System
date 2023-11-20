@@ -243,7 +243,7 @@ namespace POS_System.Pages
                 Payment eachCustomerPayment = new Payment
                 {
 
-                    customerID = +_customerID,
+                    customerID = +_customerID, 
                     paymentID = _customerID,
                     orderID = _orderId,
                     orderType = _orderType,
