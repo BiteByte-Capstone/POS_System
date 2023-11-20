@@ -400,6 +400,7 @@ namespace POS_System.Pages
                 detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
                 detailTableRowGroup.Rows.Add(CreateTableRow("Table:", eachCustomerPayment.tableNumber));
                 detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", eachCustomerPayment.orderID.ToString()));
+              
                 detailTableRowGroup.Rows.Add(CreateTableRow("Server:", User.id.ToString()));
 
                 // Add a line with dashes after "Server: John"
