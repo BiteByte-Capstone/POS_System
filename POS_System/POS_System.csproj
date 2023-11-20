@@ -16,6 +16,7 @@
     <None Remove="Images\AdminPicture.png" />
     <None Remove="Images\BackBtn.png" />
     <None Remove="Images\deleteIcon.png" />
+    <None Remove="Images\DeleteItem.png" />
     <None Remove="Images\editIcon.png" />
     <None Remove="Images\editUser.png" />
     <None Remove="Images\LoginButton.png" />
@@ -53,6 +54,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\deleteIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\DeleteItem.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\editIcon.png">

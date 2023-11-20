@@ -221,13 +221,12 @@
                     <StackPanel>
                         <Image
                        Source="pack://application:,,,/POS_System;component/Images/ResetBtn.png"
-                       Width="499" Height="275"
-                       />
+                       Width="499" Height="275"/>
                         <TextBlock Grid.Row="1"
                            Text="RESET" FontWeight="Bold"
                            HorizontalAlignment="Center"
-                           Margin="10,18,0,0" Height="87" Width="264"
-                                   FontSize="70"/>
+                           Margin="10,18,0,0" Height="114" Width="382"
+                                   FontSize="100"/>
                     </StackPanel>
                 </Viewbox>
             </Button>
@@ -239,8 +238,17 @@
                     FontSize="20"
                     Click="DeleteItemButton_Click"
                     Grid.Column="1" FontWeight="Bold">
-                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="173" Height="31" FontFamily="Verdana" FontSize="25"/>
+                <Viewbox HorizontalAlignment="Center"
+                         VerticalAlignment="Center">
+                    <StackPanel>
+                        <Image
+                       Source="pack://application:,,,/POS_System;component/Images/DeleteItem.png"
+                       Width="566" Height="275"/>
+                        <TextBlock
+                           Text="Delete Item" FontWeight="Bold"
+                           Height="119" Width="546"
+                                   FontSize="100"/>
+                    </StackPanel>
                 </Viewbox>
             </Button>
 
