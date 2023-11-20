@@ -63,7 +63,7 @@ namespace POS_System.Pages
                     // Add the selected item to the second ListView
                     _splitedItem.Add(selectedItem);
 
-
+                   
 
 
                     // Refresh the ListViews
@@ -100,7 +100,7 @@ namespace POS_System.Pages
             if (splitOrderedItems.Items.Count > 0)
             {
 
-                foreach (OrderedItem splitedItem in _splitedItem)
+                foreach(OrderedItem splitedItem in _splitedItem)
                 {
                     OrderedItem newSplitByItemBill = new OrderedItem
                     {
@@ -115,9 +115,9 @@ namespace POS_System.Pages
                         customerID = currentCustomerId
                     };
                     _assignCustomerIDItems.Add(newSplitByItemBill);
-
+                    
                 }
-
+                
                 var selectedItems = (_splitedItem as ObservableCollection<OrderedItem>);
 
 
@@ -145,7 +145,7 @@ namespace POS_System.Pages
                     AddCustomerItemsToListBox(currentCustomerId, group.Select(item => item.item_name).ToList());
 
 
-
+ 
 
                 }
 
@@ -158,7 +158,7 @@ namespace POS_System.Pages
                 else if (_allOrderedItem.Count.Equals(0))
                 {
                     DialogResult = true;
-
+  
                 }
             }
         }

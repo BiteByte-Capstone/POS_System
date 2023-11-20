@@ -92,7 +92,7 @@ namespace POS_System.Pages
                 MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
-                    DeleteItemFromDatabase(id, name, price, description, category);
+                    DeleteItemFromDatabase(id,name,price,description,category);
                     MessageBox.Show("Delete successfully");
                     itemCategoryDataGrid.Content = GetAllItems();
                 }
@@ -112,7 +112,7 @@ namespace POS_System.Pages
                 MessageBox.Show("second stage");
                 int id = category.Id;
                 string name = category.Name;
-
+             
 
                 // Confirm user wants to delete with the user's name included
                 MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure you want to delete {name}?", "Delete Confirmation", MessageBoxButton.YesNo);
@@ -144,7 +144,7 @@ namespace POS_System.Pages
 
 
 
-                EditItemDialog editItemDialog = new EditItemDialog(id, name, price, description, category);
+                EditItemDialog editItemDialog = new EditItemDialog(id, name, price, description,category);
                 if (editItemDialog.ShowDialog() == true)
                 {
                     int editedId = editItemDialog.editedId;
@@ -153,14 +153,14 @@ namespace POS_System.Pages
                     double editedprice = editItemDialog.editedPrice;
                     string editedDescription = editItemDialog.editedDescripion;
                     string editedCategory = editItemDialog.editedCategory;
-
+                    
 
                     if (!string.IsNullOrWhiteSpace(editedName))
                     {
                         MessageBoxResult messageBoxResult = MessageBox.Show($"Are you sure want to edit from {name} to {editedName}?", "Delete Confirmation", MessageBoxButton.YesNo);
                         if (messageBoxResult == MessageBoxResult.Yes)
                         {
-                            if (EditItemFromDatabase(editedId, editedName, editedprice, editedDescription, editedCategory))
+                            if (EditItemFromDatabase(editedId, editedName,editedprice,editedDescription,editedCategory))
                             {
                                 MessageBox.Show($"Updated from {name} to {editedName}");
                                 itemCategoryDataGrid.Content = GetAllItems();
@@ -302,7 +302,7 @@ namespace POS_System.Pages
                                 ItemPrice = Convert.ToDouble(reader["item_price"]),
                                 Description = reader["item_description"].ToString(),
                                 Category = reader["item_category"].ToString()
-
+                                
                             });
                         }
                     }
@@ -343,7 +343,7 @@ namespace POS_System.Pages
                                 Name = reader["category_name"].ToString(),
                             };
                             categories.Add(category);
-
+                           
                         }
                     }
                 }
@@ -469,7 +469,7 @@ namespace POS_System.Pages
         }
 
         //Method: edit category
-        private bool EditCategoryFromDatabase(string categoryName, int categoryId)
+        private bool EditCategoryFromDatabase(string categoryName,int categoryId)
         {
             try
             {
@@ -495,7 +495,7 @@ namespace POS_System.Pages
             }
         }
 
-        private bool EditItemFromDatabase(int itemId, string itemName, double itemPrice, string itemDescription, string itemCategory)
+        private bool EditItemFromDatabase(int itemId,string itemName, double itemPrice, string itemDescription, string itemCategory)
         {
             try
             {
@@ -527,7 +527,7 @@ namespace POS_System.Pages
 
 
 
-
+       
 
 
     }

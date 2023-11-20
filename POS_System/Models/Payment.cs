@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace POS_System.Models
 {
@@ -38,7 +33,7 @@ namespace POS_System.Models
 
         }
 
-        public Payment(int customerID, int paymentID, long orderID, string tableNumber, string orderType, string paymentMethod, double baseAmount, double GST, double customerPaymentTotalAmount, double grossAmount, double customerChangeAmount, double tip, ObservableCollection<OrderedItem> eachCustomerItems)
+        public Payment(int customerID, int paymentID, long orderID,string tableNumber ,string orderType, string paymentMethod, double baseAmount, double GST, double customerPaymentTotalAmount, double grossAmount, double customerChangeAmount, double tip, ObservableCollection<OrderedItem> eachCustomerItems)
         {
 
             this._customerID = customerID;

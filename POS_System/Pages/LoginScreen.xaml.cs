@@ -27,6 +27,7 @@ namespace POS_System.Pages
     {
         private DatabaseHelper db;
         private ObservableCollection<User> users = new ObservableCollection<User>();
+        public User user = new User();
         public LoginScreen()
         {
             InitializeComponent();
@@ -38,7 +39,10 @@ namespace POS_System.Pages
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
             string enteredUserId = id.Text;
+            int UserID = int.Parse(enteredUserId);
             string enteredPassword = password.Password;
+            user.Id = UserID;
+            
 
             if (db.AuthenticateUser(enteredUserId, enteredPassword))
             {
@@ -50,17 +54,16 @@ namespace POS_System.Pages
                 int userId = int.Parse(enteredUserId);
 
                 // Only 100 to 110 admin can go to AdminManagement page
-                if (userId >= 100 & userId <= 110)
+                if (userId >= 100 & userId <= 199)
                 {
                     AdminManagement windowAdmin = new AdminManagement();
                     windowAdmin.Show();
+                } else if (userId >= 200 & userId <= 299)
+                {
+                    ManagerManagement windowManager = new ManagerManagement();
+                    windowManager.Show();
                 }
                 
-                else if (userId >=200 & userId <= 299)
-                {
-                    ManagerManagement managerManagement = new ManagerManagement();
-                    managerManagement.Show();
-                }
                 else
                 {
                     TablePage window2 = new TablePage();

@@ -61,8 +61,8 @@ namespace POS_System.Pages
 
             //Bind data table to the DataGrid on XAML
             paymentGrid.DataContext = dt;
-        }
-
+        }        
+        
         private void FilterBtn_Click(object sender, RoutedEventArgs e)
         {
 
@@ -80,7 +80,7 @@ namespace POS_System.Pages
         }
 
         private void RefundBtn_Click(object sender, RoutedEventArgs e)
-        {
+        { 
             paymentId = refundPaymentIdBox.Text;
             refundAmount = refundAmountBox.Text;
             refundMethod = refundMethodComboBox.Text;
@@ -89,12 +89,11 @@ namespace POS_System.Pages
             orderId = GetOrderID(paymentId);
 
             MessageBox.Show(orderId + ' ' + paymentId + ' ' + refundAmount + ' ' + refundMethod + ' ' + refundReason);
-
+            
             if (paymentId.Length < 1 || refundAmount.Length < 1 || refundMethod.Length < 1 || refundReason.Length < 1)
             {
                 MessageBox.Show("Please enter all fields");
-            }
-            else
+            } else
             {
                 //Create a connection object
                 MySqlConnection connection = new MySqlConnection(connectionString);
@@ -120,7 +119,7 @@ namespace POS_System.Pages
         private String GetOrderID(String paymentID)
         {
             String orderIDHolder;
-
+            
             //Create a connection object
             MySqlConnection connection = new MySqlConnection(connectionString);
 
@@ -148,9 +147,9 @@ namespace POS_System.Pages
             //Close connection to user table
             connection.Close();
 
-
+            
         }
 
-
+        
     }
 }

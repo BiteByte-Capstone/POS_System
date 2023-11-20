@@ -45,7 +45,7 @@ namespace POS_System.Pages
             // Store the table number and order type for future use
             /*            this.TableNumber = tableNumber;
                         this.OrderType = orderType;*/
-
+            
         }
 
 
@@ -88,7 +88,7 @@ namespace POS_System.Pages
                 // If there are unpaid orders, open the existing order
                 if (hasUnpaidOrders)
                 {
-                    MenuPage menuPage = new MenuPage(tableNumber, Type, "Occupied", hasUnpaidOrders);
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "Occupied",hasUnpaidOrders);
                     menuPage.Show();
                 }
                 else
@@ -161,14 +161,14 @@ namespace POS_System.Pages
                     MySqlDataReader reader = cmd.ExecuteReader();
 
 
-
+                    
                     while (reader.Read())
                     {
-
+                        
                         // Get the table number from the query result
                         string tableNumber = reader.GetString(0);
-
-
+                        
+                        
 
 
                         string tableButtonName = "table_" + tableNumber;
@@ -182,11 +182,11 @@ namespace POS_System.Pages
                         if (tableButton != null)
                         {
                             tableButton.Background = Brushes.Green;
-                        }
+                        } 
                         else if (takeOutButton != null)
                         {
                             takeOutButton.Background = Brushes.Green;
-                        }
+                        } 
 
                     }
 
@@ -220,7 +220,7 @@ namespace POS_System.Pages
                 return;
             }
 
-
+            
         }
 
         private void RemoveOrderAllTable()
@@ -253,7 +253,7 @@ namespace POS_System.Pages
                     MessageBox.Show("Error: " + ex.ToString());
                 }
             }
-
+            
 
         }
 

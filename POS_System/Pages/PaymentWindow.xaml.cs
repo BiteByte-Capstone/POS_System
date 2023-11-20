@@ -93,7 +93,7 @@ namespace POS_System.Pages
             do
             {
                 Button paymentPageButton = new Button();
-
+                
                 paymentPageButton.Content = "Customer#" + customerNumber;
                 paymentPageButton.Tag = customerNumber;
                 paymentPageButton.Click += paymentPageButton_Click;
@@ -123,7 +123,7 @@ namespace POS_System.Pages
                 {
                     // Disable the button associated with the completed payment
                     ((Button)sender).IsEnabled = false;
-
+                    
 
                     ClickNextButton(button);
                 };
