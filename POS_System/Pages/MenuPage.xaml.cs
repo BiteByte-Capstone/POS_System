@@ -1202,7 +1202,7 @@ namespace POS_System.Pages
                             // Access the text of the OrderIdTextBlock
                             detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
                         }
-                        detailTableRowGroup.Rows.Add(CreateTableRow("Server:", "John"));
+                            
 
                         // Add a line with dashes after "Server: John"
                         TableRow dashedLineRow = new TableRow();
