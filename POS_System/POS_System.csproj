@@ -20,6 +20,7 @@
     <None Remove="Images\logo.png" />
     <None Remove="Images\Logout.png" />
     <None Remove="Images\ManageMenu.png" />
+    <None Remove="Images\ManagerPicture.png" />
     <None Remove="Images\ManageSales.png" />
     <None Remove="Images\ManageTable.png" />
     <None Remove="Images\ManageUser.png" />
@@ -68,6 +69,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\ManageMenu.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ManagerPicture.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\ManageSales.png">
