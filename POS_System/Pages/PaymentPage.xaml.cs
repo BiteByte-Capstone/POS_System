@@ -337,17 +337,6 @@ namespace POS_System.Pages
             }
         }
 
-        //Method: Convert Payment Dictionary to List
-        private void ConvertPaymentDictionaryToListMethod()
-        {
-            eachPaymentList.Clear(); // Clear the list to avoid duplicating items
-
-            foreach (var kvp in _eachPaymentDictionary)
-            {
-                eachPaymentList.Add(kvp.Value);
-            }
-        }
-
         private void PrintAllReceipts(ConcurrentDictionary<int, Payment> paymentDictionary)
         {
             foreach (var kvp in paymentDictionary)
