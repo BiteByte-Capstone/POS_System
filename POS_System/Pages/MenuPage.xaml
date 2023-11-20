@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
         <!-- Buttons -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="20" Width="20*" MaxWidth="20"/>
+            <ColumnDefinition MinWidth="20" Width="20" MaxWidth="20"/>
             <ColumnDefinition Width="226"/>
             <ColumnDefinition Width="550"/>
             <ColumnDefinition Width="239*" MinWidth="500" MaxWidth="1050"/>
