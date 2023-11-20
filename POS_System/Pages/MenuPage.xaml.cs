@@ -20,6 +20,7 @@ using System.Data.Common;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Windows.Data;
+using static POS_System.Pages.LoginScreen;
 
 
 //Code for debug
@@ -1259,22 +1260,14 @@ namespace POS_System.Pages
             return row;
         }
 
-        /*        private TableRow CreateEmptyTableRow()
-                {
-                    TableRow row = new TableRow();
-
-                    TableCell emptyCell = new TableCell(new Paragraph(new Run(" "))); // Add a space or empty string
-                    emptyCell.ColumnSpan = 2; // Set the column span to cover both columns
-
-                    row.Cells.Add(emptyCell);
-
-                    return row;
-                }*/
+        
 
         // new cancel button Thevagi from PK
         //Method for CancelButtonClick - By PK
+     
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            
             if (_hasPaidOrders.Equals(false))
             {
                 MessageBox.Show("This page has no unpaid order");
@@ -1286,8 +1279,47 @@ namespace POS_System.Pages
         }
 
         //Method for CancelOrder - By PK
+        private int GetCurrentUserId(string userName)
+        {
+            int userId = 0;
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "SELECT user_id FROM users WHERE user_name = @userName;";
+                    MySqlCommand cmd = new MySqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@userName", userName);
+
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        userId = Convert.ToInt32(result);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error getting user ID: " + ex.ToString());
+                }
+            }
+            return userId;
+        }
+
         private void CancelOrder(string tableNumber)
         {
+            //**********************Thevagi cancel order
+            // Assuming you have a method GetCurrentUserRole() that returns the role of the current user
+            if (User.id >= 300)
+            {
+                MessageBox.Show("You do not have permission to cancel orders.");
+                return;
+            }
+
+           
+            
+
+
+            //**********************cancel order
             //MessageBox.Show("Order Canceled");
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -1314,6 +1346,18 @@ namespace POS_System.Pages
                 }
             }
         }
+           private string GetCurrentUserRole()
+           {
+               // Replace this with your actual logic to get the current user's role
+               return "waiter"; // Example
+           }
+        
+      /*  private int GetCurrentUserId()
+        {
+            // Replace this with your actual logic to get the current user's ID
+            return 100; // Example user ID
+        }
+      */
 
 
 

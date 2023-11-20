@@ -27,18 +27,20 @@ namespace POS_System.Pages
     {
         private DatabaseHelper db;
         private ObservableCollection<User> users = new ObservableCollection<User>();
-        public LoginScreen()
+        public LoginScreen() 
         {
             InitializeComponent();
             id.Focus();
             /*DataContext = new LoginScreenViewModel();*/
             db = new DatabaseHelper("localhost", "pos_db", "root", "password");
         }
-
+       
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
             string enteredUserId = id.Text;
             string enteredPassword = password.Password;
+            int UserID = int.Parse(enteredUserId);
+            User.id = UserID;
 
             if (db.AuthenticateUser(enteredUserId, enteredPassword))
             {
