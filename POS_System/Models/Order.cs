@@ -14,7 +14,10 @@ namespace POS_System.Models
         public int TableNumber { get; set; }
         public DateTime OrderTimestamp { get; set; }
         public double TotalAmount { get; set; }
+        public double orderType {  get; set; }
         public List<OrderedItem> OrderedItems { get; set; }
+
+        
 
         public Order(int tableNumber)
         {
@@ -26,12 +29,12 @@ namespace POS_System.Models
 
         public void AddItem(Item item, int quantity)
         {
-            double itemTotal = item.Price * quantity;
+            double itemTotal = item.ItemPrice * quantity;
             OrderedItem orderedItem = new OrderedItem()
             {
-                ItemName = item.Name,
+                item_name = item.item_name,
                 Quantity = quantity,
-                ItemPrice = item.Price
+                ItemPrice = item.ItemPrice
             };
             OrderedItems.Add(orderedItem);
             TotalAmount += itemTotal;
@@ -66,7 +69,7 @@ namespace POS_System.Models
                                                   "VALUES (@order_id, @item_id, @quantity, @item_price);";
                     MySqlCommand insertOrderedItemCmd = new MySqlCommand(insertOrderedItemSql, conn);
                     insertOrderedItemCmd.Parameters.AddWithValue("@order_id", OrderId);
-                    insertOrderedItemCmd.Parameters.AddWithValue("@item_id", orderedItem.ItemId);
+                    insertOrderedItemCmd.Parameters.AddWithValue("@item_id", orderedItem.item_id);
                     insertOrderedItemCmd.Parameters.AddWithValue("@quantity", orderedItem.Quantity);
                     insertOrderedItemCmd.Parameters.AddWithValue("@item_price", orderedItem.ItemPrice);
                     insertOrderedItemCmd.ExecuteNonQuery();

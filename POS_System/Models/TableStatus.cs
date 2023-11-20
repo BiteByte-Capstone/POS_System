@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-
-
 namespace POS_System.Models
 {
     public class TableStatus

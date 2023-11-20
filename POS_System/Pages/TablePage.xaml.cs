@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,17 +17,17 @@ using System.Xml.Linq;
 
 
 
-
-
 namespace POS_System.Pages
 {
     public partial class TablePage : Window
     {
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         // Define properties to store table number and order type
-        /*        public string TableNumber { get; private set; }
-                public string OrderType { get; private set; }*/
+        public string TableNumber { get; private set; }
+        public string OrderType { get; private set; }
 
+        public string userName { get; private set; }
+        public string userId { get; private set; }
 
 
         public TablePage()
@@ -35,19 +36,14 @@ namespace POS_System.Pages
             UpdateTableColors();
         }
 
-
-
         public TablePage(string tableNumber, string orderType)
         {
             InitializeComponent();
             UpdateTableColors();
             // Store the table number and order type for future use
-            /*            this.TableNumber = tableNumber;
-                        this.OrderType = orderType;*/
+/*            this.TableNumber = tableNumber;
+            this.OrderType = orderType;*/
         }
-
-
-
 
 
 
@@ -63,20 +59,16 @@ namespace POS_System.Pages
 
 
 
-
-
         // Handle table number, order number, order type
-        private void Open_Table(object sender, RoutedEventArgs e)
+        private void OpenOrder_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             if (button != null)
             {
                 string tableName = button.Name;
                 int index = tableName.IndexOf('_');
-                string tableNumber = tableName.Substring(index + 1);
+                string tableNumber = tableName.Substring(index + 1); //D1 if dine-in T1 if Take-Out
                 string orderType = tableName.Substring(0, index);
-
-
 
                 string Type = "";
                 if (orderType.Equals("table"))
@@ -88,40 +80,28 @@ namespace POS_System.Pages
                     Type = "Take-Out";
                 }
 
-
-
                 bool hasUnpaidOrders = CheckForUnpaidOrders(tableNumber);
-
-
 
                 // If there are unpaid orders, open the existing order
                 if (hasUnpaidOrders)
                 {
-                    MenuPage menuPage = new MenuPage(tableNumber, Type, "Occupied", hasUnpaidOrders);
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "Occupied",hasUnpaidOrders);
                     menuPage.Show();
                 }
                 else
                 {
                     // If no unpaid orders exist, create a new order
-                    MenuPage menuPage = new MenuPage(tableNumber, Type, "New Table", false);
+                    MenuPage menuPage = new MenuPage(tableNumber, Type, "New Order", false);
                     menuPage.Show();
                 }
-
-
 
                 this.Close();
             }
         }
 
-
-
         // Check if there are unpaid orders for the specified table
         private bool CheckForUnpaidOrders(string tableNumber)
         {
-            // Create a connection string
-            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
-
 
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -129,15 +109,11 @@ namespace POS_System.Pages
                 {
                     conn.Open();
 
-
-
                     // Check if there are unpaid orders for the specified table
                     string checkUnpaidOrdersSql = "SELECT order_id FROM `order` WHERE table_num = @tableNum AND paid = 'n';";
                     MySqlCommand checkUnpaidOrdersCmd = new MySqlCommand(checkUnpaidOrdersSql, conn);
                     checkUnpaidOrdersCmd.Parameters.AddWithValue("@tableNum", tableNumber);
                     object unpaidOrderId = checkUnpaidOrdersCmd.ExecuteScalar();
-
-
 
                     return (unpaidOrderId != null);
                 }
@@ -154,20 +130,19 @@ namespace POS_System.Pages
             }
         }
 
-
-
-
+        //Not working rest table colour
+        private void ResetTableButtonColor()
+        {
+            TablePage tablePage = new TablePage();
+            tablePage.Show();
+            this.Close();
+        }
 
 
 
         // Method to update table colors based on the database
         private void UpdateTableColors()
         {
-            string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-
-
-
-
 
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
@@ -177,48 +152,40 @@ namespace POS_System.Pages
 
 
 
-
-
                     // Query the database for tables with paid=n
                     string query = "SELECT table_num FROM `order` WHERE paid = 'n';";
                     MySqlCommand cmd = new MySqlCommand(query, conn);
                     MySqlDataReader reader = cmd.ExecuteReader();
 
 
-
-
-
+                    
                     while (reader.Read())
                     {
+                        
                         // Get the table number from the query result
-                        int tableNumber = reader.GetInt32(0);
+                        string tableNumber = reader.GetString(0);
+                        
+                        
 
 
-
-
-
-                        // Find the corresponding table UI element in your XAML
-                        string buttonName = "table_" + tableNumber;
-
-
-
+                        string tableButtonName = "table_" + tableNumber;
+                        string takeOutButtonName = "takeOut_" + tableNumber;
 
 
                         // Try to find the button by name
-                        Button tableButton = FindName(buttonName) as Button;
-
-
-
-
+                        Button tableButton = FindName(tableButtonName) as Button;
+                        Button takeOutButton = FindName(takeOutButtonName) as Button;
 
                         if (tableButton != null)
                         {
-                            // Change the background color to green
                             tableButton.Background = Brushes.Green;
-                        }
+                        } 
+                        else if (takeOutButton != null)
+                        {
+                            takeOutButton.Background = Brushes.Green;
+                        } 
+
                     }
-
-
 
 
 
@@ -235,6 +202,74 @@ namespace POS_System.Pages
             }
         }
 
+
+
+        private void ResetTable_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Remove every table order?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                RemoveOrderAllTable();
+                ResetTableButtonColor();
+            }
+            else
+            {
+                return;
+            }
+
+            
+        }
+
+        private void RemoveOrderAllTable()
+        {
+            using (MySqlConnection conn = new MySqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+
+                    string deleteItemListQuery = "DELETE FROM ordered_itemlist WHERE order_id > 0 ;";
+                    MySqlCommand deleteItemListCmd = new MySqlCommand(deleteItemListQuery, conn);
+                    deleteItemListCmd.ExecuteNonQuery();
+
+
+                    string deleteOrderQuery = "DELETE FROM `order` WHERE order_id > 0 and paid = 'n';";
+
+                    MySqlCommand deleteOrderCmd = new MySqlCommand(deleteOrderQuery, conn);
+                    deleteOrderCmd.ExecuteNonQuery();
+
+
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("MySQL Error: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.ToString());
+                }
+            }
+            
+
+        }
+
+        private void ChangeTable_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TablePageTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Refund refund = new Refund();
+            refund.Show();
+            this.Close();
+        }
 
 
     }

@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="AdminManagement" 
         WindowState="Maximized" 
-        Width="846" 
-        Height="544" 
+        Width="1436" 
+        Height="804" 
         Foreground="Orange" 
         Background="#383838" 
         BorderBrush="#383838">
@@ -38,13 +38,13 @@
         <Button Grid.Row="1" 
                 Grid.Column="1" 
                 HorizontalAlignment="Center" 
-                Width="250" 
-                Height="200" 
+                Width="260" 
+                Height="190" 
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
                 BorderBrush="Orange" 
-                Click="Button_Click">
+                Click="ManageUserButton_Click">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -54,12 +54,15 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
+                <Frame x:Name="ContentFrame" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" />
+
+
                 <!-- Manage Users Image & Text -->
                 <Image Grid.Row="0"
-                       Source="C:\Users\2002g\source\repos\POS_System\POS_System\Images\ManageUser.png"
+                       Source="pack://application:,,,/POS_System;component/Images/ManageUser.png"
                        Width="168"
-                       HorizontalAlignment="Left"
-                       Margin="24,-7,0,32" Grid.RowSpan="2"/>
+                       HorizontalAlignment="Center"
+                       Margin="0,-7,0,32" Grid.RowSpan="2"/>
                 <TextBlock Grid.Row="1"
                            Text="Manage Users" FontWeight="Bold"
                            HorizontalAlignment="Center"
@@ -71,12 +74,12 @@
         <Button Grid.Row="1" 
                 Grid.Column="2" 
                 HorizontalAlignment="Center" 
-                Width="250" 
-                Height="200" 
+                Width="260" 
+                Height="190" 
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
-                BorderBrush="Orange" Click="Button_Click_1">
+                BorderBrush="Orange" Click="ManageSalesButton_Click">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -88,10 +91,10 @@
 
                 <!-- Manage Sales Image & Text -->
                 <Image Grid.Row="0" 
-                       Source="C:\Users\2002g\source\repos\POS_System\POS_System\Images\ManageSales.png"
+                       Source="pack://application:,,,/POS_System;component/Images/ManageSales.png"
                        Width="200"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,30"
+                       Margin="0,4,0,26"
                        Grid.RowSpan="2"/>
 
                 <TextBlock Grid.Row="1" 
@@ -103,15 +106,16 @@
         </Button>
 
         <!-- Manage Table -->
-        <Button Grid.Row="1" 
-                Grid.Column="3" 
+        <Button Grid.Row="2" 
+                Grid.Column="1" 
                 HorizontalAlignment="Center" 
-                Width="250" 
-                Height="200" 
+                Width="260" 
+                Height="190" 
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
-                BorderBrush="Orange">
+                BorderBrush="Orange" Margin="0,19,0,327"
+                Click="ManageTableButton_Click">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -123,7 +127,7 @@
 
                 <!-- Manage Table Image & Text -->
                 <Image Grid.Row="0"
-                       Source="C:\Users\2002g\source\repos\POS_System\POS_System\Images\ManageTable.png"
+                       Source="pack://application:,,,/POS_System;component/Images/ManageTable.png"
                        Width="200" HorizontalAlignment="Center"
                        Margin="0,0,0,30" Grid.RowSpan="2"/>
                 <TextBlock Grid.Row="1"
@@ -138,12 +142,13 @@
         <Button Grid.Row="2" 
                 Grid.Column="2"  
                 HorizontalAlignment="Center" 
-                Width="250" 
-                Height="200" 
+                Width="260" 
+                Height="190" 
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
-                BorderBrush="Orange" Margin="80,20,75,200">
+                BorderBrush="Orange" Margin="0,5,0,313"
+                Click="ManageMenuButton_Click">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -153,10 +158,10 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Manage Menu Image & Text (update image source as needed) -->
+                <!-- Manage Menu Image & Text -->
                 <Image Grid.Row="0"
-                       Source="C:\Users\2002g\source\repos\POS_System\POS_System\Images\ManageMenu.png"
-                       Width="200" HorizontalAlignment="Center"
+                       Source="pack://application:,,,/POS_System;component/Images/ManageMenu.png"
+                       Width="136" HorizontalAlignment="Center"
                        Margin="0,0,0,10" Grid.RowSpan="1"/>
                 <TextBlock Grid.Row="1"
                            Text="Manage Menu"
@@ -168,8 +173,8 @@
 
         <Button x:Name="Logout_Button_Click" 
                 Content="Logout" 
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 BorderBrush="Orange" 
                 Background="#383838" 
                 Foreground="Orange" 
@@ -177,6 +182,6 @@
                 Width="200" 
                 Height="80" 
                 Click="LogoutButton_Click"
-                Grid.Column="4" Grid.Row="3"/>
+                Grid.Column="4" Grid.Row="2" Margin="253,446,0,0"/>
     </Grid>
 </Window>

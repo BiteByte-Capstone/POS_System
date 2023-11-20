@@ -14,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using POS_System.Models;
-using System.Printing;
 
 namespace POS_System.Pages
 {
@@ -62,6 +61,15 @@ namespace POS_System.Pages
             orderedItemListGrid.DataContext = dt;
         }
 
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            //Tutorial used https://www.youtube.com/watch?v=qZwT_NWQ6Mk&t=14s   
+
+            var row = sender as DataGridRow;
+            var order = row.DataContext as Order;
+
+            MessageBox.Show(order.OrderId.ToString());
+        }
 
         private void filterBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -83,16 +91,14 @@ namespace POS_System.Pages
             String fromToPriceQuery = "";
             String fromToDateQuery = "";
 
-            int[] lengthcount = new int[6];
+            int[] lengthcount = new int[6];     
 
             String sqlquery = "select * from pos_db.ordered_itemlist where ";
 
             if (fromD.Length + untilD.Length + orderID.Length + itemID.Length + category.Length + fromQuantity.Length + toQuantity.Length + fromPrice.Length + toPrice.Length < 1)
             {
                 getDataOrderedListTable();
-            }
-            else
-            {
+            } else {
 
                 //This part checks for the filter that was entered by counting the length of the filter inputs.
                 //If length of filter input > 0, then that filter was used, which then triggers the formulation of a sql query for that filter
@@ -141,7 +147,7 @@ namespace POS_System.Pages
                 if (lengthcount[1] == 1 && lengthcount[1] == 1)
                 {
                     sqlquery += " and " + itemIdQuery;
-                }
+                } 
                 else if (lengthcount[1] == 1 && lengthcount[0] == 0)
                 {
                     sqlquery += itemIdQuery;
@@ -368,23 +374,23 @@ namespace POS_System.Pages
             return fromToPriceFilterString;
         }
 
-     //   private void printBtn_Click(object sender, RoutedEventArgs e)
-       // {
-         //   //Tutorial used https://www.youtube.com/watch?v=z7SZsmSjsfM minute 19 onwards
-         //
-           // try
-            //{
-              //  PrintDialog printDialog = new PrintDialog();
-                //if (printDialog.ShowDialog() == true)
-                //{
-                  //  printDialog.PrintVisual(printReport, "Order Report");
-                //}
-            //}
-            //catch (Exception ex)
-            //{
+        private void printBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //Tutorial used https://www.youtube.com/watch?v=z7SZsmSjsfM minute 19 onwards
 
-            //}
-       // }
+            try
+            {
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    printDialog.PrintVisual(printReport, "Order Report");
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
     }
 

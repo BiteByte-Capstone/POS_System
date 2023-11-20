@@ -9,8 +9,8 @@ namespace POS.Models
 {
     public class User : INotifyPropertyChanged
     {
-        private int id;
-        private string name;
+        public static int id;
+        public static string name;
         private string password;
 
         public event PropertyChangedEventHandler PropertyChanged;

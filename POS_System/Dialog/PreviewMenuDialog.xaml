@@ -1,0 +1,16 @@
+﻿<Window x:Class="POS_System.Pages.PreviewMenuDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:POS_System"
+        mc:Ignorable="d"
+        Title="Preview (read only)" Height="800" Width="1200">
+
+    <Grid>
+        <!-- category button list-->
+        <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="14,114,912,80"  RenderTransformOrigin="0.471,0.536"/>
+        <!-- item button list -->
+        <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="293,113,119,80" />
+    </Grid>
+</Window>
