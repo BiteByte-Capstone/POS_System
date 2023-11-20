@@ -14,8 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
-
-
+using POS.Models;
+using POS_System.Dialog;
 
 namespace POS_System.Pages
 {
@@ -34,6 +34,8 @@ namespace POS_System.Pages
         {
             InitializeComponent();
             UpdateTableColors();
+
+            UserNameTextBox.Text = "Welcome User ID: " + User.id;
         }
 
         public TablePage(string tableNumber, string orderType)
@@ -41,8 +43,9 @@ namespace POS_System.Pages
             InitializeComponent();
             UpdateTableColors();
             // Store the table number and order type for future use
-/*            this.TableNumber = tableNumber;
-            this.OrderType = orderType;*/
+            /*            this.TableNumber = tableNumber;
+                        this.OrderType = orderType;*/
+            
         }
 
 
@@ -256,20 +259,24 @@ namespace POS_System.Pages
 
         private void ChangeTable_Click(object sender, RoutedEventArgs e)
         {
+            var dialog = new ChangeTableDialog();
 
+            // Subscribe to the event
+            dialog.TableColorUpdated += Dialog_TableColorUpdated;
+
+            // Populate ComboBoxes with tables (modify as needed)
+            // ...
+
+            // Show the dialog
+            dialog.ShowDialog();
         }
-
-        private void TablePageTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Dialog_TableColorUpdated(object sender, EventArgs e)
         {
-
+            // Handle the event and update the UI if necessary
+            // For example, you can call UpdateTableColors() here
+            UpdateTableColors();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Refund refund = new Refund();
-            refund.Show();
-            this.Close();
-        }
 
 
     }

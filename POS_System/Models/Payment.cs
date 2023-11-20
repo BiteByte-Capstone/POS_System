@@ -1,43 +1,213 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace POS_System.Models
 {
-    public class Payment
+    public class Payment : INotifyPropertyChanged
     {
-        public int customerID {  get; set; }
-        public int paymentID { get; set; }
-        public long orderID { get; set; }
-        public string orderType { get; set; }
-        public string paymentMethod {  get; set; }
-        public double baseAmount { get; set; }
-        public double GST {  get; set; }
-        public double customerPaymentTotalAmount { get; set; }
-        public double grossAmount { get; set; }
-        public double customerChangeAmount {  get; set; }
-        public double tip {  get; set; }
+        private int _customerID;
+        private int _paymentID;
+        private long _orderID;
+        private string _tableNumber;
+        private string _orderType;
+        private string _paymentMethod;
+        private double _baseAmount;
+        private double _GST;
+        private double _customerPaymentTotalAmount;
+        private double _grossAmount;
+        private double _customerChangeAmount;
+        private double _tip;
+        public ObservableCollection<OrderedItem> eachCustomerItems { get; set; }
 
 
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public Payment() { }
-
-        public Payment(int customerID, int paymentID, int orderID, string orderType, string paymentMethod, double baseAmount, double gst, double customerPaymentTotalAmount, double grossAmount, double customerChangeAmount, double tip)
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            this.customerID = customerID;
-            this.paymentID = paymentID;
-            this.orderID = orderID;
-            this.orderType = orderType;
-            this.paymentMethod = paymentMethod;
-            this.baseAmount = baseAmount;
-            this.GST = gst;
-            this.customerPaymentTotalAmount = customerPaymentTotalAmount;
-            this.grossAmount = grossAmount;
-            this.customerChangeAmount = customerChangeAmount;
-            this.tip = tip;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public Payment()
+        {
+
+        }
+
+        public Payment(int customerID, int paymentID, long orderID,string tableNumber ,string orderType, string paymentMethod, double baseAmount, double GST, double customerPaymentTotalAmount, double grossAmount, double customerChangeAmount, double tip, ObservableCollection<OrderedItem> eachCustomerItems)
+        {
+
+            this._customerID = customerID;
+            this._paymentID = paymentID;
+            this._orderID = orderID;
+            this._tableNumber = tableNumber;
+            this._orderType = orderType;
+            this._paymentMethod = paymentMethod;
+            this._baseAmount = baseAmount;
+            this._GST = GST;
+            this._customerPaymentTotalAmount = customerPaymentTotalAmount;
+            this._grossAmount = grossAmount;
+            this._customerChangeAmount = customerChangeAmount;
+            this._tip = tip;
+            this.eachCustomerItems = eachCustomerItems ?? new ObservableCollection<OrderedItem>();
+        }
+
+        public int customerID
+        {
+            get => _customerID;
+            set
+            {
+                if (_customerID != value)
+                {
+                    _customerID = value;
+                    OnPropertyChanged(nameof(customerID));
+                }
+            }
+        }
+
+        public int paymentID
+        {
+            get => _paymentID;
+            set
+            {
+                if (_paymentID != value)
+                {
+                    _paymentID = value;
+                    OnPropertyChanged(nameof(paymentID));
+                }
+            }
+        }
+
+        public long orderID
+        {
+            get => _orderID;
+            set
+            {
+                if (_orderID != value)
+                {
+                    _orderID = value;
+                    OnPropertyChanged(nameof(orderID));
+                }
+            }
+        }
+
+        public string tableNumber
+        {
+            get => _tableNumber;
+            set
+            {
+                if (_tableNumber != value)
+                {
+                    _tableNumber = value;
+                    OnPropertyChanged(nameof(tableNumber));
+                }
+            }
+        }
+
+        public string orderType
+        {
+            get => _orderType;
+            set
+            {
+                if (_orderType != value)
+                {
+                    _orderType = value;
+                    OnPropertyChanged(nameof(orderType));
+                }
+            }
+        }
+
+        public string paymentMethod
+        {
+            get => _paymentMethod;
+            set
+            {
+                if (_paymentMethod != value)
+                {
+                    _paymentMethod = value;
+                    OnPropertyChanged(nameof(paymentMethod));
+                }
+            }
+        }
+
+        public double baseAmount
+        {
+            get => _baseAmount;
+            set
+            {
+                if (_baseAmount != value)
+                {
+                    _baseAmount = value;
+                    OnPropertyChanged(nameof(baseAmount));
+                }
+            }
+        }
+
+        public double GST
+        {
+            get => _GST;
+            set
+            {
+                if (_GST != value)
+                {
+                    _GST = value;
+                    OnPropertyChanged(nameof(GST));
+                }
+            }
+        }
+
+        public double customerPaymentTotalAmount
+        {
+            get => _customerPaymentTotalAmount;
+            set
+            {
+                if (_customerPaymentTotalAmount != value)
+                {
+                    _customerPaymentTotalAmount = value;
+                    OnPropertyChanged(nameof(customerPaymentTotalAmount));
+                }
+            }
+        }
+
+        public double grossAmount
+        {
+            get => _grossAmount;
+            set
+            {
+                if (_grossAmount != value)
+                {
+                    _grossAmount = value;
+                    OnPropertyChanged(nameof(grossAmount));
+                }
+            }
+        }
+
+        public double customerChangeAmount
+        {
+            get => _customerChangeAmount;
+            set
+            {
+                if (_customerChangeAmount != value)
+                {
+                    _customerChangeAmount = value;
+                    OnPropertyChanged(nameof(customerChangeAmount));
+                }
+            }
+        }
+
+        public double tip
+        {
+            get => _tip;
+            set
+            {
+                if (_tip != value)
+                {
+                    _tip = value;
+                    OnPropertyChanged(nameof(tip));
+                }
+            }
+        }
+
+
+
     }
 }
