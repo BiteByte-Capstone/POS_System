@@ -42,17 +42,19 @@
 
         <!-- Login Button -->
         <Button x:Name="loginbtn" 
-                Grid.Row="4" 
-                Grid.ColumnSpan="4" 
-                Click="btnSubmit_Click" 
-                Content="Login" 
-                HorizontalAlignment="Center" 
-                Background="Orange" 
-                Width="119" 
-                BorderBrush="#FF4C4B56" 
-                FontSize="30" 
-                FontFamily="Verdana" 
-                FontWeight="Bold" 
-                Margin="0,20"/>
+         Grid.Row="4" 
+         Grid.ColumnSpan="4" 
+         Click="btnSubmit_Click" 
+         
+         HorizontalAlignment="Center" 
+         Background="Transparent" 
+         Width="243"
+         BorderBrush="Transparent" 
+         FontSize="30" 
+         FontFamily="Verdana" 
+         FontWeight="Bold" 
+         Margin="0,20,0,9">
+            <Image Source="pack://application:,,,/POS_System;component/Images/LoginButton.png" Width="166" Height="64"/>
+        </Button>
     </Grid>
 </Window>

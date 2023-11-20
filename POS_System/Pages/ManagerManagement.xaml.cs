@@ -30,7 +30,7 @@ namespace POS_System.Pages
             // Open the OrderReport window when the button is clicked
             OrderReport orderReportWindow = new OrderReport();
             orderReportWindow.Show();
-            this.Close();
+
         }
 
         private void ManageTableButton_Click(object sender, RoutedEventArgs e)
@@ -38,7 +38,7 @@ namespace POS_System.Pages
             // Open the Admin window when the button is clicked
             TablePage adminWindow = new TablePage();
             adminWindow.Show();
-            this.Close();
+
         }
 
         private void ManageRefundButton_Click(object sender, RoutedEventArgs e)
@@ -46,7 +46,7 @@ namespace POS_System.Pages
             // Open the Admin window when the button is clicked
             Refund adminWindow = new Refund();
             adminWindow.Show();
-            this.Close();
+
         }
 
         private void ManageMenuButton_Click(object sender, RoutedEventArgs e)
@@ -54,7 +54,6 @@ namespace POS_System.Pages
             // Open the Admin window when the button is clicked
             ManageMenu adminWindow = new ManageMenu();
             adminWindow.Show();
-            this.Close();
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)

@@ -30,7 +30,7 @@ namespace POS_System.Pages
             // Open the Admin window when the button is clicked
             AdminPage adminWindow = new AdminPage();
             adminWindow.Show();
-            this.Close();
+
         }
         private void ManageSalesButton_Click(object sender, RoutedEventArgs e)
         {
@@ -51,7 +51,6 @@ namespace POS_System.Pages
             // Open the Admin window when the button is clicked
             ManageMenu adminWindow = new ManageMenu();
             adminWindow.Show();
-            this.Close();
         }
 
         private void ManageRefundButton_Click(object sender, RoutedEventArgs e)

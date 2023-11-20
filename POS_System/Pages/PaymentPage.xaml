@@ -43,7 +43,7 @@
             <!-- Buttons -->
 
             <Button x:Name="cashBtn" Grid.Column="0" Grid.Row="1" Margin="40,10,40,10" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="cashBtn_Click" >
-                <Image Height="81" Width="157" Source="pack://application:,,,/Images/Cash.png"/>
+                <Image Height="100" Width="189" Source="pack://application:,,,/Images/Cash.png"/>
             </Button>
 
             <Button x:Name="visaBtn" Grid.Column="0" Margin="40,8,40,12" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="visaBtn_Click" Grid.Row="2">
@@ -51,7 +51,7 @@
             </Button>
 
             <Button x:Name="mcBtn" Grid.Row="3" Grid.Column="0" Margin="40,8,40,12" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="mcBtn_Click">
-                <Image Height="80" Width="124" Source="pack://application:,,,/Images/MC.png"/>
+                <Image Height="100" Width="143" Source="pack://application:,,,/Images/MC.png"/>
             </Button>
 
             <Button x:Name="amexBtn" Grid.Row="4" Grid.Column="0" Margin="40,7,40,13" Foreground="Orange" Background="#FF4C4B56" BorderBrush="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Click="amexBtn_Click">

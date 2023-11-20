@@ -709,47 +709,7 @@ namespace POS_System.Pages
         //(button)back button
         private void Back_to_TablePage(object sender, RoutedEventArgs e)
         {
-            if (orderedItems.Count == 0 && OriginalItemsCount > 0)
-            {
-                MessageBox.Show("Since it is a saved order and nothing on the list now. \n\n Please canel order before closing window!");
-                return;
-            }
-
-            else if (orderedItems.Count < OriginalItemsCount) // Condition: removed item
-            {
-
-                MessageBoxResult result = MessageBox.Show("Removed Item on the list. \n\n\n Do you want to save? \nYes --- Save the order \nNo --- Back to Table Page", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    AutoSave();
-
-                }
-                else
-                {
-                    BackToTablePage();
-                }
-            }
-
-            else if (IsSavedItem() == false && orderedItems.Count > OriginalItemsCount ) // Condition: added item 
-            {
-
-                MessageBoxResult result = MessageBox.Show("There is new item on the list. \n\n\n Do you want to save? \nYes --- Save the order \nNo ---  Back to Table Page", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    AutoSave();
-                }
-                else
-                {
-                    BackToTablePage();
-                }
-            }
-
-            
-
-            else if (IsSavedItem() == true || StatusTextBlock.Text == "New Order")
-            {
-                BackToTablePage();
-            }
+            BackToTablePage();
 
         }
         
@@ -1374,8 +1334,6 @@ namespace POS_System.Pages
             return row;
         }
 
-
-        
 
     }
 }
