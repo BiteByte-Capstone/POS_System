@@ -78,18 +78,18 @@
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
         Grid.Column="3" Height="51" VerticalAlignment="Center" Grid.Row="1" Margin="1,0,1,0">
 
-            <Grid Margin="3,0,62,0" Height="41" VerticalAlignment="Center">
+            <Grid Margin="3,-1,10,-1">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="37*"/>
                     <RowDefinition Height="39*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="127*"/>
-                    <ColumnDefinition Width="77*"/>
-                    <ColumnDefinition Width="9*"/>
-                    <ColumnDefinition Width="86*"/>
-                    <ColumnDefinition Width="109*"/>
+                    <ColumnDefinition Width="143*"/>
+                    <ColumnDefinition Width="99*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="123*"/>
                 </Grid.ColumnDefinitions>
 
 
@@ -100,25 +100,25 @@
                     Name="TableNumberTextBlock"
                Foreground="Orange" 
                FontFamily="Verdana" 
-               FontSize="15" TextAlignment="Right" Height="17" VerticalAlignment="Center" HorizontalAlignment="Center" Width="122"><Run Text="Table Number"/><Run Language="en-ca" Text=" "/><Run Text=":"/></TextBlock>
+               FontSize="15" TextAlignment="Right" Height="17" VerticalAlignment="Center" Margin="21,0,0,0"><Run Text="Table Number"/><Run Language="en-ca" Text=" "/><Run Text=":"/></TextBlock>
 
                 <TextBox Name="TableNumberTextBox" 
              IsReadOnly="True" 
              Foreground="Orange" 
-             BorderBrush="Orange" 
-             FontFamily="Verdana" Background="{x:Null}" Margin="0,3,4,1" Grid.ColumnSpan="2" Grid.Column="1"/>
+             BorderBrush="{x:Null}" 
+             FontFamily="Verdana" Background="{x:Null}" Margin="5,0,3,2" Grid.Column="1" Height="15" VerticalAlignment="Bottom"/>
 
 
 
                 <TextBlock 
                Foreground="Orange" 
                FontFamily="Verdana" 
-               FontSize="15" Margin="1,0,1,0" Grid.Row="1" Grid.Column="3" RenderTransformOrigin="0.742,0.524" TextAlignment="Right" Height="19" VerticalAlignment="Center"><Run Text="Status"/><Run Text=" "/><Run Text=":"/></TextBlock>
+               FontSize="15" Margin="1,1,1,1" Grid.Row="1" Grid.Column="3" RenderTransformOrigin="0.742,0.524" TextAlignment="Right"><Run Text="Status"/><Run Text=" "/><Run Text=":"/></TextBlock>
                 <TextBox x:Name="StatusTextBlock" 
              IsReadOnly="True" 
              Foreground="Orange" 
              Background="{x:Null}"  
-             BorderBrush="Orange" Margin="1,2,13,2" Grid.Column="4" Grid.Row="1" 
+             BorderBrush="{x:Null}" Margin="1,2,13,0" Grid.Column="4" Grid.Row="1" Height="17" VerticalAlignment="Top" 
              />
 
 
@@ -127,12 +127,12 @@
                 <TextBlock 
                Foreground="Orange" 
                FontSize="15" 
-               FontFamily="Verdana" Grid.Row="1" TextAlignment="Right" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Width="122"><Run Text="Type"/><Run Language="en-ca" Text=" "/><Run Text=":"/></TextBlock>
+               FontFamily="Verdana" Grid.Row="1" TextAlignment="Right" Height="22" VerticalAlignment="Center" Margin="21,0,0,0"><Run Text="Type"/><Run Language="en-ca" Text=" "/><Run Text=":"/></TextBlock>
                 <TextBox x:Name="TypeTextBox" 
              IsReadOnly="True" 
              Foreground="Orange" 
              Background="{x:Null}" 
-             BorderBrush="Orange" Height="16" VerticalAlignment="Center" Margin="0,0,4,0" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="1"/>
+             BorderBrush="{x:Null}" Margin="2,2,4,3" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="1"/>
 
 
 
@@ -141,13 +141,13 @@
                x:Name="orderIdTextBlock" 
                Foreground="Orange" 
                FontFamily="Verdana" 
-               TextWrapping="Wrap" Grid.Column="3" FontSize="15" TextAlignment="Right" Height="19" VerticalAlignment="Center" HorizontalAlignment="Right" Width="84" Margin="0,0,1,0"/>
+               TextWrapping="Wrap" Grid.Column="3" FontSize="15" TextAlignment="Right" Margin="4,0,1,1"/>
                 <TextBox x:Name="OrderIdTextBlock" 
                IsReadOnly="True"
                TextWrapping="Wrap" 
              Foreground="Orange" 
              Background="{x:Null}" 
-             BorderBrush="Orange" 
+             BorderBrush="{x:Null}" 
                FontFamily="Verdana" Grid.Column="4" Margin="1,2,13,3"/>
 
 
