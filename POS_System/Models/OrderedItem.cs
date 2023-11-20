@@ -19,9 +19,11 @@ namespace POS_System.Models
         private int _quantity;
         private double _itemPrice;
         private double _originalItemPrice;
-        private bool _isExistItem;
+        private bool _isSavedItem;
         private bool _isSettled;
         private int _customerID;
+
+
 
         // Properties
         public int order_id
@@ -102,20 +104,20 @@ namespace POS_System.Models
             }
         }
 
-        public bool IsExistItem
+        public bool IsSavedItem
         {
-            get { return _isExistItem; }
+            get { return _isSavedItem; }
             set
             {
-                if (_isExistItem != value)
+                if (_isSavedItem != value)
                 {
-                    _isExistItem = value;
-                    OnPropertyChanged(nameof(IsExistItem));
+                    _isSavedItem = value;
+                    OnPropertyChanged(nameof(IsSavedItem));
                 }
             }
         }
 
-        public bool IsSettled
+        public bool isSettled
         {
             get
             {
@@ -123,10 +125,10 @@ namespace POS_System.Models
             }
             set
             {
-                if (IsExistItem != value)
+                if (isSettled != value)
                 {
-                    _isExistItem= value;
-                    OnPropertyChanged(nameof(IsSettled));
+                    _isSettled = value;
+                    OnPropertyChanged(nameof(isSettled));
                 }
             }
         }
@@ -151,14 +153,14 @@ namespace POS_System.Models
         // Constructors
         public OrderedItem() { }
 
-        public OrderedItem(int order_id, int item_id, string item_name, int quantity, double itemPrice, bool isExistItem, int customerID, double originalItemPrice, bool isSettled)
+        public OrderedItem(int order_id, int item_id, string item_name, int quantity, double itemPrice, bool isSavedItem, int customerID, double originalItemPrice, bool isSettled)
         {
             this._order_id = order_id;
             this._item_id = item_id;
             this._item_name = item_name;
             this._quantity = quantity;
             this._itemPrice = itemPrice;
-            this._isExistItem = isExistItem;
+            this._isSavedItem = isSavedItem;
             this._customerID = customerID;
             this._originalItemPrice = originalItemPrice;
             _isSettled = isSettled;

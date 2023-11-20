@@ -1,0 +1,61 @@
+﻿<Window x:Class="POS_System.Dialog.ChangeTableDialog"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:POS_System.Dialog"
+        mc:Ignorable="d"
+        Title="ChangeTableDialog" Height="300" Width="300">
+    <Grid>
+        <StackPanel Margin="20">
+            <TextBlock Text="Change Table" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <TextBlock Text="To:"/>
+            <ComboBox x:Name="cboToTable" Margin="0,0,0,20">
+                <ComboBoxItem Content="D1"/>
+                <ComboBoxItem Content="D2"/>
+                <ComboBoxItem Content="D3"/>
+                <ComboBoxItem Content="D4"/>
+                <ComboBoxItem Content="D5"/>
+                <ComboBoxItem Content="D6"/>
+                <ComboBoxItem Content="D7"/>
+                <ComboBoxItem Content="D8"/>
+                <ComboBoxItem Content="D9"/>
+                <ComboBoxItem Content="D10"/>
+                <ComboBoxItem Content="D11"/>
+                <ComboBoxItem Content="D12"/>
+                <ComboBoxItem Content="D13"/>
+                <ComboBoxItem Content="D14"/>
+                <ComboBoxItem Content="D14-2"/>
+                <ComboBoxItem Content="D15-1"/>
+                <ComboBoxItem Content="D15-2"/>
+                <ComboBoxItem Content="D15-3"/>
+            </ComboBox>
+
+            <TextBlock Text="From:"/>
+            <ComboBox x:Name="cboFromTable" Margin="0,0,0,20">
+                <ComboBoxItem Content="D1"/>
+                <ComboBoxItem Content="D2"/>
+                <ComboBoxItem Content="D3"/>
+                <ComboBoxItem Content="D4"/>
+                <ComboBoxItem Content="D5"/>
+                <ComboBoxItem Content="D6"/>
+                <ComboBoxItem Content="D7"/>
+                <ComboBoxItem Content="D8"/>
+                <ComboBoxItem Content="D9"/>
+                <ComboBoxItem Content="D10"/>
+                <ComboBoxItem Content="D11"/>
+                <ComboBoxItem Content="D12"/>
+                <ComboBoxItem Content="D13"/>
+                <ComboBoxItem Content="D14"/>
+                <ComboBoxItem Content="D14-2"/>
+                <ComboBoxItem Content="D15-1"/>
+                <ComboBoxItem Content="D15-2"/>
+                <ComboBoxItem Content="D15-3"/>
+            </ComboBox>
+
+            <Button Content="OK" Click="OK_Click"/>
+            <Button Content="Cancel" Click="Cancel_Click" Margin="0,0,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>

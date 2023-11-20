@@ -36,28 +36,38 @@ namespace POS_System.Pages
         private double totalItemPriceForCustomer;
         private bool isSettled;
         PaymentPage paymentPage = new PaymentPage();
-        
+
 
 
         private ObservableCollection<OrderedItem> _orderedItems = new ObservableCollection<OrderedItem>();
         private ObservableCollection<OrderedItem> _customerOrderedItems = new ObservableCollection<OrderedItem>();
-
-        //from payment page( store every payment)
-        private ConcurrentDictionary<int, Payment> _paymentDictionary = PaymentPage._eachPaymentDictionary;
-        private ObservableCollection<Payment> _customersPayment;
+        private List<Payment> _paymentList = new List<Payment>();
         private MenuPage _menuPage;
 
 
         public PaymentWindow()
         {
             InitializeComponent();
-            
+            this.Loaded += new RoutedEventHandler(Window_Loaded);
+
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            {
+                if (DisplayCustomerButton_Panel.Children.Count > 0 &&
+                    DisplayCustomerButton_Panel.Children[0] is Button firstButton)
+                {
+                    paymentPageButton_Click(firstButton, new RoutedEventArgs(Button.ClickEvent));
+                }
+            }
+
         }
 
 
 
 
-        public PaymentWindow(MenuPage menuPage,ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int numberOfBill) : this()
+        public PaymentWindow(MenuPage menuPage, ObservableCollection<OrderedItem> orderedItems, string tableNumber, string orderType, long orderId, string status, bool hasUnpaidOrders, int numberOfBill) : this()
         {
             _tableNumber = tableNumber;
             _orderedItems = orderedItems;
@@ -67,10 +77,9 @@ namespace POS_System.Pages
             _hasUnpaidOrders = hasUnpaidOrders;
             _numberOfBill = numberOfBill;
             _menuPage = menuPage;
-            MessageBox.Show("Split number:" + _numberOfBill);
             ShowPaymentPageButton(_numberOfBill);
-            
-            
+
+
         }
 
 
@@ -84,34 +93,25 @@ namespace POS_System.Pages
             do
             {
                 Button paymentPageButton = new Button();
+
                 paymentPageButton.Content = "Customer#" + customerNumber;
                 paymentPageButton.Tag = customerNumber;
                 paymentPageButton.Click += paymentPageButton_Click;
                 DisplayCustomerButton_Panel.Children.Add(paymentPageButton);
 
                 customerNumber++;
-                splitNumber--; 
+                splitNumber--;
             }
             while (splitNumber > 0);
 
 
         }
 
-        
 
-
-        private void CompleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button)
-            {
-                List<Payment> _customersPayment = _paymentDictionary.Values.ToList();
-                SavePaymentToDatabase(_paymentDictionary);
-            }
-        }
 
         private void paymentPageButton_Click(object sender, RoutedEventArgs e)
         {
-            
+
             if (sender is Button button)
             {
                 _customerOrderedItems.Clear();
@@ -123,6 +123,9 @@ namespace POS_System.Pages
                 {
                     // Disable the button associated with the completed payment
                     ((Button)sender).IsEnabled = false;
+
+
+                    ClickNextButton(button);
                 };
 
                 PaymentPageFrame.Navigate(paymentPage);
@@ -130,6 +133,19 @@ namespace POS_System.Pages
             }
         }
 
+        private void ClickNextButton(Button currentButton)
+        {
+            var buttons = DisplayCustomerButton_Panel.Children.OfType<Button>().ToList();
+            int currentIndex = buttons.IndexOf(currentButton);
+            if (currentIndex >= 0 && currentIndex < buttons.Count - 1)
+            {
+                Button nextButton = buttons[currentIndex + 1];
+                if (nextButton != null && nextButton.IsEnabled)
+                {
+                    paymentPageButton_Click(nextButton, new RoutedEventArgs(Button.ClickEvent));
+                }
+            }
+        }
 
 
         //Method for return payment page
@@ -151,21 +167,21 @@ namespace POS_System.Pages
                         Quantity = order.Quantity,
                         ItemPrice = order.ItemPrice,
                         origialItemPrice = order.origialItemPrice,
-                        IsExistItem = true,
+                        IsSavedItem = true,
                         customerID = order.customerID,
-                        IsSettled = false
+                        isSettled = false
 
 
                     };
                     _customerOrderedItems.Add(ForEachCustomer);
-                         
-                    
-                    PaymentBaseOnCustomerID= new PaymentPage(_menuPage, this,_customerOrderedItems, _tableNumber, _orderType, _orderId, _status, false, customerNumber, _numberOfBill);
+
+
+                    PaymentBaseOnCustomerID = new PaymentPage(_menuPage, this, _customerOrderedItems, _tableNumber, _orderType, _orderId, _status, false, customerNumber, _numberOfBill);
 
                 }
                 else if (order.customerID == 0)
                 {
-                    PaymentBaseOnCustomerID = new PaymentPage(_menuPage, this,_orderedItems, _tableNumber, _orderType, _orderId, _status, false, customerNumber, _numberOfBill);
+                    PaymentBaseOnCustomerID = new PaymentPage(_menuPage, this, _orderedItems, _tableNumber, _orderType, _orderId, _status, false, customerNumber, _numberOfBill);
 
                 }
 
@@ -178,156 +194,6 @@ namespace POS_System.Pages
         {
             this.Close();
         }
-
-        private void SavePaymentToDatabase(ConcurrentDictionary<int, Payment> paymentDictionary)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
-            {
-                try
-                {
-                    conn.Open();
-
-                    // Begin a transaction to ensure all inserts are treated as a single unit of work
-                    using (MySqlTransaction transaction = conn.BeginTransaction())
-                    {
-                        foreach (KeyValuePair<int, Payment> kvp in paymentDictionary)
-                        {
-                            Payment payment = kvp.Value;
-                            string paymentSql = "INSERT INTO `payment` " +
-                            "(order_id, order_type, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
-                            "VALUES (@order_id, @order_type, @payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
-
-                            MySqlCommand paymentCmd = new MySqlCommand(paymentSql, conn)
-                            {
-                                Transaction = transaction // Assign the transaction
-                            };
-
-                            paymentCmd.Parameters.AddWithValue("@order_id", payment.orderID);
-                            paymentCmd.Parameters.AddWithValue("@order_type", payment.orderType);
-                            paymentCmd.Parameters.AddWithValue("@payment_method", payment.paymentMethod);
-                            paymentCmd.Parameters.AddWithValue("@base_amount", payment.baseAmount);
-                            paymentCmd.Parameters.AddWithValue("@GST", payment.GST);
-                            paymentCmd.Parameters.AddWithValue("@total_amount", payment.customerPaymentTotalAmount);
-                            paymentCmd.Parameters.AddWithValue("@gross_amount", payment.grossAmount);
-                            paymentCmd.Parameters.AddWithValue("@customer_change_amount", payment.customerChangeAmount);
-                            paymentCmd.Parameters.AddWithValue("@tip", payment.tip);
-                            paymentCmd.Parameters.AddWithValue("@payment_timestamp", DateTime.Now);
-
-                            paymentCmd.ExecuteNonQuery();
-                        }
-
-                        // Commit the transaction
-                        transaction.Commit();
-                    }
-
-                    MessageBox.Show("Payments sent successfully!");
-                    string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
-                    MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
-                    removeOrderCmd.Parameters.AddWithValue("@orderId", _orderId);
-                    removeOrderCmd.ExecuteNonQuery();
-
-                    string isPaidSql = "UPDATE `order` SET paid = @paid WHERE order_id = @orderId; ";
-                    MySqlCommand isPaidCmd = new MySqlCommand(isPaidSql, conn);
-                    isPaidCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                    isPaidCmd.Parameters.AddWithValue("@paid", "y");
-                    isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
-                    isPaidCmd.ExecuteNonQuery();
-                    // You may want to clear the dictionary after successful save
-                    paymentDictionary.Clear();
-
-                    // Additional logic to remove ordered items and update order status...
-                    // Be sure to wrap these in the same transaction if they need to be atomic with the payment inserts
-
-                    // ... rest of the code ...
-
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("MySQL Error: " + ex.Message);
-                    // Rollback the transaction on error
-                    // transaction.Rollback(); (Add this inside a try-catch if within the try block)
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error sending order: " + ex.ToString());
-                    // Rollback the transaction on error
-                    // transaction.Rollback(); (Add this inside a try-catch if within the try block)
-                }
-            }
-        }
-
-
-
-        /*        //(method for send payment to database) back up!!!!
-                private void SavePaymentToDatabase(ConcurrentDictionary<int, Payment> paymentDictionary)
-                {
-                    using (MySqlConnection conn = new MySqlConnection(connStr))
-                    {
-                        try
-                        {
-                            conn.Open();
-                            using (MySqlTransaction transaction = conn.BeginTransaction())
-                            {
-
-                            }
-                                foreach (Payment payment in _paymentList)
-                            {
-                                string paymentSql = "INSERT INTO `payment` " +
-                                "(order_id, order_type, payment_method, base_amount, GST, total_amount, gross_amount, customer_change_amount, tip, payment_timestamp)" +
-                                "VALUES (@order_id, @order_type,@payment_method, @base_amount, @GST, @total_amount, @gross_amount, @customer_change_amount, @tip, @payment_timestamp);";
-
-                                MySqlCommand paymentCmd = new MySqlCommand(paymentSql, conn);
-
-
-
-                                paymentCmd.Parameters.AddWithValue("@order_id", payment.orderID);
-                                paymentCmd.Parameters.AddWithValue("@order_type", payment.orderType);
-                                paymentCmd.Parameters.AddWithValue("@payment_method", payment.paymentMethod);
-                                paymentCmd.Parameters.AddWithValue("@base_amount", payment.baseAmount);
-                                paymentCmd.Parameters.AddWithValue("@GST", payment.GST);
-                                paymentCmd.Parameters.AddWithValue("@total_amount", payment.totalAmount);
-                                paymentCmd.Parameters.AddWithValue("@gross_amount", payment.grossAmount);
-                                paymentCmd.Parameters.AddWithValue("@customer_change_amount", payment.customerChangeAmount);
-                                paymentCmd.Parameters.AddWithValue("@tip", payment.tip);
-                                paymentCmd.Parameters.AddWithValue("@payment_timestamp", DateTime.Now);
-
-                                paymentCmd.ExecuteNonQuery();
-                            }
-
-
-                            MessageBox.Show("Payment sent successfully!");
-
-                            string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
-                            MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
-                            removeOrderCmd.Parameters.AddWithValue("@orderId", _orderId);
-                            removeOrderCmd.ExecuteNonQuery();
-
-                            string isPaidSql = "UPDATE `order` SET paid = @paid WHERE order_id = @orderId; ";
-                            MySqlCommand isPaidCmd = new MySqlCommand(isPaidSql, conn);
-                            isPaidCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                            isPaidCmd.Parameters.AddWithValue("@paid", "y");
-                            isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
-                            isPaidCmd.ExecuteNonQuery();
-
-
-
-
-                            TablePage tablePage = new TablePage();
-                            tablePage.Show();
-
-                        }
-                        catch (MySqlException ex)
-                        {
-                            MessageBox.Show("MySQL Error: " + ex.Message);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Error sending order: " + ex.ToString());
-                        }
-                    }
-
-                }*/
-
-
     }
+
 }

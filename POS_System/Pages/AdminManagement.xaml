@@ -26,15 +26,14 @@
 
 
         <TextBlock Grid.Row="0" 
-                   Grid.ColumnSpan="3" 
-                   HorizontalAlignment="Left" 
+                   HorizontalAlignment="Center" 
                    Text="Welcome, Admin" 
                    FontSize="56"
                    FontWeight="Bold" 
                    FontStyle="Italic" 
                    Foreground="Orange" 
                    Background="#383838" 
-                   Margin="427,62,0,44" Grid.Column="2" Width="466"
+                   Margin="0,62,0,44" Grid.Column="4" Width="466"
                    />
 
         <!-- Manager Picture -->
@@ -42,7 +41,7 @@
                        Source="pack://application:,,,/POS_System;component/Images/AdminPicture.png"
                        Width="95"
                        HorizontalAlignment="Left"
-                       Margin="924,36,0,35" Grid.Column="4"/>
+                       Margin="412,36,0,35" Grid.Column="4"/>
 
 
         <!-- Manage Users -->

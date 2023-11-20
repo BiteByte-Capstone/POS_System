@@ -5,36 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
+        Loaded="Window_Loaded"
         Title="PaymentWindow" WindowState="Maximized" Height="746" Width="1777" Background="#212121">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="19*"/>
             <RowDefinition Height="55"/>
             <RowDefinition Height="189*"/>
-            <RowDefinition Height="17*"/>
+            <RowDefinition Height="17*" MinHeight="30"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1325*"/>
-            <ColumnDefinition Width="452*"/>
+            <ColumnDefinition Width="120*"/>
+            <ColumnDefinition Width="1657*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel x:Name="DisplayCustomerButton_Panel" Grid.Row="0" HorizontalAlignment="Left"  Orientation="Horizontal" Width="1328" Margin="164,0,0,10" Grid.ColumnSpan="2"/>
-        <Frame Name="PaymentPageFrame" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,3,0,0" Grid.Row="2" Grid.Column="0" Grid.RowSpan="2"/>
-        <TextBlock x:Name="CustomerNumberDisplay_TextBlock" HorizontalAlignment="Left" TextAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="823" Text="{Binding}" Height="44" FontFamily="Verdana" FontSize="40" FontWeight="Bold" Foreground="Orange" Margin="477,9,0,0"/>
-        <Button Content="Cancel" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Height="57" Width="131" Click="CloseButton_Click"/>
-        <Button Content="Complete" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Height="51" Width="215" Click="CompleteButton_Click" Grid.Column="1"  Grid.Row="3"/>
-        <ListView x:Name="OrdersListBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Payment}" Margin="0,55,0,0" Grid.RowSpan="2" >
-            <ListView.View>
-                <GridView>
-
-                    <GridViewColumn Header="Item Name" Width="200" DisplayMemberBinding="{Binding customerID}" />
-                    <GridViewColumn Header="Item Price" Width="100" DisplayMemberBinding="{Binding customerPaymentTotalAmount, StringFormat=C}" />
-
-                </GridView>
-
-            </ListView.View>
-        </ListView>
+        <StackPanel x:Name="DisplayCustomerButton_Panel" Grid.Row="0" HorizontalAlignment="Left" Visibility="Hidden" Orientation="Horizontal" Width="1328" Margin="21,0,0,10" Grid.Column="1"/>
+        <Frame Name="PaymentPageFrame" NavigationUIVisibility="Hidden" Margin="0,3,0,0" Grid.Row="2" Grid.Column="1"/>
+        <TextBlock x:Name="CustomerNumberDisplay_TextBlock" HorizontalAlignment="Left" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="796" Text="{Binding}" Height="53" FontFamily="Verdana" FontSize="50" FontWeight="Bold" Foreground="Orange" Margin="370,29,0,0" Grid.Column="1" Grid.RowSpan="2"/>
+        <Button Content="Cancel" Background="red" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Margin="0,0,2,0" VerticalAlignment="Center" Height="57" Click="CloseButton_Click"/>
 
     </Grid>
 </Window>

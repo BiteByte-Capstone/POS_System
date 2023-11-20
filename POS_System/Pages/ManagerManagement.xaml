@@ -32,17 +32,17 @@
                    FontStyle="Italic" 
                    Foreground="Orange" 
                    Background="#383838" 
-                   Margin="40,55,0,691" Width="350" Grid.Column="1" Grid.ColumnSpan="2"
+                   Margin="124,55,0,691" Width="350" Grid.Column="1" Grid.ColumnSpan="2"
                    ><Run Text="Welcome, "/><Run Language="en-ca" Text="Manager"/></TextBlock>
 
-        
+
         <!-- Manager Picture -->
         <Image Grid.Row="0" 
                        Source="pack://application:,,,/POS_System;component/Images/ManagerPicture.png"
                        Width="90"
                        HorizontalAlignment="Left"
-                       Margin="130,15,0,691"
-                       Grid.RowSpan="2" Grid.Column="2"/>
+                       Margin="18,15,0,691"
+                       Grid.RowSpan="2" Grid.Column="1"/>
 
 
         <!-- Manage Sales -->
