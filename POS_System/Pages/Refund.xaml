@@ -27,7 +27,8 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <TextBlock TextWrapping="Wrap" Text="Refund Page" Margin="19,8,663,402" Grid.RowSpan="2" FontSize="18" FontWeight="Bold" TextDecorations="Underline"/>
+
+        <TextBlock Text="Refund Page" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="0" FontSize="24" FontWeight="Bold" TextDecorations="Underline"/>
 
         <DatePicker Name="fromDate"  HorizontalAlignment="Left" Margin="188,42,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="Short" Grid.Row="1"/>
         <DatePicker Name="untilDate" HorizontalAlignment="Left" Margin="512,42,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="short" Grid.Row="1"/>
