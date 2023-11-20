@@ -26,6 +26,7 @@
     <None Remove="Images\ManageUser.png" />
     <None Remove="Images\MC.png" />
     <None Remove="Images\Refund.png" />
+    <None Remove="Images\ResetBtn.png" />
     <None Remove="Images\userDelete.png" />
     <None Remove="Images\Visa.png" />
   </ItemGroup>
@@ -87,6 +88,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\Refund.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ResetBtn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\userDelete.png">
