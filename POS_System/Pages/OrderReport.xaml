@@ -5,111 +5,308 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-        Title="Order Report" Width="850" Height="650" WindowStartupLocation="CenterScreen">
+        Title="Order Report" Width="850" Height="650" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
 
         <TabControl>
             <!-- OrderReport Tap -->
             <TabItem Header="Order Report">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" MinHeight="240"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
-                    <DataGrid Name="orderGrid" ItemsSource="{Binding}" Margin="18,211,18,10" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
-                            <DataGridTextColumn Header="Table Number" Binding="{Binding table_num}" />
-                            <DataGridTextColumn Header="Order TimeStamp" Binding="{Binding order_timestamp}" />
-                            <DataGridTextColumn Header="Total Amount" Binding="{Binding total_amount}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
 
-                    <TextBlock TextWrapping="Wrap" Text="Order Report" Margin="38,23,656,551" Grid.RowSpan="2" FontSize="18" FontWeight="Bold" TextDecorations="Underline"/>
+                        <DataGrid Name="orderGrid" ItemsSource="{Binding}" Margin="18,40,10,8" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
+                                <DataGridTextColumn Header="Table Number" Binding="{Binding table_num}" />
+                                <DataGridTextColumn Header="Order TimeStamp" Binding="{Binding order_timestamp}" />
+                                <DataGridTextColumn Header="Total Amount" Binding="{Binding total_amount}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock Text="Date" FontSize="17" FontWeight="Bold" RenderTransformOrigin="-5.897,-1.267" Margin="12,83,774,162"/>
+                        <Viewbox Grid.Row="0" Stretch="Uniform" Margin="140,68,-39,152">
 
-                    <DatePicker Name="fromDateOrder"  HorizontalAlignment="Left" Margin="195,77,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="Short" Grid.Row="1"/>
-                    <DatePicker Name="untilDateOrder" HorizontalAlignment="Left" Margin="515,77,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="short" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="Date" Margin="38,80,719,292" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="From:" Margin="152,80,605,292" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="To:" Margin="489,78,268,294" Grid.Row="1"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="592">
 
-                    <TextBlock TextWrapping="Wrap" Text="Table Number" Margin="38,115,656,257" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="Specific table(s):" Margin="151,115,535,257" Grid.Row="1"/>
-                    <TextBox Name="specificTableBoxFilter" HorizontalAlignment="Left" Margin="262,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="From Table:" Margin="151,144,563,228" Grid.Row="1"/>
-                    <TextBox x:Name="fromTableBoxFilter" HorizontalAlignment="Left" Margin="262,144,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="To Table:" Margin="430,144,284,228" Grid.Row="1"/>
-                    <TextBox x:Name="toTableBoxFilter" HorizontalAlignment="Left" Margin="496,144,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
+                                <TextBlock Text="From:" VerticalAlignment="Center" Width="33" FontSize="13"/>
+                                <DatePicker x:Name="fromDateOrder" SelectedDateFormat="Short" Margin="5,0" Width="192"/>
+                                <TextBlock Text="To:" VerticalAlignment="Center" Margin="5,0,5,0" Width="27"/>
+                                <DatePicker x:Name="untilDateOrder" SelectedDateFormat="Short" Width="192"/>
+                            </StackPanel>
+                        </Viewbox>
 
-                    <TextBlock TextWrapping="Wrap" Text="Total Amount" Margin="38,175,656,197" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="From Amount:" Margin="151,175,535,197" Grid.Row="1"/>
-                    <TextBox x:Name="fromAmountBoxFilter" HorizontalAlignment="Left" Margin="262,173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="To Amount:" Margin="430,175,284,197" Grid.Row="1"/>
-                    <TextBox x:Name="toAmountBoxFilter" HorizontalAlignment="Left" Margin="496,173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
+                        <!-- First Section Line -->
+                        <Border VerticalAlignment="Top" BorderBrush="DeepSkyBlue" BorderThickness="0,1,0,0" Margin="0,71,0,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="DeepSkyBlue" Offset="0.0"/>
+                                    <GradientStop Color="LightSkyBlue" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="DeepSkyBlue" Direction="0" ShadowDepth="5" BlurRadius="5"/>
+                            </Border.Effect>
+                        </Border>
 
-                    <Button Name="filterBtnOrder" Content="Filter" HorizontalAlignment="Left" Margin="680,130,0,0" VerticalAlignment="Top" Height="24" Width="102" Click="filterBtnOrder_Click" Grid.Row="1"/>
-                    <Button x:Name="printBtnOrder" Content="Print Report" HorizontalAlignment="Left" Margin="680,166,0,0" VerticalAlignment="Top" Height="24" Width="102" Click="printBtnOrder_Click" Grid.Row="1"/>
-                </Grid>
+                        <!-- Second Section Line -->
+                        <Border VerticalAlignment="Top" BorderBrush="DeepSkyBlue" BorderThickness="0,1,0,0" Margin="0,122,0,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="DeepSkyBlue" Offset="0.0"/>
+                                    <GradientStop Color="LightSkyBlue" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="DeepSkyBlue" Direction="0" ShadowDepth="5" BlurRadius="5"/>
+                            </Border.Effect>
+                        </Border>
+
+                        <!-- Third Section Lines -->
+                        <Border VerticalAlignment="Top" BorderBrush="DeepSkyBlue" BorderThickness="0,1,0,0" Margin="0,176,0,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="DeepSkyBlue" Offset="0.0"/>
+                                    <GradientStop Color="LightSkyBlue" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="DeepSkyBlue" Direction="0" ShadowDepth="5" BlurRadius="5"/>
+                            </Border.Effect>
+                        </Border>
+
+                        <!-- Fourth Section Lines -->
+                        <Border Grid.Row="0" VerticalAlignment="Bottom" BorderBrush="DeepSkyBlue" BorderThickness="0,1,0,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="DeepSkyBlue" Offset="0.0"/>
+                                    <GradientStop Color="LightSkyBlue" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="DeepSkyBlue" Direction="0" ShadowDepth="5" BlurRadius="5"/>
+                            </Border.Effect>
+                        </Border>
+
+
+
+
+                        <!-- Table Number Filter Section -->
+                        <Viewbox Grid.Row="0" Stretch="Uniform" Margin="142,116,175,95">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal" Width="202" Height="25">
+                                    <TextBlock Text="Specific table(s):" Width="61" FontSize="8" Height="10" RenderTransformOrigin="0.927,0.598"/>
+                                    <TextBox x:Name="specificTableBoxFilter" Width="64" Height="12" FontSize="7" FontWeight="Bold"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Viewbox>
+                        <Viewbox Stretch="Uniform" Margin="144,174,117,41">
+                            <StackPanel Orientation="Horizontal" Width="348" Height="35">
+                                <TextBlock Text="From Table:" VerticalAlignment="Center" FontSize="12" Height="16" Width="90"/>
+                                <TextBox x:Name="fromTableBoxFilter" Width="99" Margin="5,0" Height="17"/>
+                                <TextBlock Text="To Table:" VerticalAlignment="Center" Margin="5,0,5,0" Height="19" Width="57"/>
+                                <TextBox x:Name="toTableBoxFilter" Width="77" Height="16"/>
+                            </StackPanel>
+                        </Viewbox>
+
+
+                        <!-- Total Amount Filter Section -->
+                        <Viewbox Stretch="Uniform" Margin="142,221,119,9">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal" Width="370" Height="26">
+                                    <TextBlock Text="From Amount:" VerticalAlignment="Center" FontSize="13" Width="95" Height="19"/>
+                                    <TextBox x:Name="fromAmountBoxFilter" Width="106" Margin="5,0" Height="17"/>
+                                    <TextBlock Text="To Amount:" VerticalAlignment="Center" Margin="5,0,5,0" FontSize="13" Height="20" Width="68"/>
+                                    <TextBox x:Name="toAmountBoxFilter" Width="77" Height="18"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Viewbox>
+
+                        <!-- Title -->
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="Order Report"
+                                   Margin="300,12,0,214"
+                                   FontSize="30"
+                                   FontWeight="Bold"
+                                   FontStyle="Italic"
+                                   Foreground="Orange"
+                                   HorizontalAlignment="Left"/>
+
+                        <!-- OrderReport Picture -->
+                        <Image Grid.Row="0"
+                       Source="pack://application:,,,/POS_System;component/Images/OrderReport.png"
+                       Width="42"
+                       HorizontalAlignment="Left" Margin="243,0,0,212"/>
+
+
+                        <Button x:Name="printBtnOrder" Content="Print Report" HorizontalAlignment="Left" Margin="730,229,0,0" VerticalAlignment="Top" Height="32" Width="93" FontSize="13" Click="printBtnOrder_Click"/>
+                        <Button x:Name="filterBtnOrder" Content="Filter" HorizontalAlignment="Left" Margin="730,188,0,0" VerticalAlignment="Top" Height="34" Width="93" FontSize="13" Click="filterBtnOrder_Click"/>
+                        <TextBlock FontSize="15" FontWeight="Bold" RenderTransformOrigin="-5.897,-1.267" Margin="12,139,707,104"><Run Language="en-ca" Text="Table Number"/></TextBlock>
+                        <TextBlock FontSize="15" FontWeight="Bold" RenderTransformOrigin="-5.897,-1.267" Margin="12,234,705,13"><Run Language="en-ca" Text="Total Amount"/></TextBlock>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
+
 
 
             <!-- OrderedItemReport Tap -->
             <TabItem Header="Order Item Report">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <DataGrid Name="orderedItemListGrid" ItemsSource="{Binding}" Margin="18,166,18,9" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
-                            <DataGridTextColumn Header="Item ID" Binding="{Binding item_id}" />
-                            <DataGridTextColumn Header="Name" Binding="{Binding total_amount}" />
-                            <DataGridTextColumn Header="Quantity" Binding="{Binding quantity}" />
-                            <DataGridTextColumn Header="Price" Binding="{Binding quantity}" />
-                            <DataGridTextColumn Header="Category" Binding="{Binding item_category}" />
-                            <DataGridTextColumn Header="Date" Binding="{Binding order_timestamp}" />
+                        <DataGrid Name="orderedItemListGrid" ItemsSource="{Binding}" Margin="18,10,18,10" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
+                                <DataGridTextColumn Header="Item ID" Binding="{Binding item_id}" />
+                                <DataGridTextColumn Header="Name" Binding="{Binding total_amount}" />
+                                <DataGridTextColumn Header="Quantity" Binding="{Binding quantity}" />
+                                <DataGridTextColumn Header="Price" Binding="{Binding quantity}" />
+                                <DataGridTextColumn Header="Category" Binding="{Binding item_category}" />
+                                <DataGridTextColumn Header="Date" Binding="{Binding order_timestamp}" />
 
-                        </DataGrid.Columns>
-                    </DataGrid>
+                            </DataGrid.Columns>
+                        </DataGrid>
 
-                    <TextBlock TextWrapping="Wrap" Text="Order Item Report" Margin="10,8,662,566" Grid.RowSpan="2" FontSize="18" FontWeight="Bold" TextDecorations="Underline"/>
+                        <!-- Select Date Filter Section -->
+                        <Viewbox Grid.Row="0" Stretch="Uniform" Margin="32,80,85,133">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="592" Height="25">
+                                <TextBlock Height="20" Width="103"><Run Text="Date " FontWeight="Bold" FontSize="13"/><Run Language="ko-kr" Text="          "/><Run Text="From:"/></TextBlock>
+                                <DatePicker x:Name="fromDateItem" SelectedDateFormat="Short" Width="192"/>
+                                <TextBlock Text="To:" VerticalAlignment="Center" Margin="5,0,5,0" Width="27" RenderTransformOrigin="0.969,0.662"/>
+                                <DatePicker x:Name="untilDateItem" SelectedDateFormat="Short" Width="192"/>
+                            </StackPanel>
+                        </Viewbox>
 
-                    <DatePicker Name="fromDateItem"  HorizontalAlignment="Left" Margin="195,42,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="Short" Grid.Row="1"/>
-                    <DatePicker Name="untilDateItem" HorizontalAlignment="Left" Margin="515,42,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="short" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="Date" Margin="38,45,719,327" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="From:" Margin="152,45,605,327" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="To:" Margin="489,45,268,327" Grid.Row="1"/>
+                        <!-- Order ID Filter Section -->
+                        <Viewbox Stretch="Uniform" Margin="32,124,550,93">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="170">
+                                <TextBlock Text="Order ID(s):" Width="63" FontSize="11"/>
+                                <TextBox x:Name="orderIdBoxFilter" Width="100"/>
+                            </StackPanel>
+                        </Viewbox>
 
-                    <TextBlock TextWrapping="Wrap" Text="Order ID(s):" Margin="38,80,648,292" Grid.Row="1"/>
-                    <TextBox Name="orderIdBoxFilter" HorizontalAlignment="Left" Margin="106,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
+                        <!-- Item ID Filter Section -->
+                        <Viewbox Stretch="Uniform" Margin="309,125,280,95" RenderTransformOrigin="0.5,0.5">
+                            <Viewbox.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-0.048"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Viewbox.RenderTransform>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="19" Width="177">
+                                <TextBlock Text="Item ID(s):" Width="58" RenderTransformOrigin="0.56,0.392"/>
+                                <TextBox x:Name="itemIdBoxFilter" Width="80" Margin="5,0"/>
+                            </StackPanel>
+                        </Viewbox>
 
-                    <TextBlock TextWrapping="Wrap" Text="Item ID(s):" Margin="273,80,413,292" Grid.Row="1"/>
-                    <TextBox x:Name="itemIdBoxFilter" HorizontalAlignment="Left" Margin="334,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
+                        <!-- Category Filter Section -->
+                        <Viewbox Stretch="Uniform" Margin="535,125,56,96">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="Category:"/>
+                                <TextBox x:Name="categoryBoxFilter" Width="108" Margin="5,0"/>
+                            </StackPanel>
+                        </Viewbox>
 
-                    <TextBlock TextWrapping="Wrap" Text="Category:" Margin="501,80,185,292" Grid.Row="1"/>
-                    <TextBox x:Name="categoryBoxFilter" HorizontalAlignment="Left" Margin="558,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
+                        <!-- Quantity and Price Filter Section-->
+                        <Viewbox Stretch="Uniform" Margin="158,174,138,52">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="From Quantity:" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Width="86">
+                                    <TextBlock.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="-0.068"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                                <TextBox x:Name="fromQuantityBoxFilter" Width="88"/>
+                                <TextBlock Text="To Quantity:" VerticalAlignment="Center" Margin="5,0"/>
+                                <TextBox x:Name="toQuantityBoxFilter" Width="88"/>
+                            </StackPanel>
+                        </Viewbox>
 
-                    <TextBlock TextWrapping="Wrap" Text="From Quantity:" Margin="151,109,563,263" Grid.Row="1"/>
-                    <TextBox x:Name="fromQuantityBoxFilter" HorizontalAlignment="Left" Margin="262,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="To Quantity:" Margin="430,109,284,263" Grid.Row="1"/>
-                    <TextBox x:Name="toQuantityBoxFilter" HorizontalAlignment="Left" Margin="496,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
+                        <!-- Total Price Filter Section -->
+                        <Viewbox Stretch="Uniform" Margin="26,219,156,10">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock VerticalAlignment="Center" Width="165"><Run Text="Total Price" FontWeight="Bold" FontSize="11"/><Run Text="           "/><Run Language="ko-kr" Text="   "/><Run Text=" From"/><Run Text=" Price"/><Run Text=":"/></TextBlock>
+                                <TextBox x:Name="fromPriceBoxFilter" Width="88" Margin="5,0" Height="17"/>
+                                <TextBlock VerticalAlignment="Center" Margin="5,0" Width="61"><Run Language="ko-kr" Text="     "/><Run Text="To"/><Run Text=" Price"/><Run Text=":"/></TextBlock>
+                                <TextBox x:Name="toPriceBoxFilter" Width="77"/>
+                            </StackPanel>
+                        </Viewbox>
 
-                    <TextBlock TextWrapping="Wrap" Text="Total Price" Margin="38,140,656,232" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="From Price:" Margin="151,140,535,232" Grid.Row="1"/>
-                    <TextBox x:Name="fromPriceBoxFilter" HorizontalAlignment="Left" Margin="262,138,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
-                    <TextBlock TextWrapping="Wrap" Text="To Price:" Margin="430,140,284,232" Grid.Row="1"/>
-                    <TextBox x:Name="toPriceBoxFilter" HorizontalAlignment="Left" Margin="496,138,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
+                        <!-- Filter and Print Buttons -->
+                        <Button Name="filterBtnItem" Content="Filter" Margin="719,176,19,55" Click="filterBtnItem_Click"/>
+                        <Button x:Name="printBtnItem" Content="Print Report" Click="printBtnItem_Click" Margin="719,216,19,14" RenderTransformOrigin="0.517,0.545"/>
 
-                    <Button Name="filterBtnItem" Content="Filter" HorizontalAlignment="Left" Margin="680,108,0,0" VerticalAlignment="Top" Height="24" Width="102" Click="filterBtnItem_Click" Grid.Row="1"/>
-                    <Button x:Name="printBtnItem" Content="Print Report" HorizontalAlignment="Left" Margin="680,138,0,0" VerticalAlignment="Top" Height="24" Width="102" Click="printBtnItem_Click" Grid.Row="1"/>
-                </Grid>
+                        <!-- Title -->
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="Order Item Report"
+                                   Margin="279,10,0,204"
+                                   FontSize="30"
+                                   FontWeight="Bold"
+                                   FontStyle="Italic"
+                                   Foreground="Orange"
+                                   HorizontalAlignment="Left"/>
+                        <!-- OrderedReport Picture -->
+                        <Image Grid.Row="0"
+                               Source="pack://application:,,,/POS_System;component/Images/OrderReport.png"
+                               Width="42"
+                               HorizontalAlignment="Left" Margin="229,8,0,204"/>
+
+                        <!-- First Section Lines -->
+                        <Border VerticalAlignment="Top" BorderBrush="DeepSkyBlue" BorderThickness="0,1,0,0" Margin="1,75,-1,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="DeepSkyBlue" Offset="0.0"/>
+                                    <GradientStop Color="LightSkyBlue" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="DeepSkyBlue" Direction="0" ShadowDepth="5" BlurRadius="5"/>
+                            </Border.Effect>
+                        </Border>
+
+
+                        <!-- Second Section Lines -->
+                        <Border VerticalAlignment="Top" BorderBrush="DeepSkyBlue" BorderThickness="0,1,0,0" Margin="0,166,0,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="DeepSkyBlue" Offset="0.0"/>
+                                    <GradientStop Color="LightSkyBlue" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="DeepSkyBlue" Direction="0" ShadowDepth="5" BlurRadius="5"/>
+                            </Border.Effect>
+                        </Border>
+
+
+                        <!-- Third Section Lines -->
+                        <Border Grid.Row="0" VerticalAlignment="Bottom" BorderBrush="DeepSkyBlue" BorderThickness="0,1,0,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="DeepSkyBlue" Offset="0.0"/>
+                                    <GradientStop Color="LightSkyBlue" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="DeepSkyBlue" Direction="0" ShadowDepth="5" BlurRadius="5"/>
+                            </Border.Effect>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
-
         </TabControl>
-
-
     </Grid>
 </Window>

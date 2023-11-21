@@ -686,6 +686,5 @@ namespace POS_System.Pages
 
             }
         }
-
     }
 }
