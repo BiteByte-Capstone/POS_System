@@ -464,13 +464,12 @@ namespace POS_System.Pages
         //(Method) for split item
         private ObservableCollection<OrderedItem> GetNewSplitItemList(ObservableCollection<OrderedItem>splitedList,int numberOfBill,string splitType)
         {
-            ObservableCollection<OrderedItem> items = splitedList;
-            foreach (OrderedItem splitOrderedItem in items)
+            
+            foreach (OrderedItem splitOrderedItem in splitedList)
             {
                 if (splitType == "ByItem")
                 {
-                    for (int i = 1; numberOfBill > 0; i++)
-                    {
+
                         OrderedItem newSplitBill = new OrderedItem
                     {
 
@@ -481,13 +480,13 @@ namespace POS_System.Pages
                         origialItemPrice = splitOrderedItem.origialItemPrice,
                         ItemPrice = splitOrderedItem.ItemPrice,
                         IsSavedItem = true,
-                        customerID = i
+                        customerID = splitOrderedItem.customerID
 
                     };
                         splitOrderedItems.Add(newSplitBill);
                         
-                        numberOfBill--;
-                    }
+                       
+                    
 
                 }
                 else if (splitType == "ByBill")
