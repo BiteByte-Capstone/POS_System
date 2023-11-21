@@ -13,46 +13,75 @@
             <TabItem Header="DineIn" BorderBrush="Orange" Background="#383838" Foreground="Orange" FontSize="25" FontFamily="Verdana" FontWeight="Bold">
                 <Grid Background="#383838" Margin="1,0,-1,0" >
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="66.326"/>
-                        <RowDefinition Height="550.674"/>
-                        <RowDefinition/>
+                        <RowDefinition Height="*" MinHeight="50" MaxHeight="80"/>
+                        <RowDefinition Height="*" MinHeight="720" MaxHeight="750"/>
+                        <RowDefinition Height="*" MinHeight="50" MaxHeight="80"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="91*"/>
-                        <ColumnDefinition Width="236*"/>
-                        <ColumnDefinition Width="145*"/>
-                        <ColumnDefinition Width="966*"/>
-                        <ColumnDefinition Width="333*"/>
+                        <ColumnDefinition Width="40*" MinWidth="50" MaxWidth="80"/>
+                        <ColumnDefinition Width="115*" MinWidth="200" MaxWidth="230"/>
+                        <ColumnDefinition Width="582*" MinWidth="1200" MaxWidth="1300"/>
+                        <ColumnDefinition Width="68*"/>
+                        <ColumnDefinition Width="40*" MinWidth="50" MaxWidth="80"/>
                     </Grid.ColumnDefinitions>
 
 
 
 
 
-                    <Grid VerticalAlignment="Center" Height="548" Grid.Column="3" Grid.Row="1" Margin="10,0,10,0">
+                    <Grid Grid.Column="2" Grid.Row="1" Margin="15,15,20,15">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="90*"/>
+                            <RowDefinition Height="39*"/>
+                            <RowDefinition Height="58*"/>
+                            <RowDefinition Height="28*"/>
+                            <RowDefinition Height="44*"/>
+                            <RowDefinition Height="54*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="48*"/>
+                            <RowDefinition Height="279*"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="103*"/>
+                            <ColumnDefinition Width="53*"/>
+                            <ColumnDefinition Width="37*"/>
+                            <ColumnDefinition Width="38*"/>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="42*"/>
+                            <ColumnDefinition Width="28*"/>
+                            <ColumnDefinition Width="40*"/>
+                            <ColumnDefinition Width="28*"/>
+                            <ColumnDefinition Width="42*"/>
+                            <ColumnDefinition Width="43*"/>
+                            <ColumnDefinition Width="33*"/>
+                            <ColumnDefinition Width="28*"/>
+                            <ColumnDefinition Width="36*"/>
+                            <ColumnDefinition Width="69*"/>
+                            <ColumnDefinition Width="148*"/>
+                            <ColumnDefinition Width="400*" MinWidth="400" MaxWidth="400"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="table_D8" Content="T8" HorizontalAlignment="Left" Margin="8,15,0,0" VerticalAlignment="Top" Height="54" Width="145" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D6" Content="T6" HorizontalAlignment="Left" Margin="257,15,0,0" VerticalAlignment="Top" Height="72" Width="31" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D1" Content="T1" HorizontalAlignment="Left" Margin="645,15,0,0" VerticalAlignment="Top" Height="52" Width="145" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" RenderTransformOrigin="1.03,-0.564" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D15_1" Content="T15-1" HorizontalAlignment="Left" Margin="388,260,0,0" VerticalAlignment="Top" Height="48" Width="106" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D14" Content="T14" HorizontalAlignment="Left" Margin="672,207,0,0" VerticalAlignment="Top" Height="52" Width="118" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D7" Content="T7" HorizontalAlignment="Left" Margin="196,15,0,0" VerticalAlignment="Top" Height="72" Width="32" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" RenderTransformOrigin="2.255,0.474" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D5" Content="T5" HorizontalAlignment="Left" Margin="333,15,0,0" VerticalAlignment="Top" Height="72" Width="31" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D4" Content="T4" HorizontalAlignment="Left" Margin="388,15,0,0" VerticalAlignment="Top" Height="72" Width="30" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D3" Content="T3" HorizontalAlignment="Left" Margin="479,15,0,0" VerticalAlignment="Top" Height="72" Width="30" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D2" Content="T2" HorizontalAlignment="Left" Margin="538,15,0,0" VerticalAlignment="Top" Height="72" Width="31" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <GridSplitter HorizontalAlignment="Left" Height="72" Margin="233,15,0,0" VerticalAlignment="Top" Width="19" Background="Orange"/>
-                        <GridSplitter HorizontalAlignment="Left" Height="72" Margin="514,15,0,0" VerticalAlignment="Top" Width="19" Background="Orange"/>
-                        <Button x:Name="table_D9" Content="T9" HorizontalAlignment="Left" Margin="103,129,0,0" VerticalAlignment="Top" Height="80" Width="50" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" RenderTransformOrigin="2.255,0.474" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D10" Content="T10" HorizontalAlignment="Left" Margin="147,129,0,0" VerticalAlignment="Top" Height="80" Width="50" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" RenderTransformOrigin="2.255,0.474" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D11" Content="T11" HorizontalAlignment="Left" Margin="214,129,0,0" VerticalAlignment="Top" Height="55" Width="114" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D12" Content="T12" HorizontalAlignment="Left" Margin="356,129,0,0" VerticalAlignment="Top" Height="55" Width="114" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D13" Content="T13" HorizontalAlignment="Left" Margin="502,129,0,0" VerticalAlignment="Top" Height="55" Width="114" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D14_2" Content="T14-2" HorizontalAlignment="Left" Margin="672,259,0,0" VerticalAlignment="Top" Height="52" Width="118" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D15_2" Content="T15-2" HorizontalAlignment="Left" Margin="388,308,0,0" VerticalAlignment="Top" Height="48" Width="106" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
-                        <Button x:Name="table_D15_3" Content="T15-3" HorizontalAlignment="Left" Margin="388,356,0,0" VerticalAlignment="Top" Height="48" Width="106" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click"/>
+
+                        <Button x:Name="table_D8" Content="T8" Margin="8,15,3,21" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.ColumnSpan="2"/>
+                        <Button x:Name="table_D6" Content="T6" Margin="3,15,3,0" VerticalAlignment="Top" Height="72" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="5"/>
+                        <Button x:Name="table_D1" Content="T1" Margin="1,14,1,0" VerticalAlignment="Top" Height="52" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" RenderTransformOrigin="1.03,-0.564" Click="OpenOrder_Click" Grid.Column="15"/>
+                        <Button x:Name="table_D15_1" Content="T15-1" Margin="3,2,2,2" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="9" Grid.ColumnSpan="3" Grid.Row="5"/>
+                        <Button x:Name="table_D14" Content="T14" Margin="4,1,0,1" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="15" Grid.Row="5"/>
+                        <Button x:Name="table_D7" Content="T7" Margin="3,15,3,3" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" RenderTransformOrigin="2.255,0.474" Click="OpenOrder_Click" Grid.Column="3"/>
+                        <Button x:Name="table_D5" Content="T5" Margin="4,15,1,3" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="7"/>
+                        <Button x:Name="table_D4" Content="T4" Margin="2,16,2,3" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="9"/>
+                        <Button x:Name="table_D3" Content="T3" Margin="1,15,0,0" VerticalAlignment="Top" Height="72" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="11"/>
+                        <Button x:Name="table_D2" Content="T2" Margin="0,15,0,0" VerticalAlignment="Top" Height="72" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="13"/>
+                        <GridSplitter HorizontalAlignment="Stretch" Height="72" Margin="3,15,3,0" VerticalAlignment="Top" Background="Orange" Grid.Column="4"/>
+                        <GridSplitter HorizontalAlignment="Center" Height="72" Margin="0,15,0,0" VerticalAlignment="Top" Width="18" Background="Orange" Grid.Column="12"/>
+                        <Button x:Name="table_D9" Content="T9" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" RenderTransformOrigin="2.255,0.474" Click="OpenOrder_Click" Grid.Row="2" Grid.Column="1" Margin="0,0,3,6" Grid.RowSpan="2"/>
+                        <Button x:Name="table_D10" Content="T10" Margin="2,0,23,6" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" RenderTransformOrigin="2.255,0.474" Click="OpenOrder_Click" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" Grid.RowSpan="2"/>
+                        <Button x:Name="table_D11" Content="T11" Margin="2,0,4,3" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="4" Grid.ColumnSpan="4" Grid.Row="2"/>
+                        <Button x:Name="table_D12" Content="T12" Margin="1,0,3,3" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="9" Grid.ColumnSpan="3" Grid.Row="2"/>
+                        <Button x:Name="table_D13" Content="T13" Margin="3,0,3,3" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="13" Grid.ColumnSpan="2" Grid.Row="2"/>
+                        <Button x:Name="table_D14_2" Content="T14-2" Margin="4,0,0,2" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="15" Grid.Row="6"/>
+                        <Button x:Name="table_D15_2" Content="T15-2" VerticalAlignment="Center" Height="48" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="9" Grid.ColumnSpan="3" Grid.Row="6" Margin="3,0,3,0"/>
+                        <Button x:Name="table_D15_3" Content="T15-3" Margin="3,0,3,0" FontFamily="Verdana" FontSize="18" FontWeight="Bold" BorderThickness="3,3,3,3" BorderBrush="Orange" Background="#383838" Foreground="Orange" Click="OpenOrder_Click" Grid.Column="9" Grid.ColumnSpan="3" Grid.Row="7" Height="48" VerticalAlignment="Center"/>
+                        <GridSplitter Height="72" Margin="3,16,3,0" VerticalAlignment="Top" Background="Orange" Grid.Column="8" HorizontalAlignment="Stretch"/>
 
 
 
@@ -62,7 +91,7 @@
 
                     </Grid>
 
-                    <Button x:Name="logout_button" Content="Logout" BorderBrush="Orange" Background="Red" BorderThickness="3,3,3,3" Click="LogoutButton_Click" Margin="0,0,85,0" Grid.Column="1"/>
+                    <Button x:Name="logout_button" Content="Logout" BorderBrush="Orange" Background="Red" BorderThickness="3,3,3,3" Click="LogoutButton_Click" Margin="3,648,9,3" Grid.Column="3" Grid.Row="1"/>
 
                     <Button x:Name="print_button" Content="Change Table" Margin="0,104,4,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Height="62" Click="ChangeTable_Click" Grid.Row="1" Grid.Column="1"/>
                     <Button x:Name="reset_button" Content="Reset All Table" Margin="0,337,4,0" VerticalAlignment="Top" BorderBrush="Orange" Background="#383838" Foreground="Orange" BorderThickness="3,3,3,3" Height="62" Click="ResetTable_Click" Grid.Row="1" Grid.Column="1"/>
