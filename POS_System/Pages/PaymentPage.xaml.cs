@@ -345,6 +345,8 @@ namespace POS_System.Pages
                 PrintSettledPaymentReceipt(eachCustomerPayment);
             }
         }
+        private string _selectedPaymentMethod = "";
+
 
         private void PrintSettledPaymentReceipt(Payment eachCustomerPayment)
         {
@@ -455,7 +457,7 @@ namespace POS_System.Pages
                 paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
 
                 // Create a Paragraph for "GST"
-                Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
+                Paragraph gstLabelParagraph = new Paragraph(new Run("Tax (5%):"));
                 gstLabelParagraph.FontSize = 20; // Increase the font size
                 gstLabelParagraph.TextAlignment = TextAlignment.Right;
 
@@ -463,17 +465,34 @@ namespace POS_System.Pages
                 Paragraph gstValueParagraph = new Paragraph(new Run(customerGSTAmount.ToString("C")));
                 paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
 
+                
+
+                //*********************************
+
+
                 // Create a Paragraph for "Total Amount"
-                Paragraph totalDueAmountLabelParagraph = new Paragraph(new Run("Total Due:"));
+                Paragraph totalDueAmountLabelParagraph = new Paragraph(new Run("Customer Payment:"));
                 totalDueAmountLabelParagraph.FontSize = 20; // Increase the font size
                 totalDueAmountLabelParagraph.TextAlignment = TextAlignment.Right;
 
-                double totalDueAmountWithGST = eachCustomerPayment.grossAmount;
-                Paragraph totalDueAmountValueParagraph = new Paragraph(new Run(totalDueAmountWithGST.ToString("C")));
+                double customerPaymentValue = eachCustomerPayment.customerPaymentTotalAmount;
+                Paragraph totalDueAmountValueParagraph = new Paragraph(new Run(customerPaymentValue.ToString("C")));
                 paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalDueAmountLabelParagraph, totalDueAmountValueParagraph));
-                //////////////////////////////////////////////////
 
-                detailsTable.RowGroups.Add(detailTableRowGroup);
+                //Tip Thevagi ********************
+                Paragraph tipLabelParagraph = new Paragraph(new Run("Tip:"));
+                tipLabelParagraph.FontSize = 20; // Increase the font size
+                tipLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                double customerTipPayent = eachCustomerPayment.tip;
+                Paragraph tipValueParagraph = new Paragraph(new Run(customerTipPayent.ToString("C")));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(tipLabelParagraph, tipValueParagraph));
+
+
+
+        //////////////////////////////////////////////////
+
+        detailsTable.RowGroups.Add(detailTableRowGroup);
                 itemsTable.RowGroups.Add(itemTableRowGroup);
                 paymentTable.RowGroups.Add(paymentTableRowGroup);
 
@@ -484,6 +503,16 @@ namespace POS_System.Pages
                 flowDocument.Blocks.Add(orderDetailsSection);
                 flowDocument.Blocks.Add(itemSection);
                 flowDocument.Blocks.Add(paymentSection);
+
+
+                // Create a Paragraph for the payment method
+                Paragraph paymentMethodParagraph = new Paragraph(new Run($"Payment Type: {_selectedPaymentMethod}"));
+                paymentMethodParagraph.FontSize = 20;
+                paymentMethodParagraph.TextAlignment = TextAlignment.Left; // Adjust alignment as needed
+
+                // Add the payment method paragraph to your document
+                flowDocument.Blocks.Add(paymentMethodParagraph);
+
                 // /*****************************
                 // Create a new paragraph for the "Thank You" message
                 Paragraph thankYouParagraph = new Paragraph();
@@ -581,6 +610,7 @@ namespace POS_System.Pages
         //cash button (payment type = cash)
         private void cashBtn_Click(object sender, RoutedEventArgs e)
         {
+            _selectedPaymentMethod = "Cash";
             _paymentMethod = "Cash";
             cashBtn.Background = Brushes.White;
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
@@ -602,6 +632,8 @@ namespace POS_System.Pages
         //visa button (payment type = visa)
         private void visaBtn_Click(object sender, RoutedEventArgs e)
         {
+            _selectedPaymentMethod = "Visa";
+            //
             _paymentMethod = "Visa";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = Brushes.White;
@@ -620,6 +652,8 @@ namespace POS_System.Pages
         //Master card button (payment type = MC)
         private void mcBtn_Click(object sender, RoutedEventArgs e)
         {
+            _selectedPaymentMethod = "Mastercard";
+            //
             _paymentMethod = "Mastercard";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
@@ -639,6 +673,8 @@ namespace POS_System.Pages
         //Amex button (payment type = amex)
         private void amexBtn_Click(object sender, RoutedEventArgs e)
         {
+            _selectedPaymentMethod = "Amex";
+            //
             _paymentMethod = "Amex";
             cashBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
             visaBtn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF4C4B56"));
