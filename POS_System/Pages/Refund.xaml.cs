@@ -98,7 +98,7 @@ namespace POS_System.Pages
                 //Create a connection object
                 MySqlConnection connection = new MySqlConnection(connectionString);
 
-                String sqlquery = "insert into pos_db.refund values (0, " + orderId + ", " + paymentId + ", " + refundAmount + ", '" + refundMethod + "', '" + refundReason + "', " + userId + ");";
+                String sqlquery = "insert into pos_db.refund values (0, " + orderId + ", " + paymentId + ", " + refundAmount + ", '" + refundMethod + "', '" + refundReason + "', " + userId + ", sysdate());";
 
                 MessageBox.Show(sqlquery);
 
