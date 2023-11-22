@@ -1082,192 +1082,213 @@ namespace POS_System.Pages
 
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            if (orderedItems.Count == 0 && itemClick==false) 
+            if (orderedItems.Count == 0 && itemClick == false)
             {
                 MessageBox.Show("Sorry! Nothing to print for the order!");
                 return;
-            } 
+            }
 
             else if (orderedItems.Count == 0)
             {
                 MessageBox.Show("Sorry! Nothing to print for the order!");
                 return;
             }
-            
-            else if (IsSavedItem()==false && orderedItems.Count > 0) 
+
+            else if (IsSavedItem() == false && orderedItems.Count > 0)
             {
                 MessageBox.Show("New Item on the list. \n\nPlease save the order first!");
                 return;
             }
             else
             {
-                PrintDialog printDialog = new PrintDialog();
+                PrintCustomerBill(orderedItems);
+            }
+        }
 
-                if (printDialog.ShowDialog() == true)
+        private void PrintCustomerBill(ObservableCollection<OrderedItem> OrderItemcCollection)
+        {
+            PrintDialog printDialog = new PrintDialog();
+
+            if (printDialog.ShowDialog() == true)
+            {
+                // Calculate GST (5% of TotalAmount)
+                double gstRate = 0.05;  // GST rate as 5%
+                double gstAmount = TotalAmount * gstRate;
+                // Calculate TotalAmount with GST included
+                double totalAmountWithGST = TotalAmount + gstAmount;
+                int customerID = 1;
+                // Iterate through split bills
+
+                do
                 {
-                    // Calculate GST (5% of TotalAmount)
-                    double gstRate = 0.05;  // GST rate as 5%
-                    double gstAmount = TotalAmount * gstRate;
-                    // Calculate TotalAmount with GST included
-                    double totalAmountWithGST = TotalAmount + gstAmount;
+                    // Create a FlowDocument for each split bill
+                    FlowDocument flowDocument = new FlowDocument();
 
-                    // Iterate through split bills
-                    for (int customerID = 1; customerID <= _numberOfBill; customerID++)
+                    // Add the "-------------------------------------------------" separator at the top
+                    flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+                    // Create a paragraph for restaurant information
+                    Paragraph restaurantInfoParagraph = new Paragraph();
+                    restaurantInfoParagraph.TextAlignment = TextAlignment.Center;
+
+                    // Restaurant Name
+                    Run restaurantNameRun = new Run("Thai Bistro\n");
+                    restaurantNameRun.FontSize = 20;
+                    restaurantInfoParagraph.Inlines.Add(restaurantNameRun);
+
+                    // Address
+                    Run addressRun = new Run("233 Centre St S #102,\n Calgary, AB T2G 2B7\n");
+                    addressRun.FontSize = 12;
+                    restaurantInfoParagraph.Inlines.Add(addressRun);
+
+                    // Phone
+                    Run phoneRun = new Run("Phone: (403) 313-9922\n");
+                    phoneRun.FontSize = 12;
+                    restaurantInfoParagraph.Inlines.Add(phoneRun);
+
+                    // Add the restaurant info paragraph
+                    flowDocument.Blocks.Add(restaurantInfoParagraph);
+
+                    // Add the "-------------------------------------------------" separator at the top
+                    flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                    ///^^^^^^good^^^^^^^^^^^
+
+                    ////////order detail session!!!!
+
+                    // Create a Section for the order details
+                    Section orderDetailsSection = new Section();
+
+                    // Table to display order details
+                    Table detailsTable = new Table();
+                    TableRowGroup detailTableRowGroup = new TableRowGroup();
+                    // Add rows for order details
+                    detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
+                    detailTableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
+                    if (OrderIdTextBlock != null) // Check if the TextBlock exists
                     {
-                        // Create a FlowDocument for each split bill
-                        FlowDocument flowDocument = new FlowDocument();
+                        // Access the text of the OrderIdTextBlock
+                        detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
+                    }
 
-                        // Add the "-------------------------------------------------" separator at the top
-                        flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
-                        // Create a paragraph for restaurant information
-                        Paragraph restaurantInfoParagraph = new Paragraph();
-                        restaurantInfoParagraph.TextAlignment = TextAlignment.Center;
 
-                        // Restaurant Name
-                        Run restaurantNameRun = new Run("Thai Bistro\n");
-                        restaurantNameRun.FontSize = 20;
-                        restaurantInfoParagraph.Inlines.Add(restaurantNameRun);
+                    // Add a line with dashes after "Server: John"
+                    TableRow dashedLineRow = new TableRow();
+                    TableCell dashedLineCell = new TableCell();
 
-                        // Address
-                        Run addressRun = new Run("233 Centre St S #102,\n Calgary, AB T2G 2B7\n");
-                        addressRun.FontSize = 12;
-                        restaurantInfoParagraph.Inlines.Add(addressRun);
+                    Paragraph dashedLineParagraph = new Paragraph(new Run("-------------------------------------------------"));
+                    //dashedLineParagraph.TextAlignment = TextAlignment.Center;
+                    dashedLineCell.ColumnSpan = 2;
+                    dashedLineCell.Blocks.Add(dashedLineParagraph);
+                    dashedLineRow.Cells.Add(dashedLineCell);
+                    detailTableRowGroup.Rows.Add(dashedLineRow);
 
-                        // Phone
-                        Run phoneRun = new Run("Phone: (403) 313-9922\n");
-                        phoneRun.FontSize = 12;
-                        restaurantInfoParagraph.Inlines.Add(phoneRun);
+                    ///item session
 
-                        // Add the restaurant info paragraph
-                        flowDocument.Blocks.Add(restaurantInfoParagraph);
+                    // Create a TableRow for displaying items and their prices
+                    TableRowGroup itemTableRowGroup = new TableRowGroup();
+                    Section itemSection = new Section();
+                    // Add space (empty TableRow) for the gap
+                    itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
 
-                        // Add the "-------------------------------------------------" separator at the top
-                        flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+                    // Create a nested Table within the items cell
+                    Table itemsTable = new Table();
 
-                        ///^^^^^^good^^^^^^^^^^^
-
-                        ////////order detail session!!!!
-
-                        // Create a Section for the order details
-                        Section orderDetailsSection = new Section();
-
-                        // Table to display order details
-                        Table detailsTable = new Table();
-                        TableRowGroup detailTableRowGroup = new TableRowGroup();
-                        // Add rows for order details
-                        detailTableRowGroup.Rows.Add(CreateTableRow("Date:", DateTime.Now.ToString("MMMM/dd/yyyy hh:mm")));
-                        detailTableRowGroup.Rows.Add(CreateTableRow("Table:", TableNumberTextBox.Text));
-                        if (OrderIdTextBlock != null) // Check if the TextBlock exists
-                        {
-                            // Access the text of the OrderIdTextBlock
-                            detailTableRowGroup.Rows.Add(CreateTableRow("Order ID:", OrderIdTextBlock.Text));
-                        }
-                            
-
-                        // Add a line with dashes after "Server: John"
-                        TableRow dashedLineRow = new TableRow();
-                        TableCell dashedLineCell = new TableCell();
-
-                        Paragraph dashedLineParagraph = new Paragraph(new Run("-------------------------------------------------"));
-                        //dashedLineParagraph.TextAlignment = TextAlignment.Center;
-                        dashedLineCell.ColumnSpan = 2;
-                        dashedLineCell.Blocks.Add(dashedLineParagraph);
-                        dashedLineRow.Cells.Add(dashedLineCell);
-                        detailTableRowGroup.Rows.Add(dashedLineRow);
-
-                        ///item session
-
-                        // Create a TableRow for displaying items and their prices
-                        TableRowGroup itemTableRowGroup = new TableRowGroup();
-                        Section itemSection = new Section();
-                        // Add space (empty TableRow) for the gap
-                        itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
-
-                        // Create a nested Table within the items cell
-                        Table itemsTable = new Table();
-
-                        // Access the 'Items' collection and loop through it to add item rows.
-                        foreach (var OrderedItem in orderedItems.Where(item => item.customerID == customerID))
+                    if (_numberOfBill == 0)
+                    {
+                        foreach (var OrderedItem in OrderItemcCollection.Where(item => item.customerID == 0))
                         {
                             itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
                         }
-
-                        // Initialize the TableRowGroup
-                        itemSection.Blocks.Add(itemsTable);
-
-                        // Create a new TableRow for the itemsCell and add it to the tableRowGroup
-                        // Add space (empty TableRow) for the gap
-                        itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
-                        /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                        ///////sub total session
-                        Table paymentTable = new Table();
-                        Section paymentSection = new Section();
-                        TableRowGroup paymentTableRowGroup = new TableRowGroup();
-                        // Create a Paragraph for "Sub Total" with underline
-                        Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
-                        subTotalParagraph.FontSize = 20; // Increase the font size
-                        subTotalParagraph.TextAlignment = TextAlignment.Right;
-
-                        double customerTotalAmount = orderedItems.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
-                        Paragraph subTotalValueParagraph = new Paragraph(new Run(customerTotalAmount.ToString("C")));
-                        paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
-
-                        // Create a Paragraph for "GST"
-                        Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
-                        gstLabelParagraph.FontSize = 20; // Increase the font size
-                        gstLabelParagraph.TextAlignment = TextAlignment.Right;
-
-                        double customerGSTAmount = customerTotalAmount * gstRate;
-                        Paragraph gstValueParagraph = new Paragraph(new Run(customerGSTAmount.ToString("C")));
-                        paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
-
-                        // Create a Paragraph for "Total Amount"
-                        Paragraph totalAmountLabelParagraph = new Paragraph(new Run("Total Amount:"));
-                        totalAmountLabelParagraph.FontSize = 20; // Increase the font size
-                        totalAmountLabelParagraph.TextAlignment = TextAlignment.Right;
-
-                        double customerTotalAmountWithGST = customerTotalAmount + customerGSTAmount;
-                        Paragraph totalAmountValueParagraph = new Paragraph(new Run(customerTotalAmountWithGST.ToString("C")));
-                        paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
-                        //////////////////////////////////////////////////
-
-                        detailsTable.RowGroups.Add(detailTableRowGroup);
-                        itemsTable.RowGroups.Add(itemTableRowGroup);
-                        paymentTable.RowGroups.Add(paymentTableRowGroup);
-
-                        orderDetailsSection.Blocks.Add(detailsTable);
-                        itemSection.Blocks.Add(itemsTable);
-                        paymentSection.Blocks.Add(paymentTable);
-
-                        flowDocument.Blocks.Add(orderDetailsSection);
-                        flowDocument.Blocks.Add(itemSection);
-                        flowDocument.Blocks.Add(paymentSection);
-                        // /*****************************
-                        // Create a new paragraph for the "Thank You" message
-                        Paragraph thankYouParagraph = new Paragraph();
-                        thankYouParagraph.TextAlignment = TextAlignment.Center;
-                        thankYouParagraph.FontSize = 16; // You can set the font size as you wish
-                        thankYouParagraph.Inlines.Add(new Run("Thank You for dining with us!"));
-                        thankYouParagraph.Margin = new Thickness(0, 10, 0, 0); // Add some space before the message if needed
-
-                        // Add a "-------------------------------------------------" separator before the "Thank You" message
-                        flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
-
-                        // Add the "Thank You" paragraph to the FlowDocument
-                        flowDocument.Blocks.Add(thankYouParagraph);
-                        flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
-
-                        //**********************************
-
-                        // Create a DocumentPaginator for the FlowDocument
-                        IDocumentPaginatorSource paginatorSource = flowDocument;
-                        DocumentPaginator documentPaginator = paginatorSource.DocumentPaginator;
-
-                        // Send the document to the printer
-                        printDialog.PrintDocument(documentPaginator, $"Order Receipt - Customer {customerID}");
                     }
+                    else
+                    {
+                        foreach (var OrderedItem in OrderItemcCollection.Where(item => item.customerID == customerID))
+                        {
+                            itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
+                        }
+                    }
+
+                    // Access the 'Items' collection and loop through it to add item rows.
+
+
+                    // Initialize the TableRowGroup
+                    itemSection.Blocks.Add(itemsTable);
+
+                    // Create a new TableRow for the itemsCell and add it to the tableRowGroup
+                    // Add space (empty TableRow) for the gap
+                    itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
+                    /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                    ///////sub total session
+                    Table paymentTable = new Table();
+                    Section paymentSection = new Section();
+                    TableRowGroup paymentTableRowGroup = new TableRowGroup();
+                    // Create a Paragraph for "Sub Total" with underline
+                    Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
+                    subTotalParagraph.FontSize = 20; // Increase the font size
+                    subTotalParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerTotalAmount = orderedItems.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
+                    Paragraph subTotalValueParagraph = new Paragraph(new Run(customerTotalAmount.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+
+                    // Create a Paragraph for "GST"
+                    Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
+                    gstLabelParagraph.FontSize = 20; // Increase the font size
+                    gstLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerGSTAmount = customerTotalAmount * gstRate;
+                    Paragraph gstValueParagraph = new Paragraph(new Run(customerGSTAmount.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
+
+                    // Create a Paragraph for "Total Amount"
+                    Paragraph totalAmountLabelParagraph = new Paragraph(new Run("Total Amount:"));
+                    totalAmountLabelParagraph.FontSize = 20; // Increase the font size
+                    totalAmountLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerTotalAmountWithGST = customerTotalAmount + customerGSTAmount;
+                    Paragraph totalAmountValueParagraph = new Paragraph(new Run(customerTotalAmountWithGST.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalAmountLabelParagraph, totalAmountValueParagraph));
+                    //////////////////////////////////////////////////
+
+                    detailsTable.RowGroups.Add(detailTableRowGroup);
+                    itemsTable.RowGroups.Add(itemTableRowGroup);
+                    paymentTable.RowGroups.Add(paymentTableRowGroup);
+
+                    orderDetailsSection.Blocks.Add(detailsTable);
+                    itemSection.Blocks.Add(itemsTable);
+                    paymentSection.Blocks.Add(paymentTable);
+
+                    flowDocument.Blocks.Add(orderDetailsSection);
+                    flowDocument.Blocks.Add(itemSection);
+                    flowDocument.Blocks.Add(paymentSection);
+                    // /*****************************
+                    // Create a new paragraph for the "Thank You" message
+                    Paragraph thankYouParagraph = new Paragraph();
+                    thankYouParagraph.TextAlignment = TextAlignment.Center;
+                    thankYouParagraph.FontSize = 16; // You can set the font size as you wish
+                    thankYouParagraph.Inlines.Add(new Run("Thank You for dining with us!"));
+                    thankYouParagraph.Margin = new Thickness(0, 10, 0, 0); // Add some space before the message if needed
+
+                    // Add a "-------------------------------------------------" separator before the "Thank You" message
+                    flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                    // Add the "Thank You" paragraph to the FlowDocument
+                    flowDocument.Blocks.Add(thankYouParagraph);
+                    flowDocument.Blocks.Add(new Paragraph(new Run("-------------------------------------------------")));
+
+                    //**********************************
+
+                    // Create a DocumentPaginator for the FlowDocument
+                    IDocumentPaginatorSource paginatorSource = flowDocument;
+                    DocumentPaginator documentPaginator = paginatorSource.DocumentPaginator;
+
+                    // Send the document to the printer
+                    printDialog.PrintDocument(documentPaginator, $"Order Receipt - Customer {customerID}");
+                    MessageBox.Show($"Customer# {customerID} bill print");
+                    customerID++;
                 }
+                while (customerID <= _numberOfBill);
             }
         }
 
