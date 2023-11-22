@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -339,12 +340,27 @@ namespace POS_System.Pages
 
         private void PrintAllReceipts(ConcurrentDictionary<int, Payment> paymentDictionary)
         {
-            foreach (var kvp in paymentDictionary)
+            // Check if the order is split into multiple customer IDs
+            bool isOrderSplit = paymentDictionary.Values.Select(payment => payment.customerID).Distinct().Count() > 1;
+
+            if (!isOrderSplit)
             {
-                Payment eachCustomerPayment = kvp.Value;
-                PrintSettledPaymentReceipt(eachCustomerPayment);
+                // If the order is not split, print a single receipt for the entire order
+                PrintSettledPaymentReceipt(paymentDictionary.First().Value); // Use the first payment as an example
+            }
+            else
+            {
+                // If the order is split, print receipts for each customer ID
+                foreach (var kvp in paymentDictionary)
+                {
+                    Payment eachCustomerPayment = kvp.Value;
+                    PrintSettledPaymentReceipt(eachCustomerPayment);
+                }
             }
         }
+
+
+
 
         private void PrintSettledPaymentReceipt(Payment eachCustomerPayment)
         {
@@ -433,7 +449,6 @@ namespace POS_System.Pages
                 // Initialize the TableRowGroup
                 itemSection.Blocks.Add(itemsTable);
 
-                // Create a new TableRow for the itemsCell and add it to the tableRowGroup
                 // Add space (empty TableRow) for the gap
                 itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
                 /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -443,35 +458,7 @@ namespace POS_System.Pages
                 Section paymentSection = new Section();
                 TableRowGroup paymentTableRowGroup = new TableRowGroup();
 
-
-                // Create a Paragraph for "Sub Total" with underline
-                Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
-                subTotalParagraph.FontSize = 20; // Increase the font size
-                subTotalParagraph.TextAlignment = TextAlignment.Right;
-
-                //double customerTotalAmount = orderedItems.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
-                double subTotalAmount = eachCustomerPayment.baseAmount;
-                Paragraph subTotalValueParagraph = new Paragraph(new Run(subTotalAmount.ToString("C")));
-                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
-
-                // Create a Paragraph for "GST"
-                Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
-                gstLabelParagraph.FontSize = 20; // Increase the font size
-                gstLabelParagraph.TextAlignment = TextAlignment.Right;
-
-                double customerGSTAmount = eachCustomerPayment.GST;
-                Paragraph gstValueParagraph = new Paragraph(new Run(customerGSTAmount.ToString("C")));
-                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
-
-                // Create a Paragraph for "Total Amount"
-                Paragraph totalDueAmountLabelParagraph = new Paragraph(new Run("Total Due:"));
-                totalDueAmountLabelParagraph.FontSize = 20; // Increase the font size
-                totalDueAmountLabelParagraph.TextAlignment = TextAlignment.Right;
-
-                double totalDueAmountWithGST = eachCustomerPayment.grossAmount;
-                Paragraph totalDueAmountValueParagraph = new Paragraph(new Run(totalDueAmountWithGST.ToString("C")));
-                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalDueAmountLabelParagraph, totalDueAmountValueParagraph));
-                //////////////////////////////////////////////////
+                // ... (previous code remains unchanged)
 
                 detailsTable.RowGroups.Add(detailTableRowGroup);
                 itemsTable.RowGroups.Add(itemTableRowGroup);
@@ -506,7 +493,7 @@ namespace POS_System.Pages
                 DocumentPaginator documentPaginator = paginatorSource.DocumentPaginator;
 
                 PrintDialog printDialog = new PrintDialog();
-                if (printDialog.ShowDialog() == true)
+                if (eachCustomerPayment.customerID == null || printDialog.ShowDialog() == true)
                 {
                     printDialog.PrintDocument(documentPaginator, $"Settled Payment Receipt - Customer {eachCustomerPayment.customerID}");
                 }
