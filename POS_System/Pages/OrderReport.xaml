@@ -21,12 +21,12 @@
 
                         <DataGrid Name="orderGrid" ItemsSource="{Binding}" Margin="18,40,10,8" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
-                                <DataGridTextColumn Header="Table Number" Binding="{Binding table_num}" />
-                                <DataGridTextColumn Header="Total Amount" Binding="{Binding total_amount}" />
-                                <DataGridTextColumn Header="Order Type" Binding="{Binding order_type}" />
-                                <DataGridTextColumn Header="Order Status" Binding="{Binding paid}" />
-                                <DataGridTextColumn Header="Order TimeStamp" Binding="{Binding order_timestamp}" />
+                                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" Width="Auto"/>
+                                <DataGridTextColumn Header="Table Number" Binding="{Binding table_num}" Width="Auto" />
+                                <DataGridTextColumn Header="Total Amount" Binding="{Binding total_amount}" Width="Auto" />
+                                <DataGridTextColumn Header="Order Type" Binding="{Binding order_type}" Width="Auto" />
+                                <DataGridTextColumn Header="Order Status" Binding="{Binding paid}" Width="Auto" />
+                                <DataGridTextColumn Header="Order TimeStamp" Binding="{Binding order_timestamp}" Width="*" />
                             </DataGrid.Columns>
                         </DataGrid>
                         <TextBlock Text="Date" FontSize="17" FontWeight="Bold" RenderTransformOrigin="-5.897,-1.267" Margin="12,83,774,162"/>
@@ -392,14 +392,14 @@
                         <!-- DataGrid -->
                         <DataGrid Name="refundGrid" ItemsSource="{Binding}" Margin="18,56,18,0" AutoGenerateColumns="False" ColumnWidth="*" VerticalAlignment="Top" Grid.Row="2" Height="345">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Refund ID" Binding="{Binding refund_id}" />
-                                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
+                                <DataGridTextColumn Header="Refund ID" Binding="{Binding refund_id}" Width="Auto" />
+                                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" Width="Auto" />
                                 <DataGridTextColumn Header="Payment ID" Binding="{Binding payment_id}" />
-                                <DataGridTextColumn Header="Refund Amount" Binding="{Binding refund_amount}" />
-                                <DataGridTextColumn Header="Refund Method" Binding="{Binding refund_method}" />
-                                <DataGridTextColumn Header="Refund Reason" Binding="{Binding refund_reason}" />
-                                <DataGridTextColumn Header="User ID" Binding="{Binding user_id}" />
-                                <DataGridTextColumn Header="Refund Timestamp" Binding="{Binding refund_timestamp}" />
+                                <DataGridTextColumn Header="Refund Amount" Binding="{Binding refund_amount}" Width="Auto"/>
+                                <DataGridTextColumn Header="Refund Method" Binding="{Binding refund_method}" Width="Auto" />
+                                <DataGridTextColumn Header="Refund Reason" Binding="{Binding refund_reason}" Width="Auto" />
+                                <DataGridTextColumn Header="User ID" Binding="{Binding user_id}" Width="Auto" />
+                                <DataGridTextColumn Header="Refund Timestamp" Binding="{Binding refund_timestamp}" Width="*" />
                             </DataGrid.Columns>
                         </DataGrid>
 

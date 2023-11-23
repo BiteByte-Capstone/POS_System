@@ -40,7 +40,7 @@ namespace POS_System.Pages
             //db = new DatabaseHelper("localhost", "pos_db", "root", "password");
 
             //String to make connection to database
-            
+
 
             //Create a connection object
             MySqlConnection connection = new MySqlConnection(connectionString);
