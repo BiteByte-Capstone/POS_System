@@ -24,6 +24,13 @@ namespace POS_System.Pages
             InitializeComponent();
         }
 
+        private void ManageUserButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Open the AdminPage window when the button is clicked
+            AdminPage adminWindow = new AdminPage();
+            adminWindow.Show();
+        }
+
 
         private void ManageSalesButton_Click(object sender, RoutedEventArgs e)
         {
@@ -47,13 +54,6 @@ namespace POS_System.Pages
             Refund adminWindow = new Refund();
             adminWindow.Show();
 
-        }
-
-        private void ManageMenuButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Open the Admin window when the button is clicked
-            ManageMenu adminWindow = new ManageMenu();
-            adminWindow.Show();
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)

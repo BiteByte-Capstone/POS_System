@@ -35,7 +35,7 @@
                    Margin="40,55,0,691" Width="350" Grid.Column="1" Grid.ColumnSpan="2"
                    ><Run Text="Welcome, "/><Run Language="en-ca" Text="Manager"/></TextBlock>
 
-        
+
         <!-- Manager Picture -->
         <Image Grid.Row="0" 
                        Source="pack://application:,,,/POS_System;component/Images/ManagerPicture.png"
@@ -45,16 +45,50 @@
                        Grid.RowSpan="2" Grid.Column="2"/>
 
 
+        <!-- Manage Users -->
+        <Button Grid.Row="1" 
+                HorizontalAlignment="Left" 
+                Width="256" 
+                FontSize="16" 
+                Foreground="Orange" 
+                Background="#383838" 
+                BorderBrush="Orange" 
+                Click="ManageUserButton_Click" Margin="504,165,0,482" Grid.ColumnSpan="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Frame x:Name="ContentFrame" Grid.Column="0" Margin="0,74,0,10" Grid.RowSpan="2" />
+
+
+                <!-- Manage Users Image & Text -->
+                <Image Grid.Row="0"
+                       Source="pack://application:,,,/POS_System;component/Images/ManageUser.png"
+                       Width="131"
+                       HorizontalAlignment="Center" Grid.RowSpan="2" RenderTransformOrigin="0.365,0.714" Margin="0,-20,0,20"/>
+                <TextBlock Grid.Row="1"
+                           Text="Manage Users" FontWeight="Bold"
+                           HorizontalAlignment="Left"
+                           Margin="15,34,0,-16"/>
+            </Grid>
+        </Button>
+
+
+
         <!-- Manage Sales -->
         <Button Grid.Row="1" 
                 Grid.Column="2" 
                 HorizontalAlignment="Center" 
                 Width="260" 
-                Height="190" 
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
-                BorderBrush="Orange" Click="ManageSalesButton_Click" Margin="0,143,0,461">
+                BorderBrush="Orange" Click="ManageSalesButton_Click" Margin="0,165,0,482">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -82,14 +116,14 @@
 
         <!-- Manage Table -->
         <Button Grid.Row="1" 
-                Grid.Column="1" 
+                Grid.Column="2" 
                 HorizontalAlignment="Center" 
                 Width="260" 
                 Height="190" 
                 FontSize="16" 
                 Foreground="Orange" 
                 Background="#383838" 
-                BorderBrush="Orange" Margin="0,143,0,461"
+                BorderBrush="Orange" Margin="0,382,0,265"
                 Click="ManageTableButton_Click">
             <Grid Margin="10,10,10,10">
                 <Grid.RowDefinitions>
@@ -146,44 +180,6 @@
             </Grid>
         </Button>
 
-
-
-
-
-
-
-        <!-- Manage Menu -->
-        <Button Grid.Row="1" 
-                Grid.Column="2"  
-                HorizontalAlignment="Center" 
-                Width="260" 
-                Height="190" 
-                FontSize="16" 
-                Foreground="Orange" 
-                Background="#383838" 
-                BorderBrush="Orange" Margin="0,360,0,244"
-                Click="ManageMenuButton_Click">
-            <Grid Margin="10,10,10,10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Manage Menu Image & Text -->
-                <Image Grid.Row="0"
-                       Source="pack://application:,,,/POS_System;component/Images/ManageMenu.png"
-                       Width="136" HorizontalAlignment="Center"
-                       Margin="0,0,0,10" Grid.RowSpan="1"/>
-                <TextBlock Grid.Row="1"
-                           Text="Manage Menu"
-                           HorizontalAlignment="Center"
-                           FontWeight="Bold"
-                           Margin="45,0,45,0"/>
-            </Grid>
-        </Button>
 
         <Button x:Name="Logout_Button_Click" 
                 HorizontalAlignment="Left"
