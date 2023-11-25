@@ -93,11 +93,7 @@
 
                     <!-- Role -->
                     <Label Grid.Column="0" Content="Role"  VerticalAlignment="Top" FontWeight="Bold" FontFamily="Verdana" FontSize="20" Margin="12,83,303,0" Foreground="White" Height="31" />
-                    <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="142,84,0,0" Width="196" Height="30" SelectionChanged="RoleComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Admin" />
-                        <ComboBoxItem Content="Manager" />
-                        <ComboBoxItem Content="Waiter" />
-                    </ComboBox>
+                    <ComboBox x:Name ="UserCombobox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="142,84,0,0" Width="196" Height="30" SelectionChanged="RoleComboBox_SelectionChanged"/>
 
                     <!-- ID -->
                     <Label Grid.Column="0" Content="ID" VerticalAlignment="Top" FontFamily="Verdana" FontSize="20" Foreground="White" FontWeight="Bold" Margin="0,128,303,0" Height="31" HorizontalAlignment="Right" Width="79" RenderTransformOrigin="0.454,1.166"/>
