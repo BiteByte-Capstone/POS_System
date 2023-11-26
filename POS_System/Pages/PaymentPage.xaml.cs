@@ -165,79 +165,106 @@ namespace POS_System.Pages
         }
 
 
-        //Button Session
-        //Save button (send data to payment database and reset table) 
+        private void ProcessPaymentWithCustomerID()
+        {
+            try
+            {
+                int key = _eachPaymentDictionary.Count;
+                int forConditionKey = key + 1;
+
+                if (key < _numberOfBill || _numberOfBill == 0)
+                {
+                    MessageBox.Show($"Customer ID #{_customerID} payment saved.");
+                    AddPaymentList();
+                    OnPaymentCompleted();
+
+                    if (forConditionKey == _numberOfBill || _numberOfBill == 0)
+                    {
+                        SaveAndPrintPayments();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error processing payment: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+        private void SaveAndPrintPayments()
+        {
+            SavePaymentToDatabase(_eachPaymentDictionary);
+            PrintAllReceipts(_eachPaymentDictionary);
+            _eachPaymentDictionary.Clear();
+            MessageBox.Show("All customers' payments completed! Thank you");
+
+            // Additional actions if needed
+            TablePage tablePage = new TablePage();
+            tablePage.Show();
+            _parentWindow.Close();
+            _menuPage.Close();
+        }
+
         private void SavePaymentButton_Click(object sender, RoutedEventArgs e)
         {
             if (_paymentMethod != null)
             {
                 if (GetCustomerPayment() >= CalculateOrderTotalBalance())
                 {
-
                     string message = $"orderID: {_orderId}" +
-                         $"\npayment method: {_paymentMethod}" +
-                         $"\ntotal order amount: {CalculateTotalOrderAmount()}" +
-                         $"\nGST: {CalculateTaxAmount()}" +
-                         $"\ntotal customer payment: {GetCustomerPayment()}" +
-                         $"\ntotal order balance: {CalculateOrderTotalBalance()}" +
-                         $"\ncustomer change amount: {CalculateChangeAmount()}" +
-                         $"\ntip: {CalculateTipAmount()}";
+                        $"\npayment method: {_paymentMethod}" +
+                        $"\ntotal order amount: {CalculateTotalOrderAmount()}" +
+                        $"\nGST: {CalculateTaxAmount()}" +
+                        $"\ntotal customer payment: {GetCustomerPayment()}" +
+                        $"\ntotal order balance: {CalculateOrderTotalBalance()}" +
+                        $"\ncustomer change amount: {CalculateChangeAmount()}" +
+                        $"\ntip: {CalculateTipAmount()}";
 
                     MessageBoxResult result = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-
                     if (result == MessageBoxResult.Yes)
                     {
-                        int key = _eachPaymentDictionary.Count;
-                        int forConditionKey = key + 1;
-
-
-                        if (key < _numberOfBill || _numberOfBill == 0)
+                        if (_customerID > 0)
                         {
-                            MessageBox.Show($"Customer ID #{_customerID} payment saved.");
-                            AddPaymentList();
-                            OnPaymentCompleted();
-
-
-
-                            if (forConditionKey.Equals(_numberOfBill) || _numberOfBill == 0)
-                            {
-
-
-                                SavePaymentToDatabase(_eachPaymentDictionary);
-                                PrintAllReceipts(_eachPaymentDictionary);
-                                _eachPaymentDictionary.Clear();
-                                MessageBox.Show("All customers payment completed! Thank you");
-                                TablePage tablePage = new TablePage();
-                                tablePage.Show();
-                                _parentWindow.Close();
-                                _menuPage.Close();
-                                
-                            }
-
+                            ProcessPaymentWithCustomerID();
                         }
+                        else
+                        {
+                            int key = _eachPaymentDictionary.Count;
+                            int forConditionKey = key + 1;
 
+                            if (key < _numberOfBill || _numberOfBill == 0)
+                            {
+                                MessageBox.Show($"Customer ID #{_customerID} payment saved.");
+                                AddPaymentList();
+                                OnPaymentCompleted();
+
+                                if (forConditionKey == _numberOfBill || _numberOfBill == 0)
+                                {
+                                    SaveAndPrintPayments();
+                                }
+                            }
+                        }
                     }
                     else
                     {
                         return;
                     }
-
                 }
                 else
                 {
                     MessageBox.Show($"The payment must be greater than the \n\nBalance : ${CalculateOrderTotalBalance()}");
-
                     return;
                 }
             }
-
             else if (_paymentMethod == null)
             {
                 MessageBox.Show("Please select payment type!");
                 return;
             }
         }
+
+
 
         //(method for add the payment to list)
         private void AddPaymentList()
@@ -565,7 +592,7 @@ namespace POS_System.Pages
                 DocumentPaginator documentPaginator = paginatorSource.DocumentPaginator;
 
                 PrintDialog printDialog = new PrintDialog();
-                if (eachCustomerPayment.customerID == null || printDialog.ShowDialog() == true)
+                if (eachCustomerPayment.customerID > 0 && printDialog.ShowDialog() == true)
                 {
                     printDialog.PrintDocument(documentPaginator, $"Settled Payment Receipt - Customer {eachCustomerPayment.customerID}");
                 }
