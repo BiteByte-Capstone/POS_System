@@ -431,6 +431,15 @@ namespace POS_System.Pages
                     _splitType = "ByItem";
                     _numberOfBill = splitByItemPage.currentCustomerId;
 
+                    foreach (OrderedItem assignedcustomerIDItem in splitOrderedItems)
+                    {
+                        String Message = "item_name= " + assignedcustomerIDItem.item_name + "\n" +
+                                         "customer_id=" + assignedcustomerIDItem.customerID;
+                        MessageBox.Show(Message);
+                    }
+
+
+
                     GetNewSplitItemList(splitOrderedItems, _numberOfBill, _splitType);
                     Refresh();
 
@@ -453,16 +462,15 @@ namespace POS_System.Pages
         }
 
         //(Method) for split item
-        private ObservableCollection<OrderedItem> GetNewSplitItemList(ObservableCollection<OrderedItem>splitedList,int numberOfBill,string splitType)
+        private ObservableCollection<OrderedItem> GetNewSplitItemList(ObservableCollection<OrderedItem> splitedList, int numberOfBill, string splitType)
         {
-            ObservableCollection<OrderedItem> items = splitedList;
-            foreach (OrderedItem splitOrderedItem in items)
+
+            foreach (OrderedItem splitOrderedItem in splitedList)
             {
                 if (splitType == "ByItem")
                 {
-                    for (int i = 1; numberOfBill > 0; i++)
-                    {
-                        OrderedItem newSplitBill = new OrderedItem
+
+                    OrderedItem newSplitBill = new OrderedItem
                     {
 
                         order_id = splitOrderedItem.order_id,
@@ -472,33 +480,31 @@ namespace POS_System.Pages
                         origialItemPrice = splitOrderedItem.origialItemPrice,
                         ItemPrice = splitOrderedItem.ItemPrice,
                         IsSavedItem = true,
-                        customerID = i
+                        customerID = splitOrderedItem.customerID
 
                     };
-                        splitOrderedItems.Add(newSplitBill);
-                        
-                        numberOfBill--;
-                    }
+                    splitOrderedItems.Add(newSplitBill);
 
                 }
                 else if (splitType == "ByBill")
                 {
 
-                for (int i = 1; i <= numberOfBill; i++) { 
-                OrderedItem newSplitBill = new OrderedItem
-                {
+                    for (int i = 1; i <= numberOfBill; i++)
+                    {
+                        OrderedItem newSplitBill = new OrderedItem
+                        {
 
-                    order_id = splitOrderedItem.order_id,
-                    item_id = splitOrderedItem.item_id,
-                    item_name = splitOrderedItem.item_name,
-                    Quantity = splitOrderedItem.Quantity,
-                    origialItemPrice = splitOrderedItem.origialItemPrice,
-                    ItemPrice = splitOrderedItem.ItemPrice / numberOfBill,
-                    IsSavedItem = true,
-                    customerID = i  
-                };
-                    splitOrderedItems.Add(newSplitBill);
-                }
+                            order_id = splitOrderedItem.order_id,
+                            item_id = splitOrderedItem.item_id,
+                            item_name = splitOrderedItem.item_name,
+                            Quantity = splitOrderedItem.Quantity,
+                            origialItemPrice = splitOrderedItem.origialItemPrice,
+                            ItemPrice = splitOrderedItem.ItemPrice / numberOfBill,
+                            IsSavedItem = true,
+                            customerID = i
+                        };
+                        splitOrderedItems.Add(newSplitBill);
+                    }
 
                 }
             }
@@ -1117,6 +1123,7 @@ namespace POS_System.Pages
                 // Calculate TotalAmount with GST included
                 double totalAmountWithGST = TotalAmount + gstAmount;
                 int customerID = 1;
+                double customerTotalAmount;
                 // Iterate through split bills
 
                 do
@@ -1228,7 +1235,17 @@ namespace POS_System.Pages
                     subTotalParagraph.FontSize = 20; // Increase the font size
                     subTotalParagraph.TextAlignment = TextAlignment.Right;
 
-                    double customerTotalAmount = orderedItems.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
+                    if (_numberOfBill==0)
+                    {
+                        customerTotalAmount = OrderItemcCollection.Where(item => item.customerID == 0).Sum(item => item.ItemPrice);
+                        
+                    }
+                    else
+                    {
+                        customerTotalAmount = OrderItemcCollection.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
+
+                    }
+                   
                     Paragraph subTotalValueParagraph = new Paragraph(new Run(customerTotalAmount.ToString("C")));
                     paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
 
