@@ -101,16 +101,16 @@
                 <!-- Manage Sales Image & Text -->
                 <Image Grid.Row="0" 
                        Source="pack://application:,,,/POS_System;component/Images/ManageSales.png"
-                       Width="200"
+                       Width="140"
                        HorizontalAlignment="Center"
-                       Margin="0,4,0,26"
+                       Margin="0,-5,0,20"
                        Grid.RowSpan="2"/>
 
                 <TextBlock Grid.Row="1" 
                    Text="Manage Sales"
-                   HorizontalAlignment="Center"
+                   HorizontalAlignment="Left"
                    FontWeight="Bold"
-                   Margin="10,18,0,0"/>
+                   Margin="23,37,0,-19"/>
             </Grid>
         </Button>
 
@@ -141,9 +141,9 @@
                        Margin="0,0,0,30" Grid.RowSpan="2"/>
                 <TextBlock Grid.Row="1"
                            Text="Manage Table"
-                           HorizontalAlignment="Center"
+                           HorizontalAlignment="Left"
                            FontWeight="Bold"
-                           Margin="10,18,0,0"/>
+                           Margin="52,25,0,-7"/>
             </Grid>
         </Button>
 
