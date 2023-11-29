@@ -63,8 +63,11 @@ namespace POS_System.Pages
                     newCategoryButton.Content = rdr["category_name"].ToString();
                     newCategoryButton.Tag = category;
                     newCategoryButton.Click += (sender, e) => LoadItemsByCategory(newCategoryButton.Content.ToString());
-                    newCategoryButton.Width = 150;
-                    newCategoryButton.Height = 60;
+                    newCategoryButton.Width = 120;
+                    newCategoryButton.Height = 50;
+                    newCategoryButton.FontSize = 15;
+                    newCategoryButton.Background = Brushes.DarkOrange;
+
                     newCategoryButton.Margin = new Thickness(5);
                     SetButtonStyle(newCategoryButton);
 
@@ -108,12 +111,23 @@ namespace POS_System.Pages
                     };
 
                     Button newItemButton = new Button();
-                    newItemButton.Content = rdr["item_name"].ToString();
+                    // Create a TextBlock for the button content
+                    TextBlock textBlock = new TextBlock
+                    {
+                        Text = rdr["item_name"].ToString(),
+                        TextWrapping = TextWrapping.Wrap, // Enable text wrapping
+                        TextAlignment = TextAlignment.Center
+                    };
+
+                    newItemButton.Content = textBlock;
                     newItemButton.Tag = item;
-                    newItemButton.Width = 150;
+                    newItemButton.Width = 120;
                     newItemButton.Height = 80;
+                    newItemButton.FontSize = 15;
+                    newItemButton.Background = Brushes.LightGoldenrodYellow;
+
+
                     SetButtonStyle(newItemButton);
-                    
                     ItemButtonPanel.Children.Add(newItemButton);
                 }
 
@@ -125,16 +139,14 @@ namespace POS_System.Pages
             }
             conn.Close();
         }
+
+
         private void SetButtonStyle(Button button)
         {
             button.FontFamily = new FontFamily("Verdana");
             button.FontSize = 20;
-            button.Background = Brushes.Orange;
-            button.Foreground = Brushes.Black;
             button.FontWeight = FontWeights.Bold;
             button.BorderBrush = Brushes.Orange;
-            button.Padding = new Thickness(10);
-
             button.Margin = new Thickness(5);
         }
     }
