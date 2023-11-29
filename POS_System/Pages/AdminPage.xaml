@@ -13,6 +13,12 @@
             <RowDefinition Height="2674"/>
         </Grid.RowDefinitions>
 
+        <!-- Back Button -->
+        <Button Click="BackButton_Click" Width="120" Background="Transparent" BorderBrush="Transparent" Margin="11,18,824,2594">
+            <Image Source="pack://application:,,,/Images/BackBtn.png" Width="116" Height="56"/>
+        </Button>
+
+
         <!-- Title -->
         <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="User Management" FontFamily="Verdana" FontSize="36" FontWeight="Bold" FontStyle="Italic"  Foreground="Orange" Margin="0,18,0,0" Height="62" VerticalAlignment="Top" Width="365"/>
 

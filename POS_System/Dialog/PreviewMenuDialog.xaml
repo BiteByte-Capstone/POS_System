@@ -5,12 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System"
         mc:Ignorable="d"
-        Title="Preview (read only)" Height="800" Width="1200">
+        Title="Preview (read only)" Height="800" Width="800">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200" MinHeight="200" MaxHeight="300"/>
+            <RowDefinition Height="600" MinHeight="600" MaxHeight="600"/>
+        </Grid.RowDefinitions>
         <!-- category button list-->
-        <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="14,114,912,80"  RenderTransformOrigin="0.471,0.536"/>
+        <Border BorderBrush="Orange" BorderThickness="1" 
+         Margin="0,50,1,0" Grid.Column="0" Grid.Row="0">
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Margin="3,3,1,2" >
+                <WrapPanel x:Name="CategoryButtonPanel" Orientation="Horizontal" Margin="0,0,0,0"/>
+            </ScrollViewer>
+        </Border>
+
         <!-- item button list -->
-        <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="293,113,119,80" />
+        <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
+         Margin="0,0,1,30" Grid.Column="0" Grid.Row="1" >
+            <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="0,18,-2,33"/>
+        </Border>
     </Grid>
+
+
+
 </Window>
