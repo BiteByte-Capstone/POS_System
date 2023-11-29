@@ -38,11 +38,20 @@ namespace POS_System.Pages
             if (User.id >= 300)
             {
                 logout_button.Content = "Logout";
+                reset_button.Visibility = Visibility.Collapsed;
+                Image logoutImage = new Image();
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri("pack://application:,,,/POS_System;component/Images/Logout.png");
+                bitmap.EndInit();
+                logoutImage.Source = bitmap;
+                logout_button.Content = logoutImage;
             } 
             
             else
             {
                 logout_button.Content = "Close";
+                
             }
         }
 
@@ -101,13 +110,13 @@ namespace POS_System.Pages
                 if (hasUnpaidOrders)
                 {
                     MenuPage menuPage = new MenuPage(tableNumber, Type, "Occupied",hasUnpaidOrders);
-                    menuPage.Show();
+                    menuPage.ShowDialog();
                 }
                 else
                 {
                     // If no unpaid orders exist, create a new order
                     MenuPage menuPage = new MenuPage(tableNumber, Type, "New Order", false);
-                    menuPage.Show();
+                    menuPage.ShowDialog();
                 }
 
                 this.Close();
@@ -199,6 +208,11 @@ namespace POS_System.Pages
                         {
                             takeOutButton.Background = Brushes.Green;
                         } 
+                        else
+                        {
+                            tableButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#383838")); ;
+                            takeOutButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#383838")); ;
+                        }
 
                     }
 
@@ -275,10 +289,14 @@ namespace POS_System.Pages
             var dialog = new ChangeTableDialog();
             dialog.TableColorUpdated += Dialog_TableColorUpdated;
             dialog.ShowDialog();
+            TablePage tablePage = new TablePage();
+            this.Close();
+            tablePage.Show();
         }
         private void Dialog_TableColorUpdated(object sender, EventArgs e)
         {
             UpdateTableColors();
+
         }
 
 

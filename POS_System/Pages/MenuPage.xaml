@@ -11,13 +11,13 @@
     <Grid Background="#212121" Margin="0,0,0,0">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" MinHeight="5" MaxHeight="18"/>
-            <RowDefinition Height="*" MinHeight="51" MaxHeight="51"/>
-            <RowDefinition Height="*" MinHeight="82" MaxHeight="82"/>
-            <RowDefinition Height="*" MinHeight="51" MaxHeight="51"/>
-            <RowDefinition Height="*" MinHeight="300" MaxHeight="400"/>
-            <RowDefinition Height="*" MinHeight="65" MaxHeight="65"/>
-            <RowDefinition Height="*" MinHeight="1" MaxHeight="20"/>
+            <RowDefinition Height="20" MinHeight="20" MaxHeight="20"/>
+            <RowDefinition Height="51" MinHeight="51" MaxHeight="51"/>
+            <RowDefinition Height="82" MinHeight="82" MaxHeight="82"/>
+            <RowDefinition Height="51" MinHeight="51" MaxHeight="51"/>
+            <RowDefinition Height="550" MinHeight="550" MaxHeight="550"/>
+            <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
+            <RowDefinition Height="20" MinHeight="20" MaxHeight="20"/>
 
         </Grid.RowDefinitions>
         <!-- Buttons -->
@@ -35,28 +35,28 @@
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
         Grid.Column="1" Grid.Row="2" Grid.RowSpan="4">
             <StackPanel Orientation="Vertical" Margin="0,40,0,3">
-                <Button Foreground="Red" Background="Red"  BorderBrush="Red" FontSize="20"  RenderTransformOrigin="-1.893,0.589" FontFamily="Verdana"  Height="50" Width="214" Margin="0,0,0,10" Click="CancelButton_Click">
+                <Button Foreground="Red" Background="Red"  BorderBrush="Red" FontSize="20"  RenderTransformOrigin="-1.893,0.589" FontFamily="Verdana"  Height="90" Width="214" Margin="0,0,0,10" Click="CancelButton_Click">
                     <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="Cancel Order" TextWrapping="Wrap" TextAlignment="Center" Width="201" Foreground="Black" FontSize="25" FontWeight="Bold"/>
                     </Viewbox>
                 </Button>
-                <Button Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="50" Margin="0,0,0,10" Width="216">
+                <!--<Button Name="ChangeTableButton" Background="Orange" BorderBrush="#FF4C4B56" FontSize="15" FontFamily="Verdana" FontWeight="Bold" Height="50" Margin="0,0,0,10" Width="216" Click="ChangeTableButton_Click">
                     <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="Change Table" TextWrapping="Wrap" TextAlignment="Center" Height="33" FontSize="25" Width="201"/>
                     </Viewbox>
-                </Button>
-                <Button x:Name="SplitItemButton" Content="Split Item" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="50" Margin="0,0,0,10"  Click="SplitbyItem_Click"  />
+                    </Button>-->
+                    <Button x:Name="SplitItemButton" Content="Split Item" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Margin="0,0,0,10"  Click="SplitbyItem_Click"  />
 
 
-                <Button x:Name="SplitBillButton" Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Margin="0,0,0,10" Height="50"  Click="SplitBillButton_Click"/>
+                <Button x:Name="SplitBillButton" Content="Split Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Margin="0,0,0,10" Height="90"  Click="SplitBillButton_Click"/>
 
 
 
 
-                <Button Content="Print Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="50" Width="212" Click="PrintButton_Click" Margin="0,0,0,10"/>
+                <Button Content="Print Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Width="212" Click="PrintButton_Click" Margin="0,0,0,10"/>
 
-                <Button Content="Payment" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="50" Width="214" Click="PaymentButton_Click" Margin="0,0,0,20"/>
-                <Button Content="Save" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Margin="0,50,0,0" Click="SaveButton_Click" Width="169"/>
+                <Button Content="Payment" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Width="214" Click="PaymentButton_Click" Margin="0,0,0,20"/>
+                <Button Content="Save" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Margin="0,100,0,0" Click="SaveButton_Click" Width="200"/>
 
             </StackPanel>
         </Border>
@@ -218,10 +218,10 @@
                     Grid.Column="0" Margin="0,0,0,1">
                 <Viewbox HorizontalAlignment="Center"
                          VerticalAlignment="Center">
-                    <StackPanel Height="199">
+                    <StackPanel Height="294">
                         <Image
                        Source="pack://application:,,,/POS_System;component/Images/ResetBtn.png"
-                       Width="296" Height="111" Margin="0,20,0,0"
+                       Width="296" Height="166" Margin="0,20,0,0"
                        />
                         <TextBlock
                            Text="RESET" FontWeight="Bold"
@@ -231,12 +231,12 @@
                 </Viewbox>
             </Button>
 
-            <Button HorizontalAlignment="Center" Width="90" Foreground="White" Background="#FF454545"  BorderBrush="Red" FontSize="20" Click="DeleteItemButton_Click" Grid.Column="1" FontWeight="Bold" BorderThickness="2,2,2,2" Margin="0,0,0,1"  >
+            <Button Foreground="White" Background="#FF454545"  BorderBrush="Red" FontSize="20" Click="DeleteItemButton_Click" Grid.Column="1" FontWeight="Bold" BorderThickness="2,2,2,2" Margin="0,0,0,1"  >
                 <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <StackPanel Height="169" Width="315">
+                    <StackPanel Height="287" Width="315">
                         <Image
                        Source="pack://application:,,,/POS_System;component/Images/DeleteItem.png"
-                       Width="249" Height="114"
+                       Width="318" Height="182"
                        />
                         <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="329" Height="55" FontFamily="Verdana" FontSize="45"/>
                     </StackPanel>
@@ -244,8 +244,8 @@
             </Button>
 
 
-            <TextBox Name="TotalAmountTextBlock" TextAlignment="Right" TextWrapping="Wrap" IsReadOnly="True" FontSize="18" Foreground="White" Background="#FF454545" FontFamily="Verdana" BorderBrush="Orange" Padding="10" BorderThickness="2,2,2,2" Grid.Column="2" Margin="0,0,0,0"/>
-            <TextBox Name="TotalAmountTextBox" Grid.Column="2"  IsReadOnly="True" TextWrapping="Wrap" Text="Total Amount : " Background="#FF454545" BorderBrush="{x:Null}" Foreground="White" FontFamily="Verdana" FontSize="18" RenderTransformOrigin="0.5,0.5" Margin="4,10,176,25" >
+            <TextBox Name="TotalAmountTextBlock" IsReadOnly="True" FontSize="18" Foreground="White" Background="#FF454545" FontFamily="Verdana" BorderBrush="Orange" Padding="10" BorderThickness="2,2,2,2" Grid.Column="2" Margin="0,0,0,0" TextAlignment="Right" TextWrapping="Wrap"/>
+            <TextBox Name="TotalAmountTextBox" Grid.Column="2"  IsReadOnly="True" TextWrapping="Wrap" Text="Total Amount : " Background="#FF454545" BorderBrush="{x:Null}" Foreground="White" FontFamily="Verdana" FontSize="18" RenderTransformOrigin="0.5,0.5" Margin="6,10,175,46" >
                 <TextBox.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>

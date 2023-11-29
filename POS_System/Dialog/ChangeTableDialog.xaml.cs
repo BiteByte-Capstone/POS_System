@@ -16,7 +16,7 @@ namespace POS_System.Dialog
         List<string> tableNumber = new List<string>
         {
             "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10",
-            "T11", "T12", "T13", "T14", "T14-2", "T15-1", "T15-2", "T15-3"
+            "T11", "T12", "T13", "T14", "T14_2", "T15_1", "T15_2", "T15_3"
         };
 
         public ChangeTableDialog()
