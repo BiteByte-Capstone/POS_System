@@ -22,6 +22,9 @@ namespace POS_System.Pages
     /// </summary>
     public partial class OrderReport : Window
     {
+
+        string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
         public OrderReport()
         {
             InitializeComponent();
@@ -36,7 +39,7 @@ namespace POS_System.Pages
             //db = new DatabaseHelper("localhost", "pos_db", "root", "password");
 
             //String to make connection to database
-            string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+            
 
             //Create a connection object
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -80,22 +83,23 @@ namespace POS_System.Pages
             String fromD = fromDateOrder.ToString();
             String untilD = untilDateOrder.ToString();
             String specificTable = specificTableBoxFilter.Text;
-            String fromTable = fromTableBoxFilter.Text;
-            String toTable = toTableBoxFilter.Text;
+            String orderType = OrderTypeComboBox.Text;
+            String orderStatus = OrderStatusComboBox.Text;
             String fromAmount = fromAmountBoxFilter.Text;
             String toAmount = toAmountBoxFilter.Text;
 
             //String to be added to sql query
             String specificTableQuery = "";
-            String fromToTableQuery = "";
+            String orderTypeQuery = "";
+            String orderStatusQuery = "";
             String fromToAmountQuery = "";
             String fromToDateQuery = "";
 
-            int[] lengthcount = new int[4];
+            int[] lengthcount = new int[5];
 
             String sqlquery = "select * from pos_db.order where ";
 
-            if (fromD.Length + untilD.Length + specificTable.Length + fromTable.Length + toTable.Length + fromAmount.Length + toAmount.Length < 1)
+            if (fromD.Length + untilD.Length + specificTable.Length + orderType.Length + orderStatus.Length + fromAmount.Length + toAmount.Length < 1)
             {
                 getDataOrderTable();
             }
@@ -108,60 +112,80 @@ namespace POS_System.Pages
                 {
                     specificTableQuery = SpecificTableFilter(specificTable);
                     lengthcount[0] = 1;
-                    lengthcount[1] = 0;
 
                 }
-                else if (specificTable.Length < 1 && (fromTable.Length > 0 || toTable.Length > 0))
+
+                if (orderType.Length > 0)
                 {
-                    fromToTableQuery = FromToTableFilter(fromTable, toTable);
-                    lengthcount[0] = 0;
+                    orderTypeQuery = OrderTypeFilter(orderType);
                     lengthcount[1] = 1;
+                }
+
+                if (orderStatus.Length > 0)
+                {
+                    orderStatusQuery = OrderStatusFilter(orderStatus);
+                    lengthcount[2] = 1;
                 }
 
                 if (fromAmount.Length > 0 || toAmount.Length > 0)
                 {
                     fromToAmountQuery = FromToAmountFilter(fromAmount, toAmount);
-                    lengthcount[2] = 1;
+                    lengthcount[3] = 1;
                 }
 
                 if (fromD.Length > 0 || untilD.Length > 0)
                 {
                     fromToDateQuery = FromToDateFilterOrderReport(fromD, untilD);
-                    lengthcount[3] = 1;
+                    lengthcount[4] = 1;
                 }
 
                 //This part of the code will build the sqlquery to be executed, by adding segments of sqlquery from the filter that was used
-                if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 1 && lengthcount[3] == 1)
+
+                if (lengthcount[0] == 1)
                 {
-                    sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToAmountQuery + " and " + fromToDateQuery;
-                }
-                else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 1 && lengthcount[3] == 0)
-                {
-                    sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToAmountQuery;
-                }
-                else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 0 && lengthcount[3] == 1)
-                {
-                    sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery + " and " + fromToDateQuery;
-                }
-                else if ((lengthcount[0] == 1 || lengthcount[1] == 1) && lengthcount[2] == 0 && lengthcount[3] == 0)
-                {
-                    sqlquery = sqlquery + specificTableQuery + " " + fromToTableQuery;
-                }
-                else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 1 && lengthcount[3] == 0)
-                {
-                    sqlquery = sqlquery + fromToAmountQuery;
-                }
-                else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 0 && lengthcount[3] == 1)
-                {
-                    sqlquery = sqlquery + fromToDateQuery;
-                }
-                else if ((lengthcount[0] == 0 || lengthcount[1] == 0) && lengthcount[2] == 1 && lengthcount[3] == 1)
-                {
-                    sqlquery = sqlquery + fromToAmountQuery + " and " + fromToDateQuery;
+                    sqlquery += specificTableQuery;
                 }
 
-                sqlquery = sqlquery + " order by 3;";
+                if (lengthcount[1] == 1 && lengthcount[0] == 1)
+                {
+                    sqlquery += " and " + orderTypeQuery;
+                }
+                else
+                {
+                    sqlquery += orderTypeQuery;
+                }
 
+                if (lengthcount[2] == 1 && ((lengthcount[0] + lengthcount[1] > 0)))
+                {
+                    sqlquery += " and " + orderStatusQuery;
+                }
+                else
+                {
+                    sqlquery += orderStatusQuery;
+                }
+
+                if (lengthcount[3] == 1 && ((lengthcount[0] + lengthcount[1] + lengthcount[2] > 0)))
+                {
+                    sqlquery += " and " + fromToAmountQuery;
+                }
+                else
+                {
+                    sqlquery += fromToAmountQuery;
+                }
+
+                if (lengthcount[4] == 1 && ((lengthcount[0] + lengthcount[1] + lengthcount[2] + lengthcount[3] > 0)))
+                {
+                    sqlquery += " and " + fromToDateQuery;
+                }
+                else
+                {
+                    sqlquery += fromToDateQuery;
+                }
+
+                sqlquery = sqlquery + " order by 6;";
+
+                OrderTypeComboBox.Text = "";
+                OrderStatusComboBox.Text = "";
 
                 //Show the sql query string to be executed
                 MessageBox.Show(sqlquery);
@@ -250,11 +274,11 @@ namespace POS_System.Pages
 
             if (specificTable.Contains(","))
             {
-                specficTableFilterString = "table_num in (" + specificTable + ")";
+                specficTableFilterString = "table_num in ('" + specificTable.Replace(",", "','") + "')";
             }
             else if (specificTable.Contains(" "))
             {
-                specficTableFilterString = "table_num in (" + specificTable.Replace(" ", ",") + ")";
+                specficTableFilterString = "table_num in ('" + specificTable.Replace(" ", "','") + "')";
             }
             else
             {
@@ -264,24 +288,38 @@ namespace POS_System.Pages
             return specficTableFilterString;
         }
 
-        private String FromToTableFilter(String fromTable, String toTable)
+        private String OrderTypeFilter(String orderType)
         {
-            String fromToTableFilterString = "";
+            String orderTypeFilterString = "";
 
-            if (fromTable.Length > 0 && toTable.Length > 0)
+            if (orderType.Contains("Dine-In"))
             {
-                fromToTableFilterString = "table_num between " + fromTable + " and " + toTable;
+                orderTypeFilterString = "order_type = 'Dine-In'";
             }
-            else if (fromTable.Length > 0 && toTable.Length < 1)
+            else
             {
-                fromToTableFilterString = "table_num >= " + fromTable;
+                orderTypeFilterString = "order_type = 'Take-Out'";
             }
-            else if (fromTable.Length < 1 && toTable.Length > 0)
-            {
-                fromToTableFilterString = "table_num <= " + toTable;
-            }
+            return orderTypeFilterString;
+        }
 
-            return fromToTableFilterString;
+        private String OrderStatusFilter(String orderStatus)
+        {
+            String orderStatusFilterString = "";
+
+            if (orderStatus.Contains("Canceled"))
+            {
+                orderStatusFilterString = "paid = 'c'";
+            }
+            else if (orderStatus.Contains("Paid"))
+            {
+                orderStatusFilterString = "paid = 'y'";
+            }
+            else
+            {
+                orderStatusFilterString = "paid = 'n'";
+            }
+            return orderStatusFilterString;
         }
 
         private String FromToAmountFilter(String fromAmount, String toAmount)
@@ -336,7 +374,7 @@ namespace POS_System.Pages
             MySqlConnection connection = new MySqlConnection(connectionString);
 
             //SQL query
-            MySqlCommand cmd = new MySqlCommand("select * from pos_db.ordered_itemlist order by 5", connection);
+            MySqlCommand cmd = new MySqlCommand("SELECT oi.order_id, i.item_category, oi.item_id, i.item_name, oi.item_price, oi.quantity, o.order_timestamp FROM ordered_itemlist oi JOIN item i ON oi.item_id = i.item_id JOIN pos_db.order o on oi.order_id = o.order_id order by 7;", connection);
 
             //Open up connection with the user table
             connection.Open();
@@ -354,15 +392,15 @@ namespace POS_System.Pages
             orderedItemListGrid.DataContext = dt;
         }
 
-        private void DataGridRow_MouseDoubleClickItem(object sender, MouseButtonEventArgs e)
-        {
-            //Tutorial used https://www.youtube.com/watch?v=qZwT_NWQ6Mk&t=14s   
+        //private void DataGridRow_MouseDoubleClickItem(object sender, MouseButtonEventArgs e)
+        //{
+        //Tutorial used https://www.youtube.com/watch?v=qZwT_NWQ6Mk&t=14s   
 
-            var row = sender as DataGridRow;
-            var order = row.DataContext as Order;
+        //  var row = sender as DataGridRow;
+        //var order = row.DataContext as Order;
 
-            MessageBox.Show(order.OrderId.ToString());
-        }
+        //MessageBox.Show(order.OrderId.ToString());
+        //}
 
         private void filterBtnItem_Click(object sender, RoutedEventArgs e)
         {
@@ -386,7 +424,7 @@ namespace POS_System.Pages
 
             int[] lengthcount = new int[6];
 
-            String sqlquery = "select * from pos_db.ordered_itemlist where ";
+            String sqlquery = "SELECT oi.order_id, i.item_category, oi.item_id, i.item_name, oi.item_price, oi.quantity, o.order_timestamp FROM ordered_itemlist oi JOIN item i ON oi.item_id = i.item_id JOIN pos_db.order o on oi.order_id = o.order_id where ";
 
             if (fromD.Length + untilD.Length + orderID.Length + itemID.Length + category.Length + fromQuantity.Length + toQuantity.Length + fromPrice.Length + toPrice.Length < 1)
             {
@@ -439,52 +477,52 @@ namespace POS_System.Pages
                     sqlquery += orderIdQuery;
                 }
 
-                if (lengthcount[1] == 1 && lengthcount[1] == 1)
+                if (lengthcount[1] == 1 && lengthcount[0] == 1)
                 {
                     sqlquery += " and " + itemIdQuery;
                 }
-                else if (lengthcount[1] == 1 && lengthcount[0] == 0)
+                else
                 {
                     sqlquery += itemIdQuery;
                 }
 
-                if (lengthcount[2] == 1 && ((lengthcount[0] == 1 || lengthcount[1] == 1)))
+                if (lengthcount[2] == 1 && ((lengthcount[0] + lengthcount[1] > 0)))
                 {
                     sqlquery += " and " + categoryQuery;
                 }
-                else if (lengthcount[2] == 1 && ((lengthcount[0] == 0 && lengthcount[1] == 0)))
+                else
                 {
                     sqlquery += categoryQuery;
                 }
 
-                if (lengthcount[3] == 1 && ((lengthcount[0] == 1 || lengthcount[1] == 1 || lengthcount[2] == 1)))
+                if (lengthcount[3] == 1 && ((lengthcount[0] + lengthcount[1] + lengthcount[2] > 0)))
                 {
                     sqlquery += " and " + fromToQuantityQuery;
                 }
-                else if (lengthcount[3] == 1 && ((lengthcount[0] == 0 && lengthcount[1] == 0 && lengthcount[2] == 0)))
+                else
                 {
                     sqlquery += fromToQuantityQuery;
                 }
 
-                if (lengthcount[4] == 1 && ((lengthcount[0] == 1 || lengthcount[1] == 1 || lengthcount[2] == 1 || lengthcount[3] == 1)))
+                if (lengthcount[4] == 1 && ((lengthcount[0] + lengthcount[1] + lengthcount[2] + lengthcount[1] > 0)))
                 {
                     sqlquery += " and " + fromToPriceQuery;
                 }
-                else if (lengthcount[4] == 1 && ((lengthcount[0] == 0 && lengthcount[1] == 0 && lengthcount[2] == 0 && lengthcount[3] == 0)))
+                else
                 {
                     sqlquery += fromToPriceQuery;
                 }
 
-                if (lengthcount[5] == 1 && ((lengthcount[0] == 1 || lengthcount[1] == 1 || lengthcount[2] == 1 || lengthcount[3] == 1 || lengthcount[4] == 1)))
+                if (lengthcount[5] == 1 && ((lengthcount[0] + lengthcount[1] + lengthcount[2] + lengthcount[3] + lengthcount[4] > 0)))
                 {
                     sqlquery += " and " + fromToDateQuery;
                 }
-                else if (lengthcount[5] == 1 && ((lengthcount[0] == 0 && lengthcount[1] == 0 && lengthcount[2] == 0 && lengthcount[3] == 0 && lengthcount[4] == 0)))
+                else
                 {
                     sqlquery += fromToDateQuery;
                 }
 
-                sqlquery = sqlquery + " order by 5;";
+                sqlquery = sqlquery + " order by 7;";
 
                 //Show the sql query string to be executed
                 MessageBox.Show(sqlquery);
@@ -575,15 +613,15 @@ namespace POS_System.Pages
 
             if (orderID.Contains(","))
             {
-                orderIdFilterString = "order_id in (" + orderID + ")";
+                orderIdFilterString = "o.order_id in (" + orderID + ")";
             }
             else if (orderID.Contains(" "))
             {
-                orderIdFilterString = "order_id in (" + orderID.Replace(" ", ",") + ")";
+                orderIdFilterString = "o.order_id in (" + orderID.Replace(" ", ",") + ")";
             }
             else
             {
-                orderIdFilterString = "order_id = " + orderID;
+                orderIdFilterString = "o.order_id = " + orderID;
             }
 
             return orderIdFilterString;
@@ -595,15 +633,15 @@ namespace POS_System.Pages
 
             if (itemID.Contains(','))
             {
-                itemIdFilterString = "item_id in (" + itemID + ")";
+                itemIdFilterString = "i.item_id in (" + itemID + ")";
             }
             else if (itemID.Contains(' '))
             {
-                itemIdFilterString = "item_id in (" + itemID.Replace(' ', ',') + ")";
+                itemIdFilterString = "i.item_id in (" + itemID.Replace(' ', ',') + ")";
             }
             else
             {
-                itemIdFilterString = "item_id = " + itemID;
+                itemIdFilterString = "i.item_id = " + itemID;
             }
 
             return itemIdFilterString;
@@ -615,15 +653,15 @@ namespace POS_System.Pages
 
             if (category.Contains(','))
             {
-                categoryFilterString = "category in (" + category + ")";
+                categoryFilterString = "i.item_category in ('" + category.Replace(",", "','") + "')";
             }
             else if (category.Contains(' '))
             {
-                categoryFilterString = "category in (" + category.Replace(' ', ',') + ")";
+                categoryFilterString = "i.item_category in ('" + category.Replace(" ", "','") + "')";
             }
             else
             {
-                categoryFilterString = "category = " + category;
+                categoryFilterString = "i.item_category = '" + category + "'";
             }
 
             return categoryFilterString;
@@ -635,15 +673,15 @@ namespace POS_System.Pages
 
             if (fromQuantity.Length > 0 && toQuantity.Length > 0)
             {
-                fromToQuantityFilterString = "quantity between " + fromQuantity + " and " + toQuantity;
+                fromToQuantityFilterString = "oi.quantity between " + fromQuantity + " and " + toQuantity;
             }
             else if (fromQuantity.Length > 0 && toQuantity.Length < 1)
             {
-                fromToQuantityFilterString = "quantity >= " + fromQuantity;
+                fromToQuantityFilterString = "oi.quantity >= " + fromQuantity;
             }
             else if (fromQuantity.Length < 1 && toQuantity.Length > 0)
             {
-                fromToQuantityFilterString = "quantity >= " + toQuantity;
+                fromToQuantityFilterString = "oi.quantity <= " + toQuantity;
             }
 
             return fromToQuantityFilterString;
@@ -655,15 +693,15 @@ namespace POS_System.Pages
 
             if (fromPrice.Length > 0 && toPrice.Length > 0)
             {
-                fromToPriceFilterString = "price between " + fromPrice + " and " + toPrice;
+                fromToPriceFilterString = "oi.item_price between " + fromPrice + " and " + toPrice;
             }
             else if (fromPrice.Length > 0 && toPrice.Length < 1)
             {
-                fromToPriceFilterString = "price >= " + fromPrice;
+                fromToPriceFilterString = "oi.item_price >= " + fromPrice;
             }
             else if (fromPrice.Length < 1 && toPrice.Length > 0)
             {
-                fromToPriceFilterString = "price >= " + fromPrice;
+                fromToPriceFilterString = "oi.item_price <= " + toPrice;
             }
 
             return fromToPriceFilterString;
@@ -687,5 +725,98 @@ namespace POS_System.Pages
             }
         }
 
+        /* RefundReport.xaml.cs */
+        private void GetDataRefundTable()
+        {
+            try
+            {
+                MySqlConnection connection = new MySqlConnection(connectionString);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM refund", connection);
+
+                connection.Open();
+                DataTable dt = new DataTable();
+                dt.Load(cmd.ExecuteReader());
+                connection.Close();
+
+                refundGrid.DataContext = dt;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void FilterBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string fromTimestamp = refundTimestampFilter.SelectedDate?.ToString("yyyy-MM-dd");
+                string untilTimestamp = refundTimestampFilter.SelectedDate?.ToString("yyyy-MM-dd");
+                string specificMethod = refundMethodFilter.Text;
+
+                string specificUser = userIdFilter.Text;
+
+                string sqlQuery = "SELECT * FROM refund WHERE 1=1";
+
+                if (!string.IsNullOrEmpty(fromTimestamp) && !string.IsNullOrEmpty(untilTimestamp))
+                {
+                    sqlQuery += " AND refund_timestamp BETWEEN @fromTimestamp AND @untilTimestamp";
+                }
+                else if (!string.IsNullOrEmpty(fromTimestamp))
+                {
+                    sqlQuery += " AND refund_timestamp >= @fromTimestamp";
+                }
+                else if (!string.IsNullOrEmpty(untilTimestamp))
+                {
+                    sqlQuery += " AND refund_timestamp <= @untilTimestamp";
+                }
+
+                if (!string.IsNullOrEmpty(specificMethod))
+                {
+                    sqlQuery += " AND refund_method = @specificMethod";
+                }
+
+                if (!string.IsNullOrEmpty(specificUser))
+                {
+                    sqlQuery += " AND user_id = @specificUser";
+                }
+
+                MySqlConnection connection = new MySqlConnection(connectionString);
+                MySqlCommand cmd = new MySqlCommand(sqlQuery, connection);
+
+                // Add parameters for user inputs
+                cmd.Parameters.AddWithValue("@fromTimestamp", fromTimestamp);
+                cmd.Parameters.AddWithValue("@untilTimestamp", untilTimestamp);
+                cmd.Parameters.AddWithValue("@specificMethod", specificMethod);
+                cmd.Parameters.AddWithValue("@specificUser", specificUser);
+
+                connection.Open();
+                DataTable dt = new DataTable();
+                dt.Load(cmd.ExecuteReader());
+                connection.Close();
+
+                refundGrid.DataContext = dt;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void PrintBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    printDialog.PrintVisual(refundGrid, "Refund Report");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
     }
 }

@@ -21,11 +21,10 @@ namespace POS_System.Pages
 {
     public partial class TablePage : Window
     {
+
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
-        // Define properties to store table number and order type
         public string TableNumber { get; private set; }
         public string OrderType { get; private set; }
-
         public string userName { get; private set; }
         public string userId { get; private set; }
 
@@ -36,15 +35,21 @@ namespace POS_System.Pages
             UpdateTableColors();
 
             UserNameTextBox.Text = "Welcome User ID: " + User.id;
+            if (User.id >= 300)
+            {
+                logout_button.Content = "Logout";
+            } 
+            
+            else
+            {
+                logout_button.Content = "Close";
+            }
         }
 
         public TablePage(string tableNumber, string orderType)
         {
             InitializeComponent();
             UpdateTableColors();
-            // Store the table number and order type for future use
-            /*            this.TableNumber = tableNumber;
-                        this.OrderType = orderType;*/
             
         }
 
@@ -53,11 +58,18 @@ namespace POS_System.Pages
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            // Perform logout actions here
-            // For example, you can close the current window and navigate back to the login screen
-            LoginScreen loginScreen = new LoginScreen();
-            loginScreen.Show();
-            this.Close();
+            if(User.id >= 300)
+            {
+                LoginScreen loginScreen = new LoginScreen();
+                loginScreen.Show();
+                this.Close();
+            }
+
+            else
+            {
+                this.Close();
+            }
+
         }
 
 
@@ -209,7 +221,7 @@ namespace POS_System.Pages
 
         private void ResetTable_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result = MessageBox.Show("Remove every table order?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult result = MessageBox.Show("Reset every table order?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
                 RemoveOrderAllTable();
@@ -237,9 +249,10 @@ namespace POS_System.Pages
                     deleteItemListCmd.ExecuteNonQuery();
 
 
-                    string deleteOrderQuery = "DELETE FROM `order` WHERE order_id > 0 and paid = 'n';";
+                    string updateOrderStatusQuery = "UPDATE pos_db.order SET paid = 'c' WHERE order_id > 0 and paid = 'n';";
 
-                    MySqlCommand deleteOrderCmd = new MySqlCommand(deleteOrderQuery, conn);
+
+                    MySqlCommand deleteOrderCmd = new MySqlCommand(updateOrderStatusQuery, conn);
                     deleteOrderCmd.ExecuteNonQuery();
 
 
@@ -260,20 +273,11 @@ namespace POS_System.Pages
         private void ChangeTable_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new ChangeTableDialog();
-
-            // Subscribe to the event
             dialog.TableColorUpdated += Dialog_TableColorUpdated;
-
-            // Populate ComboBoxes with tables (modify as needed)
-            // ...
-
-            // Show the dialog
             dialog.ShowDialog();
         }
         private void Dialog_TableColorUpdated(object sender, EventArgs e)
         {
-            // Handle the event and update the UI if necessary
-            // For example, you can call UpdateTableColors() here
             UpdateTableColors();
         }
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -204,11 +205,14 @@ namespace POS_System.Pages
 
 
                                 SavePaymentToDatabase(_eachPaymentDictionary);
+                                PrintAllReceipts(_eachPaymentDictionary);
+                                _eachPaymentDictionary.Clear();
                                 MessageBox.Show("All customers payment completed! Thank you");
                                 TablePage tablePage = new TablePage();
                                 tablePage.Show();
                                 _parentWindow.Close();
                                 _menuPage.Close();
+                                
                             }
 
                         }
@@ -318,9 +322,9 @@ namespace POS_System.Pages
                     isPaidCmd.Parameters.AddWithValue("@paid", "y");
                     isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
                     isPaidCmd.ExecuteNonQuery();
-                    PrintAllReceipts(paymentDictionary);
+                    
 
-                    paymentDictionary.Clear();
+
 
 
                 }
@@ -339,12 +343,26 @@ namespace POS_System.Pages
 
         private void PrintAllReceipts(ConcurrentDictionary<int, Payment> paymentDictionary)
         {
-            foreach (var kvp in paymentDictionary)
+            
+            if (_numberOfBill==0)
             {
-                Payment eachCustomerPayment = kvp.Value;
-                PrintSettledPaymentReceipt(eachCustomerPayment);
+                // If the order is not split, print a single receipt for the entire order
+                PrintSettledPaymentReceipt(paymentDictionary.First().Value); // Use the first payment as an example
+            }
+            else
+            {
+                // If the order is split, print receipts for each customer ID
+                foreach (var kvp in paymentDictionary)
+                {
+                    Payment eachCustomerPayment = kvp.Value;
+                    PrintSettledPaymentReceipt(eachCustomerPayment);
+                    
+                }
             }
         }
+
+
+
 
         private void PrintSettledPaymentReceipt(Payment eachCustomerPayment)
         {
@@ -433,7 +451,6 @@ namespace POS_System.Pages
                 // Initialize the TableRowGroup
                 itemSection.Blocks.Add(itemsTable);
 
-                // Create a new TableRow for the itemsCell and add it to the tableRowGroup
                 // Add space (empty TableRow) for the gap
                 itemTableRowGroup.Rows.Add(CreateEmptyTableRow());
                 /////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -455,7 +472,7 @@ namespace POS_System.Pages
                 paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
 
                 // Create a Paragraph for "GST"
-                Paragraph gstLabelParagraph = new Paragraph(new Run("GST (5%):"));
+                Paragraph gstLabelParagraph = new Paragraph(new Run("Tax (5%):"));
                 gstLabelParagraph.FontSize = 20; // Increase the font size
                 gstLabelParagraph.TextAlignment = TextAlignment.Right;
 
@@ -463,15 +480,57 @@ namespace POS_System.Pages
                 Paragraph gstValueParagraph = new Paragraph(new Run(customerGSTAmount.ToString("C")));
                 paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
 
+
+
+                //*********************************
+
+
                 // Create a Paragraph for "Total Amount"
-                Paragraph totalDueAmountLabelParagraph = new Paragraph(new Run("Total Due:"));
+                Paragraph totalDueAmountLabelParagraph = new Paragraph(new Run("Customer Payment:"));
                 totalDueAmountLabelParagraph.FontSize = 20; // Increase the font size
                 totalDueAmountLabelParagraph.TextAlignment = TextAlignment.Right;
 
-                double totalDueAmountWithGST = eachCustomerPayment.grossAmount;
-                Paragraph totalDueAmountValueParagraph = new Paragraph(new Run(totalDueAmountWithGST.ToString("C")));
+                double customerPaymentValue = eachCustomerPayment.customerPaymentTotalAmount;
+                Paragraph totalDueAmountValueParagraph = new Paragraph(new Run(customerPaymentValue.ToString("C")));
                 paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalDueAmountLabelParagraph, totalDueAmountValueParagraph));
+
+                if (eachCustomerPayment.paymentMethod.Equals("Cash"))
+                {
+                    // Create a Paragraph for "Change"
+                    Paragraph changeLabelParagraph = new Paragraph(new Run("Change:"));
+                    changeLabelParagraph.FontSize = 20; // Increase the font size
+                    changeLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerChangeValue = eachCustomerPayment.customerChangeAmount;
+                    Paragraph changeValueParagraph = new Paragraph(new Run(customerChangeValue.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(changeLabelParagraph, changeValueParagraph));
+                } 
+                
+                else
+                {
+                    // Create a Paragraph for "Tip"
+                    Paragraph tipLabelParagraph = new Paragraph(new Run("Tip:"));
+                    tipLabelParagraph.FontSize = 20; // Increase the font size
+                    tipLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerTipValue = eachCustomerPayment.tip;
+                    Paragraph tipValueParagraph = new Paragraph(new Run(customerTipValue.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(tipLabelParagraph, tipValueParagraph));
+                }
+
+
                 //////////////////////////////////////////////////
+
+                // Create a Paragraph for the payment method
+                Paragraph paymentMethodParagraph = new Paragraph(new Run($"Payment Type: {_paymentMethod}"));
+                paymentMethodParagraph.FontSize = 20;
+                paymentMethodParagraph.TextAlignment = TextAlignment.Left; // Adjust alignment as needed
+
+                // Add the payment method paragraph to your document
+                flowDocument.Blocks.Add(paymentMethodParagraph);
+
+                // /*****************************
+
 
                 detailsTable.RowGroups.Add(detailTableRowGroup);
                 itemsTable.RowGroups.Add(itemTableRowGroup);
@@ -506,7 +565,7 @@ namespace POS_System.Pages
                 DocumentPaginator documentPaginator = paginatorSource.DocumentPaginator;
 
                 PrintDialog printDialog = new PrintDialog();
-                if (printDialog.ShowDialog() == true)
+                if (eachCustomerPayment.customerID == null || printDialog.ShowDialog() == true)
                 {
                     printDialog.PrintDocument(documentPaginator, $"Settled Payment Receipt - Customer {eachCustomerPayment.customerID}");
                 }

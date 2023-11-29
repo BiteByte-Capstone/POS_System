@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-       Title="Menu Page" WindowState="Maximized">
+       Title="Menu Page" WindowState="Maximized" ResizeMode="NoResize" WindowStyle="None">
 
 
     <Grid Background="#212121" Margin="0,0,0,0">
@@ -23,9 +23,9 @@
         <!-- Buttons -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="20" Width="20" MaxWidth="20"/>
-            <ColumnDefinition Width="*" MaxWidth="226"/>
-            <ColumnDefinition Width="*" MinWidth="500" MaxWidth="500"/>
-            <ColumnDefinition  MaxWidth="700"/>
+            <ColumnDefinition Width="226*" MaxWidth="226"/>
+            <ColumnDefinition Width="519*" MinWidth="500" MaxWidth="500"/>
+            <ColumnDefinition  MaxWidth="700" Width="262*"/>
             <ColumnDefinition Width="20" MinWidth="20" MaxWidth="20"/>
         </Grid.ColumnDefinitions>
 
@@ -177,7 +177,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Item Price" Width="190">
+                    <GridViewColumn Header="Item Price" Width="180">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding ItemPrice ,StringFormat=F2}" TextAlignment="right"/>
@@ -200,9 +200,9 @@
 
         <Grid Grid.Row="5" Grid.Column="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="69*"/>
-                <ColumnDefinition Width="166*"/>
+                <ColumnDefinition Width="87"/>
+                <ColumnDefinition Width="82*"/>
+                <ColumnDefinition Width="331*"/>
             </Grid.ColumnDefinitions>
 
             <Button Name="ResetButton"
@@ -215,37 +215,46 @@
                     Click="ResetButton_Click"
                     Foreground="Black"
                     BorderThickness="2,2,2,2"
-                    Grid.Column="0" Grid.Row="0">
+                    Grid.Column="0" Margin="0,0,0,1">
                 <Viewbox HorizontalAlignment="Center"
                          VerticalAlignment="Center">
-                    <StackPanel>
+                    <StackPanel Height="199">
                         <Image
                        Source="pack://application:,,,/POS_System;component/Images/ResetBtn.png"
-                       Width="296" Height="111"
+                       Width="296" Height="111" Margin="0,20,0,0"
                        />
-                        <TextBlock Grid.Row="1"
+                        <TextBlock
                            Text="RESET" FontWeight="Bold"
-                           HorizontalAlignment="Center"
-                           Margin="10,18,0,0" Height="67" Width="194"
-                                   FontSize="50" Foreground="White"/>
+                           Height="48" Width="181"
+                                   FontSize="45" Foreground="White"/>
                     </StackPanel>
                 </Viewbox>
             </Button>
 
-            <Button HorizontalAlignment="Center" Width="138" Foreground="White" Background="#FF454545"  BorderBrush="Red" FontSize="20" Click="DeleteItemButton_Click" Grid.Column="1" FontWeight="Bold" BorderThickness="2,2,2,2"  >
+            <Button HorizontalAlignment="Center" Width="90" Foreground="White" Background="#FF454545"  BorderBrush="Red" FontSize="20" Click="DeleteItemButton_Click" Grid.Column="1" FontWeight="Bold" BorderThickness="2,2,2,2" Margin="0,0,0,1"  >
                 <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <StackPanel>
+                    <StackPanel Height="169" Width="315">
                         <Image
                        Source="pack://application:,,,/POS_System;component/Images/DeleteItem.png"
-                       Width="458" Height="128"
+                       Width="249" Height="114"
                        />
-                        <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="406" Height="65" FontFamily="Verdana" FontSize="50"/>
+                        <TextBlock Text="Delete Item" TextWrapping="Wrap" TextAlignment="Center" Width="329" Height="55" FontFamily="Verdana" FontSize="45"/>
                     </StackPanel>
                 </Viewbox>
             </Button>
 
 
-            <TextBox Name="TotalAmountTextBlock" TextAlignment="Left" TextWrapping="Wrap" IsReadOnly="True" FontSize="18" Foreground="White" Background="#FF454545" FontFamily="Verdana" BorderBrush="Orange" Padding="10" BorderThickness="1" Grid.Column="2"/>
+            <TextBox Name="TotalAmountTextBlock" TextAlignment="Right" TextWrapping="Wrap" IsReadOnly="True" FontSize="18" Foreground="White" Background="#FF454545" FontFamily="Verdana" BorderBrush="Orange" Padding="10" BorderThickness="2,2,2,2" Grid.Column="2" Margin="0,0,0,0"/>
+            <TextBox Name="TotalAmountTextBox" Grid.Column="2"  IsReadOnly="True" TextWrapping="Wrap" Text="Total Amount : " Background="#FF454545" BorderBrush="{x:Null}" Foreground="White" FontFamily="Verdana" FontSize="18" RenderTransformOrigin="0.5,0.5" Margin="4,10,176,25" >
+                <TextBox.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="0"/>
+                        <RotateTransform/>
+                        <TranslateTransform X="0"/>
+                    </TransformGroup>
+                </TextBox.RenderTransform>
+            </TextBox>
 
         </Grid>
 
@@ -265,7 +274,7 @@
 
         <!-- item button list -->
         <Border BorderBrush="Orange" BorderThickness="1" Padding="5" 
-         Margin="0,82,1,0" Grid.Column="3" Grid.Row="2" Grid.RowSpan="4">
+         Margin="0,0,1,0" Grid.Column="3" Grid.Row="3" Grid.RowSpan="3">
             <WrapPanel Name="ItemButtonPanel" Orientation="Horizontal" Margin="0,18,-2,0"/>
         </Border>
 

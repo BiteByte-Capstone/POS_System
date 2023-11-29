@@ -8,54 +8,21 @@
         Title="ChangeTableDialog" Height="300" Width="300">
     <Grid>
         <StackPanel Margin="20">
-            <TextBlock Text="Change Table" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+            <TextBlock Text="Change Table" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" Background="Orange" FontFamily="Verdana" Height="40" Width="201" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock Text="From:" FontFamily="Verdana" FontSize="14" FontWeight="Bold"/>
+            <ComboBox x:Name="cboFromTable" FontSize="14" FontWeight="Bold" FontFamily="Verdana">
 
-            <TextBlock Text="To:"/>
-            <ComboBox x:Name="cboToTable" Margin="0,0,0,20">
-                <ComboBoxItem Content="D1"/>
-                <ComboBoxItem Content="D2"/>
-                <ComboBoxItem Content="D3"/>
-                <ComboBoxItem Content="D4"/>
-                <ComboBoxItem Content="D5"/>
-                <ComboBoxItem Content="D6"/>
-                <ComboBoxItem Content="D7"/>
-                <ComboBoxItem Content="D8"/>
-                <ComboBoxItem Content="D9"/>
-                <ComboBoxItem Content="D10"/>
-                <ComboBoxItem Content="D11"/>
-                <ComboBoxItem Content="D12"/>
-                <ComboBoxItem Content="D13"/>
-                <ComboBoxItem Content="D14"/>
-                <ComboBoxItem Content="D14-2"/>
-                <ComboBoxItem Content="D15-1"/>
-                <ComboBoxItem Content="D15-2"/>
-                <ComboBoxItem Content="D15-3"/>
+
             </ComboBox>
 
-            <TextBlock Text="From:"/>
-            <ComboBox x:Name="cboFromTable" Margin="0,0,0,20">
-                <ComboBoxItem Content="D1"/>
-                <ComboBoxItem Content="D2"/>
-                <ComboBoxItem Content="D3"/>
-                <ComboBoxItem Content="D4"/>
-                <ComboBoxItem Content="D5"/>
-                <ComboBoxItem Content="D6"/>
-                <ComboBoxItem Content="D7"/>
-                <ComboBoxItem Content="D8"/>
-                <ComboBoxItem Content="D9"/>
-                <ComboBoxItem Content="D10"/>
-                <ComboBoxItem Content="D11"/>
-                <ComboBoxItem Content="D12"/>
-                <ComboBoxItem Content="D13"/>
-                <ComboBoxItem Content="D14"/>
-                <ComboBoxItem Content="D14-2"/>
-                <ComboBoxItem Content="D15-1"/>
-                <ComboBoxItem Content="D15-2"/>
-                <ComboBoxItem Content="D15-3"/>
+            <TextBlock Text="To:" FontFamily="Verdana" FontWeight="Bold" FontSize="14" Margin="0,20,0,0" HorizontalAlignment="Left"/>
+            <ComboBox x:Name="cboToTable" Margin="0,0,0,20" FontFamily="Verdana" FontSize="14" FontWeight="Bold" BorderBrush="#FFF1E4A0">
+              
             </ComboBox>
-
-            <Button Content="OK" Click="OK_Click"/>
-            <Button Content="Cancel" Click="Cancel_Click" Margin="0,0,0,0"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="OK" Click="OK_Click" BorderBrush="DarkOrange" FontFamily="Verdana" FontSize="16" FontWeight="Bold" Background="Green" Width="138" Height="38" Margin="5,0"/>
+                <Button Content="Cancel" Click="Cancel_Click" Background="Orange" BorderBrush="DarkOrange" FontFamily="Verdana" FontSize="14" FontWeight="Bold" Height="38" Width="138" Margin="5,0"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>
