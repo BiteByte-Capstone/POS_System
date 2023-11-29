@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -11,6 +12,12 @@ namespace POS_System.Dialog
     {
         private string connStr = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
         public event EventHandler TableColorUpdated;
+        List <string> unpaidTablesList = new List <string> ();
+        List<string> tableNumber = new List<string>
+        {
+            "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10",
+            "T11", "T12", "T13", "T14", "T14-2", "T15-1", "T15-2", "T15-3"
+        };
 
         public ChangeTableDialog()
         {
@@ -18,6 +25,10 @@ namespace POS_System.Dialog
 
             // Populate the ComboBox with tables that have unpaid orders
             PopulateComboBoxWithUnpaidTables();
+            var availableTables = tableNumber.Except(unpaidTablesList).ToList();
+
+            cboToTable.ItemsSource = availableTables;
+
         }
 
         // OK Button
@@ -54,7 +65,9 @@ namespace POS_System.Dialog
                     while (reader.Read())
                     {
                         string tableNumber = reader.GetString(0);
+
                         cboFromTable.Items.Add(tableNumber);
+                        unpaidTablesList.Add(tableNumber);
                     }
 
                     reader.Close();

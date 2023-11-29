@@ -14,16 +14,16 @@
 
         <DataGrid Name="paymentGrid" ItemsSource="{Binding}" Margin="19,130,18,153" Grid.Row="1" AutoGenerateColumns="False" ColumnWidth="*" IsReadOnly="True" SelectionChanged="paymentGrid_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Payment ID" Binding="{Binding payment_id}" Width="Auto"/>
-                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" Width="Auto" />
-                <DataGridTextColumn Header="Payment Amt." Binding="{Binding payment_method}" Width="Auto" />
-                <DataGridTextColumn Header="Base Amt." Binding="{Binding base_amount}" Width="Auto" />
-                <DataGridTextColumn Header="GST" Binding="{Binding GST}" Width="Auto" />
-                <DataGridTextColumn Header="Total Amt." Binding="{Binding total_amount}" Width="Auto" />
-                <DataGridTextColumn Header="Gross Amt." Binding="{Binding gross_amount}" Width="Auto" />
-                <DataGridTextColumn Header="Change Amt." Binding="{Binding customer_change_amount}" Width="Auto" />
-                <DataGridTextColumn Header="Tip" Binding="{Binding tip}" Width="Auto" />
-                <DataGridTextColumn Header="Timestamp" Binding="{Binding payment_timestamp}" Width="*" />
+                <DataGridTextColumn Header="Payment ID" Binding="{Binding payment_id}" />
+                <DataGridTextColumn Header="Order ID" Binding="{Binding order_id}" />
+                <DataGridTextColumn Header="Payment Amt." Binding="{Binding payment_method}" />
+                <DataGridTextColumn Header="Base Amt." Binding="{Binding base_amount}" />
+                <DataGridTextColumn Header="GST" Binding="{Binding GST}" />
+                <DataGridTextColumn Header="Total Amt." Binding="{Binding total_amount}" />
+                <DataGridTextColumn Header="Gross Amt." Binding="{Binding gross_amount}" />
+                <DataGridTextColumn Header="Change Amt." Binding="{Binding customer_change_amount}" />
+                <DataGridTextColumn Header="Tip" Binding="{Binding tip}" />
+                <DataGridTextColumn Header="Timestamp" Binding="{Binding payment_timestamp}" />
             </DataGrid.Columns>
         </DataGrid>
 

@@ -116,6 +116,8 @@ namespace POS_System.Pages
 
         }
 
+
+
         //Method: Group List by customer id
         private void GroupItemList()
         {
@@ -198,7 +200,7 @@ namespace POS_System.Pages
 
                             TotalAmount += orderedItem.ItemPrice;
                         }
-                        TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", new CultureInfo("en-CA"));
+                        TotalAmountTextBlock.Text =TotalAmount.ToString("C", new CultureInfo("en-CA"));
 
                         if (isSplited == true)
                         {
@@ -368,7 +370,7 @@ namespace POS_System.Pages
             TotalAmount += orderedItem.ItemPrice;
             CultureInfo cultureInfo = new CultureInfo("en-CA");
             cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-            TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", cultureInfo);
+            TotalAmountTextBlock.Text =TotalAmount.ToString("C", cultureInfo);
         }
 
         //(Button for Split Bill)
@@ -694,7 +696,7 @@ namespace POS_System.Pages
                 TotalAmount +=backupOrderedItem.ItemPrice;
             }
             OrdersListView.Items.GroupDescriptions.Clear();
-            TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", new CultureInfo("en-CA"));
+            TotalAmountTextBlock.Text =TotalAmount.ToString("C", new CultureInfo("en-CA"));
         }
 
         //(Method) Back up OrderedItem collection
@@ -774,10 +776,10 @@ namespace POS_System.Pages
                 {
                     orderedItems.Remove(selectedOrderedItem);
                     TotalAmount -= selectedOrderedItem.ItemPrice;
-                    TotalAmountTextBlock.Text = "Total Amount :             "  + TotalAmount.ToString();
+                    TotalAmountTextBlock.Text =TotalAmount.ToString();
                     CultureInfo cultureInfo = new CultureInfo("en-CA");
                     cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-                    TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", cultureInfo);
+                    TotalAmountTextBlock.Text =TotalAmount.ToString("C", cultureInfo);
                 }
 
                 else
@@ -788,10 +790,9 @@ namespace POS_System.Pages
  
                         orderedItems.Remove(selectedOrderedItem);
                         TotalAmount -= selectedOrderedItem.ItemPrice;
-                        TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString();
                         CultureInfo cultureInfo = new CultureInfo("en-CA");
                         cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
-                        TotalAmountTextBlock.Text = "Total Amount :             " + TotalAmount.ToString("C", cultureInfo);
+                        TotalAmountTextBlock.Text = TotalAmount.ToString("C", cultureInfo);
                         
                     }
                     else
@@ -881,7 +882,7 @@ namespace POS_System.Pages
                             MySqlCommand orderCmd = new MySqlCommand(orderSql, conn);
                             orderCmd.Parameters.AddWithValue("@tableNum", _tableNumber);
                             orderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                            orderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
+                            orderCmd.Parameters.AddWithValue("@totalAmount", Math.Round(TotalAmount, 2));
                             orderCmd.Parameters.AddWithValue("@order_type", TypeTextBox.Text);
                             orderCmd.ExecuteNonQuery();
                             orderId = orderCmd.LastInsertedId;
@@ -902,12 +903,9 @@ namespace POS_System.Pages
                             }
 
                         }
+
                         else if (StatusTextBlock.Text.Equals("Occupied"))
                         {
-
-
-
-
                             string removeOrderedItemlistSql = "DELETE FROM ordered_itemlist WHERE order_id = @orderId;";
                             MySqlCommand removeOrderCmd = new MySqlCommand(removeOrderedItemlistSql, conn);
                             removeOrderCmd.Parameters.AddWithValue("@orderId", orderId);
@@ -916,7 +914,7 @@ namespace POS_System.Pages
                             string updateOrderSql = "UPDATE `order` SET order_timestamp = @orderTimestamp, total_amount = @totalAmount WHERE order_id = @orderId; ";
                             MySqlCommand updateOrderCmd = new MySqlCommand(updateOrderSql, conn);
                             updateOrderCmd.Parameters.AddWithValue("@orderTimestamp", DateTime.Now);
-                            updateOrderCmd.Parameters.AddWithValue("@totalAmount", TotalAmount);
+                            updateOrderCmd.Parameters.AddWithValue("@totalAmount", Math.Round(TotalAmount, 2));
                             updateOrderCmd.Parameters.AddWithValue("@orderId", orderId);
                             updateOrderCmd.ExecuteNonQuery();
 
@@ -932,12 +930,7 @@ namespace POS_System.Pages
                                 itemCmd.Parameters.AddWithValue("@originalItemPrice", orderedItem.origialItemPrice);
                                 itemCmd.Parameters.AddWithValue("@itemPrice", orderedItem.ItemPrice);
                                 itemCmd.ExecuteNonQuery();
-
-
                             }
-
-
-
                         }
                         MessageBox.Show("Order save successfully!");
                      // Print the receipt
@@ -1085,7 +1078,7 @@ namespace POS_System.Pages
 
         }
 
-
+        //Event: print customer bill after click
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
             if (orderedItems.Count == 0 && itemClick == false)
@@ -1108,6 +1101,9 @@ namespace POS_System.Pages
             else
             {
                 PrintCustomerBill(orderedItems);
+                MessageBox.Show("Print all customer bill.");
+                MenuPage menuPage = new MenuPage();
+                menuPage.Refresh();
             }
         }
 
@@ -1123,6 +1119,7 @@ namespace POS_System.Pages
                 // Calculate TotalAmount with GST included
                 double totalAmountWithGST = TotalAmount + gstAmount;
                 int customerID = 1;
+                double customerTotalAmount;
                 // Iterate through split bills
 
                 do
@@ -1234,7 +1231,17 @@ namespace POS_System.Pages
                     subTotalParagraph.FontSize = 20; // Increase the font size
                     subTotalParagraph.TextAlignment = TextAlignment.Right;
 
-                    double customerTotalAmount = orderedItems.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
+                    if (_numberOfBill==0)
+                    {
+                        customerTotalAmount = OrderItemcCollection.Where(item => item.customerID == 0).Sum(item => item.ItemPrice);
+                        
+                    }
+                    else
+                    {
+                        customerTotalAmount = OrderItemcCollection.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
+
+                    }
+                   
                     Paragraph subTotalValueParagraph = new Paragraph(new Run(customerTotalAmount.ToString("C")));
                     paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
 

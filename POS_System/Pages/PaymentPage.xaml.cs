@@ -205,11 +205,14 @@ namespace POS_System.Pages
 
 
                                 SavePaymentToDatabase(_eachPaymentDictionary);
+                                PrintAllReceipts(_eachPaymentDictionary);
+                                _eachPaymentDictionary.Clear();
                                 MessageBox.Show("All customers payment completed! Thank you");
                                 TablePage tablePage = new TablePage();
                                 tablePage.Show();
                                 _parentWindow.Close();
                                 _menuPage.Close();
+                                
                             }
 
                         }
@@ -319,9 +322,9 @@ namespace POS_System.Pages
                     isPaidCmd.Parameters.AddWithValue("@paid", "y");
                     isPaidCmd.Parameters.AddWithValue("@orderId", _orderId);
                     isPaidCmd.ExecuteNonQuery();
-                    PrintAllReceipts(paymentDictionary);
+                    
 
-                    paymentDictionary.Clear();
+
 
 
                 }
@@ -340,10 +343,8 @@ namespace POS_System.Pages
 
         private void PrintAllReceipts(ConcurrentDictionary<int, Payment> paymentDictionary)
         {
-            // Check if the order is split into multiple customer IDs
-            bool isOrderSplit = paymentDictionary.Values.Select(payment => payment.customerID).Distinct().Count() > 1;
-
-            if (!isOrderSplit)
+            
+            if (_numberOfBill==0)
             {
                 // If the order is not split, print a single receipt for the entire order
                 PrintSettledPaymentReceipt(paymentDictionary.First().Value); // Use the first payment as an example
@@ -355,6 +356,7 @@ namespace POS_System.Pages
                 {
                     Payment eachCustomerPayment = kvp.Value;
                     PrintSettledPaymentReceipt(eachCustomerPayment);
+                    
                 }
             }
         }
@@ -458,7 +460,77 @@ namespace POS_System.Pages
                 Section paymentSection = new Section();
                 TableRowGroup paymentTableRowGroup = new TableRowGroup();
 
-                // ... (previous code remains unchanged)
+
+                // Create a Paragraph for "Sub Total" with underline
+                Paragraph subTotalParagraph = new Paragraph(new Run("Sub Total:"));
+                subTotalParagraph.FontSize = 20; // Increase the font size
+                subTotalParagraph.TextAlignment = TextAlignment.Right;
+
+                //double customerTotalAmount = orderedItems.Where(item => item.customerID == customerID).Sum(item => item.ItemPrice);
+                double subTotalAmount = eachCustomerPayment.baseAmount;
+                Paragraph subTotalValueParagraph = new Paragraph(new Run(subTotalAmount.ToString("C")));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(subTotalParagraph, subTotalValueParagraph));
+
+                // Create a Paragraph for "GST"
+                Paragraph gstLabelParagraph = new Paragraph(new Run("Tax (5%):"));
+                gstLabelParagraph.FontSize = 20; // Increase the font size
+                gstLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                double customerGSTAmount = eachCustomerPayment.GST;
+                Paragraph gstValueParagraph = new Paragraph(new Run(customerGSTAmount.ToString("C")));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(gstLabelParagraph, gstValueParagraph));
+
+
+
+                //*********************************
+
+
+                // Create a Paragraph for "Total Amount"
+                Paragraph totalDueAmountLabelParagraph = new Paragraph(new Run("Customer Payment:"));
+                totalDueAmountLabelParagraph.FontSize = 20; // Increase the font size
+                totalDueAmountLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                double customerPaymentValue = eachCustomerPayment.customerPaymentTotalAmount;
+                Paragraph totalDueAmountValueParagraph = new Paragraph(new Run(customerPaymentValue.ToString("C")));
+                paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(totalDueAmountLabelParagraph, totalDueAmountValueParagraph));
+
+                if (eachCustomerPayment.paymentMethod.Equals("Cash"))
+                {
+                    // Create a Paragraph for "Change"
+                    Paragraph changeLabelParagraph = new Paragraph(new Run("Change:"));
+                    changeLabelParagraph.FontSize = 20; // Increase the font size
+                    changeLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerChangeValue = eachCustomerPayment.customerChangeAmount;
+                    Paragraph changeValueParagraph = new Paragraph(new Run(customerChangeValue.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(changeLabelParagraph, changeValueParagraph));
+                } 
+                
+                else
+                {
+                    // Create a Paragraph for "Tip"
+                    Paragraph tipLabelParagraph = new Paragraph(new Run("Tip:"));
+                    tipLabelParagraph.FontSize = 20; // Increase the font size
+                    tipLabelParagraph.TextAlignment = TextAlignment.Right;
+
+                    double customerTipValue = eachCustomerPayment.tip;
+                    Paragraph tipValueParagraph = new Paragraph(new Run(customerTipValue.ToString("C")));
+                    paymentTableRowGroup.Rows.Add(CreateTableRowWithParagraph(tipLabelParagraph, tipValueParagraph));
+                }
+
+
+                //////////////////////////////////////////////////
+
+                // Create a Paragraph for the payment method
+                Paragraph paymentMethodParagraph = new Paragraph(new Run($"Payment Type: {_paymentMethod}"));
+                paymentMethodParagraph.FontSize = 20;
+                paymentMethodParagraph.TextAlignment = TextAlignment.Left; // Adjust alignment as needed
+
+                // Add the payment method paragraph to your document
+                flowDocument.Blocks.Add(paymentMethodParagraph);
+
+                // /*****************************
+
 
                 detailsTable.RowGroups.Add(detailTableRowGroup);
                 itemsTable.RowGroups.Add(itemTableRowGroup);

@@ -30,7 +30,6 @@ namespace POS_System.Pages
             InitializeComponent();
             getDataOrderTable();
             getDataOrderedListTable();
-            GetDataRefundTable();
         }
 
         private void getDataOrderTable()
@@ -40,7 +39,7 @@ namespace POS_System.Pages
             //db = new DatabaseHelper("localhost", "pos_db", "root", "password");
 
             //String to make connection to database
-
+            
 
             //Create a connection object
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -751,91 +750,52 @@ namespace POS_System.Pages
         {
             try
             {
-                string fromTimestamp = refundFromDateFilter.SelectedDate?.ToString("yyyy-MM-dd");
-                string untilTimestamp = refundToDateFilter.SelectedDate?.ToString("yyyy-MM-dd");
-                string refundId = refundIdFilter.Text;
-                string orderId = orderIdFilter.Text;
-                string paymentId = paymentIdFilter.Text;
-                string refundAmount = refundAmountFilter.Text;
+                string fromTimestamp = refundTimestampFilter.SelectedDate?.ToString("yyyy-MM-dd");
+                string untilTimestamp = refundTimestampFilter.SelectedDate?.ToString("yyyy-MM-dd");
                 string specificMethod = refundMethodFilter.Text;
+
                 string specificUser = userIdFilter.Text;
 
+                string sqlQuery = "SELECT * FROM refund WHERE 1=1";
 
-                if (string.IsNullOrEmpty(fromTimestamp) && string.IsNullOrEmpty(untilTimestamp) && string.IsNullOrEmpty(specificMethod) && string.IsNullOrEmpty(specificUser) && string.IsNullOrEmpty(refundId) && string.IsNullOrEmpty(orderId) && string.IsNullOrEmpty(paymentId) && string.IsNullOrEmpty(refundAmount))
+                if (!string.IsNullOrEmpty(fromTimestamp) && !string.IsNullOrEmpty(untilTimestamp))
                 {
-                    GetDataRefundTable();
+                    sqlQuery += " AND refund_timestamp BETWEEN @fromTimestamp AND @untilTimestamp";
                 }
-                else
+                else if (!string.IsNullOrEmpty(fromTimestamp))
                 {
-                    string sqlQuery = "SELECT * FROM refund WHERE 1=1";
-
-                    if (!string.IsNullOrEmpty(fromTimestamp) && !string.IsNullOrEmpty(untilTimestamp))
-                    {
-                        sqlQuery += " AND refund_timestamp BETWEEN @fromTimestamp AND @untilTimestamp + interval 1 day";
-                    }
-                    else if (!string.IsNullOrEmpty(fromTimestamp))
-                    {
-                        sqlQuery += " AND refund_timestamp >= @fromTimestamp";
-                    }
-                    else if (!string.IsNullOrEmpty(untilTimestamp))
-                    {
-                        sqlQuery += " AND refund_timestamp <= @untilTimestamp + interval 1 day";
-                    }
-
-                    if (!string.IsNullOrEmpty(specificMethod))
-                    {
-                        sqlQuery += " AND refund_method = @specificMethod";
-                    }
-
-                    if (!string.IsNullOrEmpty(specificUser))
-                    {
-                        sqlQuery += " AND user_id = @specificUser";
-                    }
-
-                    if (!string.IsNullOrEmpty(refundId))
-                    {
-                        sqlQuery += " AND refund_id = @refundId";
-                    }
-
-                    if (!string.IsNullOrEmpty(orderId))
-                    {
-                        sqlQuery += " AND order_id = @orderId";
-                    }
-
-                    if (!string.IsNullOrEmpty(paymentId))
-                    {
-                        sqlQuery += " AND payment_id = @paymentId";
-                    }
-
-                    if (!string.IsNullOrEmpty(refundAmount))
-                    {
-                        sqlQuery += " AND refund_amount = @refundAmount";
-                    }
-
-                    MySqlConnection connection = new MySqlConnection(connectionString);
-                    MySqlCommand cmd = new MySqlCommand(sqlQuery, connection);
-
-                    MessageBox.Show(sqlQuery);
-
-                    // Add parameters for user inputs        
-                    cmd.Parameters.AddWithValue("@fromTimestamp", fromTimestamp);
-                    cmd.Parameters.AddWithValue("@untilTimestamp", untilTimestamp);
-                    cmd.Parameters.AddWithValue("@specificMethod", specificMethod);
-                    cmd.Parameters.AddWithValue("@specificUser", specificUser);
-                    cmd.Parameters.AddWithValue("@refundId", refundId);
-                    cmd.Parameters.AddWithValue("@orderId", orderId);
-                    cmd.Parameters.AddWithValue("@paymentId", paymentId);
-                    cmd.Parameters.AddWithValue("@refundAmount", refundAmount);
-
-                    connection.Open();
-                    DataTable dt = new DataTable();
-                    dt.Load(cmd.ExecuteReader());
-                    connection.Close();
-
-                    refundGrid.DataContext = dt;
-
-                    refundMethodFilter.Text = "";
+                    sqlQuery += " AND refund_timestamp >= @fromTimestamp";
                 }
+                else if (!string.IsNullOrEmpty(untilTimestamp))
+                {
+                    sqlQuery += " AND refund_timestamp <= @untilTimestamp";
+                }
+
+                if (!string.IsNullOrEmpty(specificMethod))
+                {
+                    sqlQuery += " AND refund_method = @specificMethod";
+                }
+
+                if (!string.IsNullOrEmpty(specificUser))
+                {
+                    sqlQuery += " AND user_id = @specificUser";
+                }
+
+                MySqlConnection connection = new MySqlConnection(connectionString);
+                MySqlCommand cmd = new MySqlCommand(sqlQuery, connection);
+
+                // Add parameters for user inputs
+                cmd.Parameters.AddWithValue("@fromTimestamp", fromTimestamp);
+                cmd.Parameters.AddWithValue("@untilTimestamp", untilTimestamp);
+                cmd.Parameters.AddWithValue("@specificMethod", specificMethod);
+                cmd.Parameters.AddWithValue("@specificUser", specificUser);
+
+                connection.Open();
+                DataTable dt = new DataTable();
+                dt.Load(cmd.ExecuteReader());
+                connection.Close();
+
+                refundGrid.DataContext = dt;
             }
             catch (Exception ex)
             {
