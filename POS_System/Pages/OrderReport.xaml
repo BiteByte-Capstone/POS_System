@@ -109,13 +109,33 @@
                             <StackPanel Orientation="Horizontal" Width="348" Height="35">
                                 <TextBlock Text="Order Type:" VerticalAlignment="Center" FontSize="12" Height="16" Width="90"/>
                                 <ComboBox x:Name="OrderTypeComboBox" Height="16" Width="102">
-                                    <ComboBoxItem Content="Dine-In"/>
-                                    <ComboBoxItem Content="Take-Out"/>
+                                    <ComboBox.Resources>
+                                        <!-- ComboBoxItem Style -->
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="FontSize" Value="10"/>
+                                        </Style>
+                                        <!-- ComboBox Style -->
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="FontSize" Value="8.5"/>
+                                        </Style>
+                                    </ComboBox.Resources>
+                                    <ComboBoxItem Content="Dine-In" Height="20"/>
+                                    <ComboBoxItem Content="Take-Out" Height="20"/>
                                 </ComboBox>
                                 <!--<TextBox x:Name="fromTableBoxFilter" Width="99" Margin="5,0" Height="17"/>-->
                                 <TextBlock Text="Order Status:" VerticalAlignment="Center" Margin="5,0,5,0" Height="19" Width="57" FontSize="10"/>
                                 <!--<TextBox x:Name="toTableBoxFilter" Width="77" Height="16"/>-->
                                 <ComboBox x:Name="OrderStatusComboBox" Height="16" Width="82">
+                                    <ComboBox.Resources>
+                                        <!-- ComboBoxItem Style -->
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="FontSize" Value="10"/>
+                                        </Style>
+                                        <!-- ComboBox Style -->
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="FontSize" Value="8.5"/>
+                                        </Style>
+                                    </ComboBox.Resources>
                                     <ComboBoxItem Content="Canceled"/>
                                     <ComboBoxItem Content="Paid"/>
                                     <ComboBoxItem Content="Unpaid"/>
