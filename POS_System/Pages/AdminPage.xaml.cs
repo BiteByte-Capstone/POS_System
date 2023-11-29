@@ -296,6 +296,12 @@ namespace POS_System.Pages
             }
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            AdminManagement adminManagement = new AdminManagement();
+            adminManagement.Show();
+            this.Close();
+        }
 
         private void RoleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
