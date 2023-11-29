@@ -47,6 +47,7 @@ namespace POS_System.Pages
         {
             itemCategoryDataGrid.ContentTemplate = (DataTemplate)this.Resources["ItemTemplate"];
             itemCategoryDataGrid.Content = GetAllItems();
+            
             AddItemButtonVisibility(true);
             AddCategoryButtonVisibility(false);
 
@@ -58,16 +59,6 @@ namespace POS_System.Pages
             itemCategoryDataGrid.Content = GetAllCategories();
             AddCategoryButtonVisibility(true);
             AddItemButtonVisibility(false);
-
-        }
-
-        private void ViewSalesButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
 
         }
 
@@ -133,7 +124,6 @@ namespace POS_System.Pages
         {
             if (sender is Button button && button.CommandParameter is Item item)
             {
-                MessageBox.Show("second stage");
                 int id = item.Id;
                 string name = item.item_name;
                 double price = item.ItemPrice;
@@ -148,7 +138,6 @@ namespace POS_System.Pages
                 if (editItemDialog.ShowDialog() == true)
                 {
                     int editedId = editItemDialog.editedId;
-                    // Retrieve the category name from the dialog
                     string editedName = editItemDialog.editedName;
                     double editedprice = editItemDialog.editedPrice;
                     string editedDescription = editItemDialog.editedDescripion;
