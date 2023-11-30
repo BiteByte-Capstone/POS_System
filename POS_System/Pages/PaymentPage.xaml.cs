@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Google.Protobuf;
 using MySql.Data.MySqlClient;
 using POS.Models;
 using POS_System.Models;
@@ -21,7 +22,8 @@ namespace POS_System.Pages
     {
         private ObservableCollection<OrderedItem> _eachCustomerOrderedItems = new ObservableCollection<OrderedItem>();
 
-        private List<Payment> eachPaymentList = new List<Payment>();
+
+
 
         public static ConcurrentDictionary<int, Payment> _eachPaymentDictionary { get; } = new ConcurrentDictionary<int, Payment>();
 
@@ -182,6 +184,8 @@ namespace POS_System.Pages
                          $"\ntotal order balance: {CalculateOrderTotalBalance()}" +
                          $"\ncustomer change amount: {CalculateChangeAmount()}" +
                          $"\ntip: {CalculateTipAmount()}";
+                    foreach (var item in _eachCustomerOrderedItems) { message += $"\nitems: {item.item_name}"; }
+
 
                     MessageBoxResult result = MessageBox.Show(message, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
@@ -190,14 +194,16 @@ namespace POS_System.Pages
                     {
                         int numberOFPagmentInDictionary = _eachPaymentDictionary.Count;
                         int forConditionKey = numberOFPagmentInDictionary + 1;
-                        MessageBox.Show("numberOFPagmentInDictionary = " + _eachPaymentDictionary.Count.ToString()+ "\n" + "number of bill = "+ _numberOfBill);
+                        MessageBox.Show("numberOFPagmentInDictionary = " + _eachPaymentDictionary.Count.ToString()+ "\n" + "number of bill = "+ _numberOfBill +"\n"+ "forConditionKey = "+ forConditionKey);
 
 
                         if (numberOFPagmentInDictionary < _numberOfBill || _numberOfBill == 0)
                         {
-                            MessageBox.Show($"Customer ID #{_customerID} payment saved.");
+                            
                             AddPaymentList();
+
                             OnPaymentCompleted();
+                            MessageBox.Show($"Customer ID #{_customerID} payment saved.");
 
 
 
@@ -206,14 +212,14 @@ namespace POS_System.Pages
 
 
                                 SavePaymentToDatabase(_eachPaymentDictionary);
-                                PrintAllReceipts(_eachPaymentDictionary);
+                                PrintAllReceipts();
                                 _eachPaymentDictionary.Clear();
                                 MessageBox.Show("All customers payment completed! Thank you");
                                 TablePage tablePage = new TablePage();
                                 tablePage.Show();
                                 _parentWindow.Close();
                                 _menuPage.Close();
-                                
+                                _eachPaymentDictionary.Clear();
                             }
 
                         }
@@ -227,7 +233,7 @@ namespace POS_System.Pages
                 }
                 else
                 {
-                    MessageBox.Show($"The payment must be greater than the \n\nBalance : ${CalculateOrderTotalBalance()}");
+                    MessageBox.Show($"Invalid input! \n\n The payment must be greater than the \n\n         Balance : ${CalculateOrderTotalBalance()}");
 
                     return;
                 }
@@ -243,8 +249,6 @@ namespace POS_System.Pages
         //(method for add the payment to list)
         private void AddPaymentList()
         {
-            foreach (OrderedItem items in _eachCustomerOrderedItems)
-            {
                 Payment eachCustomerPayment = new Payment
                 {
 
@@ -260,14 +264,33 @@ namespace POS_System.Pages
                     grossAmount = CalculateOrderTotalBalance(),
                     customerChangeAmount = CalculateChangeAmount(),
                     tip = CalculateTipAmount(),
-                    eachCustomerItems = _eachCustomerOrderedItems
+                    ItemList = ItemList()
 
 
                 };
+            
+
 
                 
                 _eachPaymentDictionary.TryAdd(_customerID, eachCustomerPayment);
+        }
+
+        //Method: return list of the customer ordered items (name and price)
+        private List<OrderedItem> ItemList()
+        {
+            List<OrderedItem> itemList = new List<OrderedItem>();
+
+            foreach (var item in _eachCustomerOrderedItems)
+            {
+                OrderedItem orderedItem = new OrderedItem()
+                {
+                    item_name = item.item_name,
+                    ItemPrice = item.ItemPrice
+                };
+                itemList.Add(orderedItem);
             }
+
+            return itemList;
         }
 
         private void SavePaymentToDatabase(ConcurrentDictionary<int, Payment> paymentDictionary)
@@ -342,26 +365,24 @@ namespace POS_System.Pages
             }
         }
 
-        private void PrintAllReceipts(ConcurrentDictionary<int, Payment> paymentDictionary)
+        private void PrintAllReceipts()
         {
-            
-            if (_numberOfBill==0)
+
+            if (_numberOfBill == 0)
             {
                 // If the order is not split, print a single receipt for the entire order
-                PrintSettledPaymentReceipt(paymentDictionary.First().Value); // Use the first payment as an example
+                PrintSettledPaymentReceipt(_eachPaymentDictionary.First().Value);
             }
             else
             {
-                // If the order is split, print receipts for each customer ID
-                foreach (var kvp in paymentDictionary)
+
+                foreach (var key in _eachPaymentDictionary.Keys)
                 {
-                    Payment eachCustomerPayment = kvp.Value;
+                    Payment eachCustomerPayment = _eachPaymentDictionary[key];
                     PrintSettledPaymentReceipt(eachCustomerPayment);
-                    
                 }
             }
         }
-
 
 
 
@@ -443,7 +464,7 @@ namespace POS_System.Pages
                 Table itemsTable = new Table();
 
                 // Access the 'Items' collection and loop through it to add item rows.
-                foreach (var OrderedItem in eachCustomerPayment.eachCustomerItems)
+                foreach (var OrderedItem in eachCustomerPayment.ItemList)
                 {
                     itemTableRowGroup.Rows.Add(CreateTableRow(OrderedItem.item_name, OrderedItem.ItemPrice.ToString("C")));
                 }
@@ -587,7 +608,7 @@ namespace POS_System.Pages
                 Paragraph thankYouParagraph = new Paragraph();
                 thankYouParagraph.TextAlignment = TextAlignment.Center;
                 thankYouParagraph.FontSize = 20;
-                thankYouParagraph.Inlines.Add(new Run("Thank You for dining with us!"));
+                thankYouParagraph.Inlines.Add(new Run("Thank You!"));
                 thankYouParagraph.Margin = new Thickness(0, 10, 0, 0); // Add some space before the message if needed
 
                 // Add a "-------------------------------------------------" separator before the "Thank You" message

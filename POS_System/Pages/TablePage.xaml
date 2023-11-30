@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-        Title="MenuPage" WindowState="Maximized"  Height="926" Width="1777" ResizeMode="NoResize">
+        Title="MenuPage" WindowState="Maximized"  Height="926" Width="1777">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

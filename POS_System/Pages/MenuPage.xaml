@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS_System.Pages"
         mc:Ignorable="d"
-       Title="Menu Page" WindowState="Maximized" ResizeMode="NoResize" WindowStyle="None">
+       Title="Menu Page" WindowState="Maximized" Height="870" Width="1500">
 
 
     <Grid Background="#212121" Margin="0,0,0,0">
@@ -15,7 +15,7 @@
             <RowDefinition Height="51" MinHeight="51" MaxHeight="51"/>
             <RowDefinition Height="82" MinHeight="82" MaxHeight="82"/>
             <RowDefinition Height="51" MinHeight="51" MaxHeight="51"/>
-            <RowDefinition Height="550" MinHeight="550" MaxHeight="550"/>
+            <RowDefinition Height="450" MinHeight="450" MaxHeight="450"/>
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
             <RowDefinition Height="20" MinHeight="20" MaxHeight="20"/>
 
@@ -56,7 +56,7 @@
                 <Button Content="Print Bill" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Width="212" Click="PrintButton_Click" Margin="0,0,0,10"/>
 
                 <Button Content="Payment" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Width="214" Click="PaymentButton_Click" Margin="0,0,0,20"/>
-                <Button Content="Save" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Margin="0,100,0,0" Click="SaveButton_Click" Width="200"/>
+                <Button Content="Save" Background="Green" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" Height="90" Margin="0,5,0,0" Click="SaveButton_Click" Width="200"/>
 
             </StackPanel>
         </Border>

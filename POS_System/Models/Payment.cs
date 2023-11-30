@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -18,6 +19,8 @@ namespace POS_System.Models
         private double _grossAmount;
         private double _customerChangeAmount;
         private double _tip;
+        private List<OrderedItem> _itemList = new List<OrderedItem>();
+
         public ObservableCollection<OrderedItem> eachCustomerItems { get; set; }
 
 
@@ -33,7 +36,7 @@ namespace POS_System.Models
 
         }
 
-        public Payment(int customerID, int paymentID, long orderID,string tableNumber ,string orderType, string paymentMethod, double baseAmount, double GST, double customerPaymentTotalAmount, double grossAmount, double customerChangeAmount, double tip, ObservableCollection<OrderedItem> eachCustomerItems)
+        public Payment(int customerID, int paymentID, long orderID,string tableNumber ,string orderType, string paymentMethod, double baseAmount, double GST, double customerPaymentTotalAmount, double grossAmount, double customerChangeAmount, double tip, List<OrderedItem> eachCustomerItems)
         {
 
             this._customerID = customerID;
@@ -48,7 +51,7 @@ namespace POS_System.Models
             this._grossAmount = grossAmount;
             this._customerChangeAmount = customerChangeAmount;
             this._tip = tip;
-            this.eachCustomerItems = eachCustomerItems ?? new ObservableCollection<OrderedItem>();
+            this._itemList = eachCustomerItems;
         }
 
         public int customerID
@@ -207,6 +210,18 @@ namespace POS_System.Models
             }
         }
 
+        public List<OrderedItem> ItemList
+        {
+            get => _itemList;
+            set
+            {
+                if (_itemList != value)
+                {
+                    _itemList = value;
+                    OnPropertyChanged(nameof(ItemList));
+                }
+            }
+        }
 
 
     }
