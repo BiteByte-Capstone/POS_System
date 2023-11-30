@@ -10,11 +10,12 @@
         <Label HorizontalAlignment="Center" Margin="0,27,0,0" VerticalAlignment="Top" Height="46" Width="266" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White">
             <TextBlock Foreground="White" FontSize="25" FontFamily="Verdana" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="NumberOfPeopleTextBlock" Height="29" Width="215" Text="Successful login!" />
         </Label>
-        <Label HorizontalAlignment="Center" Margin="0,91,0,0" VerticalAlignment="Top" Height="38" Width="266" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White">
+        <Label HorizontalAlignment="Center" Margin="0,91,0,0" VerticalAlignment="Top" Height="38" Width="240" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White">
             <TextBlock Foreground="Orange" FontSize="25" FontFamily="Verdana" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="NumberOfPeopleTextBlock1" Height="36" Width="127" ><Run Language="en-ca" Text="Welcome"/><Run Text="!"/></TextBlock>
         </Label>
         <TextBlock Name="UserIDTextBlock" HorizontalAlignment="Center" Margin="0,129,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="53" Width="240" TextAlignment="Center" Foreground="Orange" FontSize="40" FontWeight="Bold" FontFamily="Verdana" />
         <Button Content="OK" Background="Orange" BorderBrush="#FF4C4B56" FontSize="25" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Width="170" Height="42" Margin="0,217,0,0" Click="OK_Click"  x:Name="OK_Button" />
+        <Image Name="userIcon" HorizontalAlignment="Left" Height="100" Margin="408,110,0,0" VerticalAlignment="Top" Width="100"/>
 
 
     </Grid>

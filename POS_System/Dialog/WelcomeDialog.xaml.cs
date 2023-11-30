@@ -26,11 +26,32 @@ namespace POS_System.Dialog
             InitializeComponent();
             this.Left = 510; 
             this.Top = 400;  
+            
         }
 
         public WelcomeDialog(string authenticatedUsername):this()
         {
             UserIDTextBlock.Text = authenticatedUsername;
+            string userTitle = "";
+            if (User.id >99 &&  User.id < 200)
+            {
+                userTitle = "AdminPicture";
+            } 
+            
+            else if (User.id > 199 && User.id < 300)
+            {
+                userTitle = "ManagerPicture";
+            }
+
+            else
+            {
+                userTitle = "WaiterPicture";
+            }
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri($"pack://application:,,,/POS_System;component/Images/{userTitle}.png");
+            bitmap.EndInit();
+            userIcon.Source = bitmap;
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)

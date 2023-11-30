@@ -32,10 +32,10 @@
         <DatePicker Name="fromDate"  HorizontalAlignment="Left" Margin="188,42,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="Short" Grid.Row="1"/>
         <DatePicker Name="untilDate" HorizontalAlignment="Left" Margin="512,42,0,0" VerticalAlignment="Top" Height="29" Width="270" SelectedDateFormat="short" Grid.Row="1"/>
         <TextBlock  Text="Date" Margin="19,45,738,429" Grid.Row="1"/>
-        <TextBlock TextWrapping="Wrap" Text="From:" Margin="152,45,605,429" Grid.Row="1"/>
+        <TextBlock TextWrapping="Wrap" Text="From:" Margin="134,45,612,429" Grid.Row="1"/>
         <TextBlock TextWrapping="Wrap" Text="To:" Margin="489,45,268,327" Grid.Row="1"/>
 
-        <TextBlock TextWrapping="Wrap" Text="Order ID:" Margin="134,80,552,402" Grid.Row="1"/>
+        <TextBlock TextWrapping="Wrap" Text="Order ID:" Margin="127,80,559,402" Grid.Row="1"/>
         <TextBox x:Name="orderIdBoxFilter" HorizontalAlignment="Left" Margin="188,79,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="152" Grid.Row="1"/>
 
         <TextBlock TextWrapping="Wrap" Text="Payment ID:" Margin="441,80,245,401" Grid.Row="1"/>
@@ -49,7 +49,7 @@
 
         <Button Name="filterBtn" Content="Filter" HorizontalAlignment="Left" Margin="680,78,0,0" VerticalAlignment="Top" Height="24" Width="102" Click="FilterBtn_Click" Grid.Row="1"/>
 
-        <TextBlock Text="Refund Payment ID:" Margin="10,303,676,179" Grid.Row="1"/>
+        <TextBlock Text="Refund Payment ID:" Margin="5,304,673,178" Grid.Row="1"/>
         <TextBox x:Name="refundPaymentIdBox" HorizontalAlignment="Left" Margin="127,303,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="153" Grid.Row="1"/>
 
         <TextBlock TextWrapping="Wrap" Text="Refund Amount:" Margin="10,334,676,148" Grid.Row="1"/>

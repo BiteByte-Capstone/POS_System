@@ -1,6 +1,4 @@
-﻿
-
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,24 +18,27 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Collections;
 
+
 namespace POS_System.Pages
 {
     /// <summary>
-    /// Interaction logic for Window1.xaml
+    /// Interaction logic for ManagerPage.xaml
     /// </summary>
-    public partial class AdminPage : Window
-    {
-        List<String> AdminList = new List<string> { "Waiter", "Admin", "Manager" };
+    public partial class ManagerPage : Window
 
+    {
+        List<String> managerList = new List<string> { "Waiter" };
 
         private DatabaseHelper db;
-
-        public AdminPage()
+        public ManagerPage()
         {
             InitializeComponent();
 
-            getAllUser();
-            UserCombobox.ItemsSource = AdminList;
+            if (POS.Models.User.id >= 200)
+            {
+                GetOnlyWaiter();
+                UserCombobox.ItemsSource = managerList;
+            }
         }
 
         private void getAllUser()
@@ -70,6 +71,37 @@ namespace POS_System.Pages
             userGrid.DataContext = dt;
         }
 
+        private void GetOnlyWaiter()
+        {
+            //Tutorial used https://www.youtube.com/watch?v=OPDPI5exPp8
+
+            //db = new DatabaseHelper("localhost", "pos_db", "root", "password");
+
+            //String to make connection to database
+            string connectionString = "SERVER=localhost;DATABASE=pos_db;UID=root;PASSWORD=password;";
+
+            //Create a connection object
+            MySqlConnection connection = new MySqlConnection(connectionString);
+
+            //SQL query
+            MySqlCommand cmd = new MySqlCommand("select * from user where user_id >= 300 order by 1", connection);
+
+            //Open up connection with the user table
+            connection.Open();
+
+            //create a datatable object to capture the database table
+            DataTable dt = new DataTable();
+
+            //Execute the command and the load the result of reader inside the datatable
+            dt.Load(cmd.ExecuteReader());
+
+            //Close connection to user table
+            connection.Close();
+
+            userGrid.DataContext = dt;
+
+
+        }
 
         private void MakeComboBoxReadOnly()
         {
@@ -111,7 +143,7 @@ namespace POS_System.Pages
 
                 //Close connection to user table
                 connection.Close();
-                getAllUser();
+                GetOnlyWaiter();
 
                 //Clear textboxes after method sucessfully executes
                 adduser_usernameBox.Clear();
@@ -153,7 +185,7 @@ namespace POS_System.Pages
 
             //Close connection to user table
             connection.Close();
-            getAllUser();
+            GetOnlyWaiter();
 
             //Clear textboxes after method sucessfully executes
             edituser_idBox.Clear();
@@ -244,7 +276,7 @@ namespace POS_System.Pages
                                 cmd.ExecuteNonQuery();
                             }
                         }
-                        getAllUser();
+                        GetOnlyWaiter();
                     }
                     catch (Exception ex)
                     {

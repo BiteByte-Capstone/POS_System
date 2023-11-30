@@ -27,8 +27,8 @@ namespace POS_System.Pages
         private void ManageUserButton_Click(object sender, RoutedEventArgs e)
         {
             // Open the AdminPage window when the button is clicked
-            AdminPage adminWindow = new AdminPage();
-            adminWindow.Show();
+            ManagerPage managerPage = new ManagerPage();
+            managerPage.Show();
         }
 
 
