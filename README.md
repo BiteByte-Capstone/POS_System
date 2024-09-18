@@ -1,1 +1,3 @@
-### Clone this! Not the other one.
+#SAIT Capstone Project
+
+## POS system
